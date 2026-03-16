@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import '../css/app.css';
 import { initializeTheme } from '@/hooks/use-appearance';
+import { initializeThemeColor } from '@/hooks/use-theme-color';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -33,3 +34,6 @@ createInertiaApp({
 
 // This will set light / dark mode on load...
 initializeTheme();
+
+// This applies a user-selected brand color from localStorage.
+initializeThemeColor();
