@@ -1,24 +1,14 @@
-import { Form, Head, router } from '@inertiajs/react';
-import { CheckCircle2, Plus, Search, UserCheck, UserX, XCircle } from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { CheckCircle2, Search, UserCheck, UserX, XCircle } from 'lucide-react';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
+import { DataTableWithPagination } from '@/components/data-table';
 import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -28,6 +18,9 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import { CreateUserModal } from './partials/create-user-modal';
+import { DeleteUserModal } from './partials/delete-user-modal';
+import { EditUserModal } from './partials/edit-user-modal';
 
 type Role = {
     id: number;
@@ -80,8 +73,7 @@ export default function UsersIndex({ users, filters, roles }: Props) {
     const [editUser, setEditUser] = useState<User | null>(null);
     const [editIsActive, setEditIsActive] = useState(true);
     const [editBypassVerification, setEditBypassVerification] = useState(false);
-
-    const editingRole = editUser?.roles[0]?.name ?? '';
+    const [deleteUser, setDeleteUser] = useState<User | null>(null);
 
     function applyFilters(overrides: Record<string, string | undefined>) {
         router.get(
@@ -96,163 +88,137 @@ export default function UsersIndex({ users, filters, roles }: Props) {
         applyFilters({ search: search || undefined });
     }
 
+    function handleEditUser(user: User) {
+        setEditUser(user);
+        setEditIsActive(user.is_active);
+        setEditBypassVerification(false);
+    }
+
+    const columns = [
+        {
+            key: 'name',
+            header: 'Name',
+            render: (user: User) => <span className="font-medium">{user.name}</span>,
+        },
+        {
+            key: 'email',
+            header: 'Email',
+            render: (user: User) => <span className="text-muted-foreground">{user.email}</span>,
+        },
+        {
+            key: 'role',
+            header: 'Role',
+            render: (user: User) => (
+                <div className="space-x-1">
+                    {user.roles.map((role) => (
+                        <Badge
+                            key={role.id}
+                            variant={roleBadgeVariant[role.name] ?? 'outline'}
+                        >
+                            {role.name}
+                        </Badge>
+                    ))}
+                </div>
+            ),
+        },
+        {
+            key: 'status',
+            header: 'Status',
+            render: (user: User) =>
+                user.is_active ? (
+                    <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
+                        <UserCheck className="h-4 w-4" />
+                        Active
+                    </span>
+                ) : (
+                    <span className="inline-flex items-center gap-1 text-red-500">
+                        <UserX className="h-4 w-4" />
+                        Inactive
+                    </span>
+                ),
+        },
+        {
+            key: 'verified',
+            header: 'Verified',
+            render: (user: User) =>
+                user.email_verified_at ? (
+                    <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
+                        <CheckCircle2 className="h-4 w-4" />
+                        Verified
+                    </span>
+                ) : (
+                    <span className="inline-flex items-center gap-1 text-red-500">
+                        <XCircle className="h-4 w-4" />
+                        Unverified
+                    </span>
+                ),
+        },
+        {
+            key: 'joined',
+            header: 'Joined',
+            render: (user: User) => (
+                <span className="text-muted-foreground">
+                    {new Date(user.created_at).toLocaleDateString()}
+                </span>
+            ),
+        },
+        {
+            key: 'actions',
+            header: 'Actions',
+            className: 'text-right',
+            render: (user: User) => (
+                <div className="flex items-center justify-end gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditUser(user)}
+                        className="cursor-pointer"
+                    >
+                        Edit
+                    </Button>
+                    {/* hide delete option */}
+                    {/* <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDeleteUser(user)}
+                        className="cursor-pointer text-red-600 hover:text-red-700"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button> */}
+                </div>
+            ),
+        },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="User Management" />
 
-            <div className="space-y-6 p-4 md:p-6">
+            <div className="space-y-6 p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading
                         title="User Management"
                         description="Manage system users, roles, and account status"
                     />
-                    <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                        <DialogTrigger asChild>
-                            <Button>
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add User
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-xl">
-                            <DialogHeader>
-                                <DialogTitle>Create User</DialogTitle>
-                                <DialogDescription>
-                                    Add a new user and assign a role.
-                                </DialogDescription>
-                            </DialogHeader>
-
-                            <Form
-                                {...UserController.store.form()}
-                                className="space-y-4"
-                                onSuccess={() => {
-                                    setCreateOpen(false);
-                                    setCreateIsActive(true);
-                                    setCreateBypassVerification(false);
-                                }}
-                            >
-                                {({ errors, processing }) => (
-                                    <>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="create-name">Full Name</Label>
-                                            <Input
-                                                id="create-name"
-                                                name="name"
-                                                autoComplete="name"
-                                                autoFocus
-                                                placeholder="Jane Doe"
-                                            />
-                                            <InputError message={errors.name} />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="create-email">Email Address</Label>
-                                            <Input
-                                                id="create-email"
-                                                name="email"
-                                                type="email"
-                                                autoComplete="email"
-                                                placeholder="jane@example.com"
-                                            />
-                                            <InputError message={errors.email} />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="create-password">Password</Label>
-                                            <PasswordInput
-                                                id="create-password"
-                                                name="password"
-                                                autoComplete="new-password"
-                                                placeholder="Enter a strong password"
-                                            />
-                                            <InputError message={errors.password} />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="create-password-confirmation">
-                                                Confirm Password
-                                            </Label>
-                                            <PasswordInput
-                                                id="create-password-confirmation"
-                                                name="password_confirmation"
-                                                autoComplete="new-password"
-                                                placeholder="Repeat the password"
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="create-role">Role</Label>
-                                            <Select name="role" defaultValue="">
-                                                <SelectTrigger id="create-role">
-                                                    <SelectValue placeholder="Select a role" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {roles.map((role) => (
-                                                        <SelectItem key={role} value={role}>
-                                                            {role}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <InputError message={errors.role} />
-                                        </div>
-
-                                        <div className="flex items-center gap-3 rounded-lg border p-3">
-                                            <Checkbox
-                                                id="create-is-active"
-                                                checked={createIsActive}
-                                                onCheckedChange={(checked) => setCreateIsActive(Boolean(checked))}
-                                            />
-                                            <div className="space-y-1">
-                                                <Label htmlFor="create-is-active">Account is active</Label>
-                                                <p className="text-xs text-muted-foreground">
-                                                    Active users can sign in.
-                                                </p>
-                                            </div>
-                                            <input
-                                                type="hidden"
-                                                name="is_active"
-                                                value={createIsActive ? '1' : '0'}
-                                            />
-                                        </div>
-
-                                        <div className="flex items-center gap-3 rounded-lg border p-3">
-                                            <Checkbox
-                                                id="create-bypass-email-verification"
-                                                checked={createBypassVerification}
-                                                onCheckedChange={(checked) => setCreateBypassVerification(Boolean(checked))}
-                                            />
-                                            <div className="space-y-1">
-                                                <Label htmlFor="create-bypass-email-verification">
-                                                    Bypass email verification
-                                                </Label>
-                                                <p className="text-xs text-muted-foreground">
-                                                    Mark this user as verified immediately.
-                                                </p>
-                                            </div>
-                                            <input
-                                                type="hidden"
-                                                name="bypass_email_verification"
-                                                value={createBypassVerification ? '1' : '0'}
-                                            />
-                                        </div>
-
-                                        <DialogFooter>
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                onClick={() => setCreateOpen(false)}
-                                            >
-                                                Cancel
-                                            </Button>
-                                            <Button type="submit" disabled={processing}>
-                                                Create User
-                                            </Button>
-                                        </DialogFooter>
-                                    </>
-                                )}
-                            </Form>
-                        </DialogContent>
-                    </Dialog>
+                    <CreateUserModal
+                        isOpen={createOpen}
+                        onOpenChange={setCreateOpen}
+                        roles={roles}
+                        isActive={createIsActive}
+                        onIsActiveChange={setCreateIsActive}
+                        bypassVerification={createBypassVerification}
+                        onBypassVerificationChange={setCreateBypassVerification}
+                        onSuccess={() =>
+                            Swal.fire({
+                                title: 'User Created',
+                                text: 'The user has been successfully created.',
+                                icon: 'success',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                            })
+                        }
+                    />
                 </div>
 
                 {/* Filters */}
@@ -267,7 +233,7 @@ export default function UsersIndex({ users, filters, roles }: Props) {
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                         </div>
-                        <Button type="submit" variant="secondary">
+                        <Button type="submit" variant="secondary" className="cursor-pointer">
                             Search
                         </Button>
                     </form>
@@ -277,14 +243,15 @@ export default function UsersIndex({ users, filters, roles }: Props) {
                         onValueChange={(v) =>
                             applyFilters({ role: v === 'all' ? undefined : v })
                         }
+
                     >
-                        <SelectTrigger className="w-full sm:w-40">
+                        <SelectTrigger className="w-full sm:w-40 cursor-pointer">
                             <SelectValue placeholder="All roles" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All roles</SelectItem>
                             {roles.map((role) => (
-                                <SelectItem key={role} value={role}>
+                                <SelectItem key={role} value={role} className="cursor-pointer">
                                     {role}
                                 </SelectItem>
                             ))}
@@ -297,7 +264,7 @@ export default function UsersIndex({ users, filters, roles }: Props) {
                             applyFilters({ active: v === 'all' ? undefined : v })
                         }
                     >
-                        <SelectTrigger className="w-full sm:w-40">
+                        <SelectTrigger className="w-full sm:w-40 cursor-pointer">
                             <SelectValue placeholder="All statuses" />
                         </SelectTrigger>
                         <SelectContent>
@@ -309,294 +276,58 @@ export default function UsersIndex({ users, filters, roles }: Props) {
                 </div>
 
                 {/* Table */}
-                <div className="rounded-xl border">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b bg-muted/50">
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Name
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Email
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Role
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Status
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Verified
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Joined
-                                    </th>
-                                    <th className="px-4 py-3 text-right font-medium">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.data.length === 0 ? (
-                                    <tr>
-                                        <td
-                                            colSpan={7}
-                                            className="px-4 py-10 text-center text-muted-foreground"
-                                        >
-                                            No users found.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    users.data.map((user) => (
-                                        <tr
-                                            key={user.id}
-                                            className="border-b last:border-0 hover:bg-muted/30"
-                                        >
-                                            <td className="px-4 py-3 font-medium">
-                                                {user.name}
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {user.email}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {user.roles.map((role) => (
-                                                    <Badge
-                                                        key={role.id}
-                                                        variant={roleBadgeVariant[role.name] ?? 'outline'}
-                                                    >
-                                                        {role.name}
-                                                    </Badge>
-                                                ))}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {user.is_active ? (
-                                                    <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
-                                                        <UserCheck className="h-4 w-4" />
-                                                        Active
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center gap-1 text-red-500">
-                                                        <UserX className="h-4 w-4" />
-                                                        Inactive
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {user.email_verified_at ? (
-                                                    <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
-                                                        <CheckCircle2 className="h-4 w-4" />
-                                                        Verified
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center gap-1 text-red-500">
-                                                        <XCircle className="h-4 w-4" />
-                                                        Unverified
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {new Date(
-                                                    user.created_at,
-                                                ).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-4 py-3 text-right">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => {
-                                                        setEditUser(user);
-                                                        setEditIsActive(user.is_active);
-                                                        setEditBypassVerification(false);
-                                                    }}
-                                                >
-                                                    Edit
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <DataTableWithPagination
+                    columns={columns}
+                    data={users.data}
+                    pagination={users}
+                    emptyMessage="No users found."
+                    onPageChange={(url) => router.get(url)}
+                />
 
-                {/* Pagination */}
-                {users.last_page > 1 && (
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>
-                            Showing {users.data.length} of {users.total} users
-                        </span>
-                        <div className="flex gap-1">
-                            {users.links.map((link, i) => (
-                                <Button
-                                    key={i}
-                                    variant={link.active ? 'default' : 'outline'}
-                                    size="sm"
-                                    disabled={!link.url}
-                                    onClick={() =>
-                                        link.url && router.get(link.url)
-                                    }
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                <Dialog
-                    open={Boolean(editUser)}
+                <EditUserModal
+                    user={editUser}
+                    isOpen={Boolean(editUser)}
                     onOpenChange={(open) => {
                         if (!open) {
                             setEditUser(null);
                         }
                     }}
-                >
-                    <DialogContent className="sm:max-w-xl">
-                        <DialogHeader>
-                            <DialogTitle>Edit User</DialogTitle>
-                            <DialogDescription>
-                                Update user details, role, and account status.
-                            </DialogDescription>
-                        </DialogHeader>
+                    roles={roles}
+                    isActive={editIsActive}
+                    onIsActiveChange={setEditIsActive}
+                    bypassVerification={editBypassVerification}
+                    onBypassVerificationChange={setEditBypassVerification}
+                    onSuccess={() =>
+                        Swal.fire({
+                            title: 'User Updated',
+                            text: 'The user has been successfully updated.',
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                        })
+                    }
+                />
 
-                        {editUser && (
-                            <Form
-                                key={editUser.id}
-                                {...UserController.update.form({ user: editUser.id })}
-                                className="space-y-4"
-                                onSuccess={() => setEditUser(null)}
-                            >
-                                {({ errors, processing }) => (
-                                    <>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="edit-name">Full Name</Label>
-                                            <Input
-                                                id="edit-name"
-                                                name="name"
-                                                defaultValue={editUser.name}
-                                                autoComplete="name"
-                                            />
-                                            <InputError message={errors.name} />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="edit-email">Email Address</Label>
-                                            <Input
-                                                id="edit-email"
-                                                name="email"
-                                                type="email"
-                                                defaultValue={editUser.email}
-                                                autoComplete="email"
-                                            />
-                                            <InputError message={errors.email} />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="edit-password">
-                                                New Password
-                                            </Label>
-                                            <PasswordInput
-                                                id="edit-password"
-                                                name="password"
-                                                autoComplete="new-password"
-                                                placeholder="Leave blank to keep current password"
-                                            />
-                                            <InputError message={errors.password} />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="edit-password-confirmation">
-                                                Confirm New Password
-                                            </Label>
-                                            <PasswordInput
-                                                id="edit-password-confirmation"
-                                                name="password_confirmation"
-                                                autoComplete="new-password"
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="edit-role">Role</Label>
-                                            <Select
-                                                name="role"
-                                                defaultValue={editingRole}
-                                            >
-                                                <SelectTrigger id="edit-role">
-                                                    <SelectValue placeholder="Select a role" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {roles.map((role) => (
-                                                        <SelectItem key={role} value={role}>
-                                                            {role}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <InputError message={errors.role} />
-                                        </div>
-
-                                        <div className="flex items-center gap-3 rounded-lg border p-3">
-                                            <Checkbox
-                                                id="edit-is-active"
-                                                checked={editIsActive}
-                                                onCheckedChange={(checked) => setEditIsActive(Boolean(checked))}
-                                            />
-                                            <div className="space-y-1">
-                                                <Label htmlFor="edit-is-active">Account is active</Label>
-                                                <p className="text-xs text-muted-foreground">
-                                                    Inactive users cannot sign in.
-                                                </p>
-                                            </div>
-                                            <input
-                                                type="hidden"
-                                                name="is_active"
-                                                value={editIsActive ? '1' : '0'}
-                                            />
-                                        </div>
-                                        <InputError message={errors.is_active} />
-
-                                        <div className="flex items-center gap-3 rounded-lg border p-3">
-                                            <Checkbox
-                                                id="edit-bypass-email-verification"
-                                                checked={editBypassVerification}
-                                                onCheckedChange={(checked) => setEditBypassVerification(Boolean(checked))}
-                                            />
-                                            <div className="space-y-1">
-                                                <Label htmlFor="edit-bypass-email-verification">
-                                                    Bypass email verification
-                                                </Label>
-                                                <p className="text-xs text-muted-foreground">
-                                                    Mark this user as verified immediately.
-                                                </p>
-                                            </div>
-                                            <input
-                                                type="hidden"
-                                                name="bypass_email_verification"
-                                                value={editBypassVerification ? '1' : '0'}
-                                            />
-                                        </div>
-
-                                        <DialogFooter>
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                onClick={() => setEditUser(null)}
-                                            >
-                                                Cancel
-                                            </Button>
-                                            <Button type="submit" disabled={processing}>
-                                                Save Changes
-                                            </Button>
-                                        </DialogFooter>
-                                    </>
-                                )}
-                            </Form>
-                        )}
-                    </DialogContent>
-                </Dialog>
+                <DeleteUserModal
+                    user={deleteUser}
+                    isOpen={Boolean(deleteUser)}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setDeleteUser(null);
+                        }
+                    }}
+                    onSuccess={() =>
+                        Swal.fire({
+                            title: 'User Deleted',
+                            text: 'The user has been successfully deleted.',
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                        })
+                    }
+                />
             </div>
         </AppLayout>
     );
