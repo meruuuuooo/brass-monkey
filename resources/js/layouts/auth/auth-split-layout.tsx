@@ -13,13 +13,13 @@ export default function AuthSplitLayout({
     return (
         <div className="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
             <div className="relative hidden h-full flex-col items-center justify-center bg-muted p-10 text-white lg:flex dark:border-r">
-                <div className="absolute inset-0 bg-zinc-900" />
+                <div className="absolute inset-0 bg-amber-100" />
                 <Link
                     href={home()}
                     className="relative z-20 flex flex-col items-center justify-center text-lg font-medium"
                 >
                     <AppLogoIcon className="mr-2 h-100 w-auto fill-current text-white" />
-                    Hill Business Consulting Services
+                    {/* Hill Business Consulting Services */}
                 </Link>
             </div>
             <div className="w-full lg:p-8">

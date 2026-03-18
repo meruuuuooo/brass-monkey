@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserMenuContent } from '@/components/user-menu-content';
-import { useAdvancedThemeCustomization } from '@/hooks/use-advanced-theme-customization';
+import { useAdvancedThemeCustomization, BRASS_MONKEY_COLORS } from '@/hooks/use-advanced-theme-customization';
 import { useAppearance } from '@/hooks/use-appearance';
 import { Button } from './ui/button';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from './ui/drawer';
@@ -161,7 +161,7 @@ function ColorInput({ label, value, onChange }: ColorInputProps) {
 export function AppSidebarHeader() {
     const { auth } = usePage().props;
     const { resolvedAppearance, updateAppearance } = useAppearance();
-    const { colors, updateColor, resetAllColors } = useAdvancedThemeCustomization();
+    const { colors, updateColor, resetAllColors, applyPreset } = useAdvancedThemeCustomization();
     const displayName = auth.user?.name ?? 'User';
 
     const initials = displayName
@@ -245,6 +245,21 @@ export function AppSidebarHeader() {
 
                         <div className="h-[60vh] w-full overflow-y-auto">
                             <div className="space-y-6 px-4 py-4">
+                                {/* Presets */}
+                                <div className="space-y-3">
+                                    <h3 className="text-sm font-semibold">Presets</h3>
+                                    <div className="flex flex-wrap gap-2 pl-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => applyPreset(BRASS_MONKEY_COLORS)}
+                                            className="h-8 border-amber-600/50 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-100"
+                                        >
+                                            Brass Monkey
+                                        </Button>
+                                    </div>
+                                </div>
+
                                 {/* Light Mode Colors */}
                                 <div className="space-y-3">
                                     <h3 className="text-sm font-semibold">Light Mode Colors</h3>

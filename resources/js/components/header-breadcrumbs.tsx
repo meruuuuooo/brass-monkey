@@ -61,7 +61,7 @@ export function HeaderBreadcrumbs({
     }, []);
 
     return (
-        <header className="m-4 flex h-10 shrink-0 items-center justify-between border border-sidebar-border/50 px-4 shadow-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-6">
+        <header className="m-4 rounded-sm flex h-10 shrink-0 items-center justify-between border border-sidebar-border/50 px-4 shadow-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-3">
             <div className="flex items-center">
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>

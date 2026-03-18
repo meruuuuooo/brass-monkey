@@ -78,6 +78,42 @@ const DEFAULT_COLORS: ThemeColors = {
     radius: '0.625rem',
 };
 
+export const BRASS_MONKEY_COLORS: ThemeColors = {
+    background: 'oklch(0.954 0.013 86.843)', // #F4F0E3
+    foreground: 'oklch(0.267 0.026 55.4)', // #3C3024
+    card: 'oklch(0.96 0.01 86.8)',
+    cardForeground: 'oklch(0.267 0.026 55.4)',
+    popover: 'oklch(0.96 0.01 86.8)',
+    popoverForeground: 'oklch(0.267 0.026 55.4)',
+    primary: 'oklch(0.473 0.081 57.1)', // #83643E
+    primaryForeground: 'oklch(0.987 0.022 95.277)',
+    secondary: 'oklch(0.643 0.014 62.1)', // #9A9186
+    secondaryForeground: 'oklch(0.267 0.026 55.4)',
+    muted: 'oklch(0.9 0.01 62.1)',
+    mutedForeground: 'oklch(0.4 0.01 62.1)',
+    accent: 'oklch(0.635 0.129 76.5)', // #B89232
+    accentForeground: 'oklch(0.987 0.022 95.277)',
+    destructive: 'oklch(0.577 0.245 27.325)',
+    destructiveForeground: 'oklch(0.577 0.245 27.325)',
+    border: 'oklch(0.85 0.01 62.1)',
+    input: 'oklch(0.85 0.01 62.1)',
+    ring: 'oklch(0.635 0.129 76.5)',
+    chart1: 'oklch(0.473 0.081 57.1)',
+    chart2: 'oklch(0.635 0.129 76.5)',
+    chart3: 'oklch(0.643 0.014 62.1)',
+    chart4: 'oklch(0.267 0.026 55.4)',
+    chart5: 'oklch(0.555 0.163 48.998)',
+    sidebar: 'oklch(0.267 0.026 55.4)', // #3C3024
+    sidebarForeground: 'oklch(0.954 0.013 86.843)', // #F4F0E3
+    sidebarPrimary: 'oklch(0.635 0.129 76.5)',
+    sidebarPrimaryForeground: 'oklch(0.987 0.022 95.277)',
+    sidebarAccent: 'oklch(0.473 0.081 57.1)',
+    sidebarAccentForeground: 'oklch(0.954 0.013 86.843)',
+    sidebarBorder: 'oklch(0.35 0.02 55.4)',
+    sidebarRing: 'oklch(0.635 0.129 76.5)',
+    radius: '0.625rem',
+};
+
 /**
  * Apply theme colors to document root by injecting CSS
  */
@@ -86,7 +122,9 @@ function applyThemeColors(colors: ThemeColors): void {
         return;
     }
 
-    let styleEl = document.getElementById('theme-advanced-styles') as HTMLStyleElement | null;
+    let styleEl = document.getElementById(
+        'theme-advanced-styles',
+    ) as HTMLStyleElement | null;
 
     if (!styleEl) {
         styleEl = document.createElement('style');
@@ -207,6 +245,16 @@ export function useAdvancedThemeCustomization() {
         }
     };
 
+    const applyPreset = (presetColors: ThemeColors): void => {
+        setColors(presetColors);
+
+        if (typeof window !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(presetColors));
+        }
+
+        applyThemeColors(presetColors);
+    };
+
     return {
         colors,
         defaultColors: DEFAULT_COLORS,
@@ -214,5 +262,6 @@ export function useAdvancedThemeCustomization() {
         importTheme,
         resetAllColors,
         updateColor,
+        applyPreset,
     };
 }
