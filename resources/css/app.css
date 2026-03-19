@@ -80,8 +80,10 @@
     body {
         @apply bg-background text-foreground;
     }
-  html {
-    @apply font-serif;
+    html {
+        @apply font-serif;
+        scroll-behavior: smooth;
+        scroll-padding-top: 5rem;
     }
 }
 

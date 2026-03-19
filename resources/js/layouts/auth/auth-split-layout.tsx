@@ -12,6 +12,28 @@ export default function AuthSplitLayout({
 
     return (
         <div className="bm-grain relative grid h-dvh flex-col items-center justify-center bg-bm-dark px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0 overflow-hidden">
+            {/* Navigation Overlay */}
+            <header className="absolute top-0 right-0 left-0 z-50">
+                <div className="mx-auto flex h-20 max-w-7xl items-center justify-end px-6 lg:px-8">
+                    <nav className="hidden items-center gap-8 lg:flex">
+                        {[
+                            { name: 'Track Order', href: '/track-order' },
+                            { name: 'Services', href: home.url() + '#services' },
+                            { name: 'Blogs', href: home.url() + '#blogs' },
+                            { name: 'About', href: home.url() + '#about' },
+                            { name: 'Product', href: home.url() + '#product' }
+                        ].map((item) => (
+                            <Link 
+                                key={item.name} 
+                                href={item.href} 
+                                className="text-[13px] font-bold text-bm-muted transition-colors hover:text-bm-gold uppercase tracking-wider"
+                            >
+                                {item.name}
+                            </Link>
+                        ))}
+                    </nav>
+                </div>
+            </header>
             {/* Split Background ensuring no lines */}
             <div className="absolute inset-0 z-0 flex">
                 <div className="h-full w-1/2 bg-bm-gradient hidden lg:block" />
