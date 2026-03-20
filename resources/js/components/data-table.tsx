@@ -1,9 +1,9 @@
-import * as React from "react"
-import {
+import type {
     ColumnDef,
     ColumnFiltersState,
     SortingState,
-    VisibilityState,
+    VisibilityState} from "@tanstack/react-table";
+import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
@@ -11,12 +11,14 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import { ChevronDown, LayoutGrid, List } from "lucide-react"
+import * as React from "react"
 
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -45,6 +47,10 @@ export type DataTableProps<TData, TValue> = {
     emptyMessage?: string
     onRowClick?: (item: TData) => void
     renderGridItem?: (item: TData) => React.ReactNode
+    bulkActions?: {
+        label: string
+        onClick: (selectedRows: TData[]) => void
+    }[]
 }
 
 export type DataTableWithPaginationProps<TData, TValue> = DataTableProps<TData, TValue> & {
@@ -58,6 +64,7 @@ export function DataTable<TData, TValue>({
     emptyMessage = 'No data found.',
     onRowClick,
     renderGridItem,
+    bulkActions,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -82,6 +89,8 @@ export function DataTable<TData, TValue>({
             rowSelection,
         },
     })
+
+    const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original)
 
     // Prevent row click triggering if user interacts with a button/checkbox inside the row
     const handleRowClick = (item: TData, e: React.MouseEvent) => {
@@ -119,6 +128,31 @@ export function DataTable<TData, TValue>({
                                 <span className="sr-only">Grid View</span>
                             </Button>
                         </div>
+                    )}
+
+                    {bulkActions && bulkActions.length > 0 && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="cursor-pointer"
+                                    disabled={selectedRows.length === 0}
+                                >
+                                    Bulk Actions <ChevronDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start">
+                                {bulkActions.map((action) => (
+                                    <DropdownMenuItem
+                                        key={action.label}
+                                        className="cursor-pointer"
+                                        onClick={() => action.onClick(selectedRows)}
+                                    >
+                                        {action.label}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     )}
                 </div>
                 <div className="flex items-center">
@@ -243,6 +277,7 @@ export function DataTableWithPagination<TData, TValue>({
     pagination,
     onPageChange,
     renderGridItem,
+    bulkActions,
 }: DataTableWithPaginationProps<TData, TValue>) {
     return (
         <div className="flex flex-col gap-4">
@@ -252,6 +287,7 @@ export function DataTableWithPagination<TData, TValue>({
                 emptyMessage={emptyMessage}
                 onRowClick={onRowClick}
                 renderGridItem={renderGridItem}
+                bulkActions={bulkActions}
             />
             {pagination && pagination.last_page > 1 && (
                 <div className="flex items-center justify-between text-sm text-muted-foreground pt-4 border-t border-border">

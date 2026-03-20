@@ -5,62 +5,72 @@
  */
 
 :root {
+    /* Brass Monkey Brand Colors */
+    --color-bm-dark: #4A2E1F;
+    --color-bm-medium: #6B4A2F;
+    --color-bm-cream: #E8DFC9;
+    --color-bm-gold: #D4A017;
+    --color-bm-gold-hover: #E0B84C;
+    --color-bm-white: #FFFFFF;
+    --color-bm-muted: #D1D1D1;
+    --color-bm-border: #C9B08A;
+
     /* Light Mode - Background & Text */
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.141 0.005 285.823);
+    --background: var(--color-bm-cream);
+    --foreground: var(--color-bm-dark);
 
     /* Card Styles */
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.141 0.005 285.823);
+    --card: var(--color-bm-white);
+    --card-foreground: var(--color-bm-dark);
 
     /* Popover */
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.141 0.005 285.823);
+    --popover: var(--color-bm-white);
+    --popover-foreground: var(--color-bm-dark);
 
     /* Primary Color - Main brand color */
-    --primary: oklch(0.555 0.163 48.998);
-    --primary-foreground: oklch(0.987 0.022 95.277);
+    --primary: var(--color-bm-gold);
+    --primary-foreground: var(--color-bm-dark);
 
     /* Secondary Color */
-    --secondary: oklch(0.967 0.001 286.375);
-    --secondary-foreground: oklch(0.21 0.006 285.885);
+    --secondary: var(--color-bm-medium);
+    --secondary-foreground: var(--color-bm-white);
 
     /* Muted - Disabled/placeholder states */
-    --muted: oklch(0.967 0.001 286.375);
-    --muted-foreground: oklch(0.552 0.016 285.938);
+    --muted: var(--color-bm-muted);
+    --muted-foreground: var(--color-bm-dark);
 
     /* Accent Color - Highlights and emphasis */
-    --accent: oklch(0.967 0.001 286.375);
-    --accent-foreground: oklch(0.21 0.006 285.885);
+    --accent: var(--color-bm-gold-hover);
+    --accent-foreground: var(--color-bm-dark);
 
     /* Destructive - Delete/error states */
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --destructive: #dc2626;
+    --destructive-foreground: var(--color-bm-white);
 
     /* Borders and inputs */
-    --border: oklch(0.92 0.004 286.32);
-    --input: oklch(0.92 0.004 286.32);
-    --ring: oklch(0.705 0.015 286.067);
+    --border: var(--color-bm-border);
+    --input: var(--color-bm-cream);
+    --ring: var(--color-bm-gold);
 
     /* Chart Colors */
-    --chart-1: oklch(0.879 0.169 91.605);
-    --chart-2: oklch(0.769 0.188 70.08);
-    --chart-3: oklch(0.666 0.179 58.318);
-    --chart-4: oklch(0.555 0.163 48.998);
-    --chart-5: oklch(0.473 0.137 46.201);
+    --chart-1: var(--color-bm-gold);
+    --chart-2: var(--color-bm-gold-hover);
+    --chart-3: var(--color-bm-medium);
+    --chart-4: var(--color-bm-dark);
+    --chart-5: var(--color-bm-border);
 
     /* Border Radius */
     --radius: 0.625rem;
 
     /* Sidebar Colors */
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.141 0.005 285.823);
-    --sidebar-primary: oklch(0.666 0.179 58.318);
-    --sidebar-primary-foreground: oklch(0.987 0.022 95.277);
-    --sidebar-accent: oklch(0.967 0.001 286.375);
-    --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-    --sidebar-border: oklch(0.92 0.004 286.32);
-    --sidebar-ring: oklch(0.705 0.015 286.067);
+    --sidebar: var(--color-bm-dark);
+    --sidebar-foreground: var(--color-bm-white);
+    --sidebar-primary: var(--color-bm-gold);
+    --sidebar-primary-foreground: var(--color-bm-dark);
+    --sidebar-accent: var(--color-bm-gold-hover);
+    --sidebar-accent-foreground: var(--color-bm-dark);
+    --sidebar-border: var(--color-bm-border);
+    --sidebar-ring: var(--color-bm-gold);
 }
 
 .dark {

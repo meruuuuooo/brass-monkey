@@ -1,8 +1,12 @@
 import { Head, router } from '@inertiajs/react';
-import { Search } from 'lucide-react';
-import { useState } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { ArrowUpDown, CalendarDays, Search, User } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import ActivityLogController from '@/actions/App/Http/Controllers/Admin/ActivityLogController';
+import { DataTableWithPagination } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -12,7 +16,6 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import ActivityLogController from '@/actions/App/Http/Controllers/Admin/ActivityLogController';
 import type { BreadcrumbItem } from '@/types';
 
 type UserRef = { id: number; name: string; email: string } | null;
@@ -32,7 +35,10 @@ type PaginatedLogs = {
     data: Log[];
     current_page: number;
     last_page: number;
+    per_page: number;
     total: number;
+    prev_page_url: string | null;
+    next_page_url: string | null;
     links: { url: string | null; label: string; active: boolean }[];
 };
 
@@ -60,6 +66,171 @@ const eventColors: Record<string, string> = {
 export default function ActivityLogs({ logs, filters, events }: Props) {
     const [search, setSearch] = useState(filters.search ?? '');
 
+    function toCsvCell(value: string): string {
+        return `"${value.replace(/"/g, '""')}"`;
+    }
+
+    function exportSelectedAsCsv(selectedLogs: Log[]): void {
+        if (selectedLogs.length === 0) {
+            return;
+        }
+
+        const header = ['Event', 'Description', 'User Name', 'User Email', 'IP Address', 'Date'];
+        const rows = selectedLogs.map((log) => [
+            log.event,
+            log.description,
+            log.user?.name ?? '',
+            log.user?.email ?? '',
+            log.ip_address ?? '',
+            new Date(log.created_at).toISOString(),
+        ]);
+
+        const csvContent = [
+            header.map(toCsvCell).join(','),
+            ...rows.map((row) => row.map((cell) => toCsvCell(cell)).join(',')),
+        ].join('\n');
+
+        const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+        link.href = url;
+        link.setAttribute(
+            'download',
+            `activity-logs-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.csv`,
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    const columns: ColumnDef<Log>[] = useMemo(
+        () => [
+            {
+                id: 'select',
+                header: ({ table }) => (
+                    <div className="flex w-8 items-center justify-center">
+                        <Checkbox
+                            checked={
+                                table.getIsAllPageRowsSelected() ||
+                                (table.getIsSomePageRowsSelected() && 'indeterminate')
+                            }
+                            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                            aria-label="Select all"
+                        />
+                    </div>
+                ),
+                cell: ({ row }) => (
+                    <div className="flex w-8 items-center justify-center">
+                        <Checkbox
+                            checked={row.getIsSelected()}
+                            onCheckedChange={(value) => row.toggleSelected(!!value)}
+                            aria-label="Select row"
+                        />
+                    </div>
+                ),
+                enableSorting: false,
+                enableHiding: false,
+            },
+            {
+                accessorKey: 'event',
+                header: ({ column }) => (
+                    <div
+                        className="flex cursor-pointer select-none items-center space-x-2"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                    >
+                        <span>Event</span>
+                        <ArrowUpDown className="h-4 w-4" />
+                    </div>
+                ),
+                cell: ({ row }) => (
+                    <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${eventColors[row.original.event] ?? 'bg-muted text-muted-foreground'}`}
+                    >
+                        {row.original.event}
+                    </span>
+                ),
+            },
+            {
+                accessorKey: 'description',
+                header: 'Description',
+                cell: ({ row }) => (
+                    <span className="line-clamp-2 text-foreground">{row.original.description}</span>
+                ),
+            },
+            {
+                id: 'user',
+                header: 'User',
+                cell: ({ row }) => {
+                    const user = row.original.user;
+
+                    return user ? (
+                        <div>
+                            <p className="font-medium">{user.name}</p>
+                            <p className="text-xs text-muted-foreground">{user.email}</p>
+                        </div>
+                    ) : (
+                        <span className="text-muted-foreground">-</span>
+                    );
+                },
+            },
+            {
+                accessorKey: 'ip_address',
+                header: 'IP Address',
+                cell: ({ row }) => (
+                    <span className="text-muted-foreground">{row.original.ip_address ?? '-'}</span>
+                ),
+            },
+            {
+                accessorKey: 'created_at',
+                header: ({ column }) => (
+                    <div
+                        className="flex cursor-pointer select-none items-center space-x-2"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                    >
+                        <span>Date</span>
+                        <ArrowUpDown className="h-4 w-4" />
+                    </div>
+                ),
+                cell: ({ row }) => (
+                    <span className="text-muted-foreground">
+                        {new Date(row.original.created_at).toLocaleString()}
+                    </span>
+                ),
+            },
+        ],
+        [],
+    );
+
+    const renderGridItem = (log: Log) => (
+        <div className="h-full rounded-lg border bg-card p-4 transition-all hover:shadow-md">
+            <div className="mb-3 flex items-center justify-between gap-2">
+                <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${eventColors[log.event] ?? 'bg-muted text-muted-foreground'}`}
+                >
+                    {log.event}
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                    <CalendarDays className="h-3.5 w-3.5" />
+                    {new Date(log.created_at).toLocaleDateString()}
+                </span>
+            </div>
+
+            <p className="line-clamp-3 text-sm text-foreground">{log.description}</p>
+
+            <div className="mt-4 space-y-2 border-t pt-3 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                    <User className="h-3.5 w-3.5" />
+                    <span className="truncate">
+                        {log.user ? `${log.user.name} (${log.user.email})` : '-'}
+                    </span>
+                </div>
+                <p className="text-xs text-muted-foreground">IP: {log.ip_address ?? '-'}</p>
+            </div>
+        </div>
+    );
+
     function applyFilters(overrides: Record<string, string | undefined>) {
         router.get(
             ActivityLogController.index.url(),
@@ -77,7 +248,7 @@ export default function ActivityLogs({ logs, filters, events }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Activity Logs" />
 
-            <div className="space-y-6 p-4 md:p-6">
+            <div className="space-y-6 p-4 md:p-6 rounded-sm m-4 mt-0 border border-sidebar-border/50 shadow-sm">
                 <Heading
                     title="Activity Logs"
                     description="Track all user activity and system events"
@@ -120,114 +291,20 @@ export default function ActivityLogs({ logs, filters, events }: Props) {
                     </Select>
                 </div>
 
-                {/* Table */}
-                <div className="rounded-xl border">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b bg-muted/50">
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Event
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Description
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        User
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        IP Address
-                                    </th>
-                                    <th className="px-4 py-3 text-left font-medium">
-                                        Date
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {logs.data.length === 0 ? (
-                                    <tr>
-                                        <td
-                                            colSpan={5}
-                                            className="px-4 py-10 text-center text-muted-foreground"
-                                        >
-                                            No activity logs found.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    logs.data.map((log) => (
-                                        <tr
-                                            key={log.id}
-                                            className="border-b last:border-0 hover:bg-muted/30"
-                                        >
-                                            <td className="px-4 py-3">
-                                                <span
-                                                    className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${eventColors[log.event] ?? 'bg-muted text-muted-foreground'}`}
-                                                >
-                                                    {log.event}
-                                                </span>
-                                            </td>
-                                            <td className="max-w-xs px-4 py-3 text-foreground">
-                                                <span className="line-clamp-2">
-                                                    {log.description}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {log.user ? (
-                                                    <div>
-                                                        <p className="font-medium">
-                                                            {log.user.name}
-                                                        </p>
-                                                        <p className="text-xs text-muted-foreground">
-                                                            {log.user.email}
-                                                        </p>
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-muted-foreground">
-                                                        —
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {log.ip_address ?? '—'}
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {new Date(
-                                                    log.created_at,
-                                                ).toLocaleString()}
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Pagination */}
-                {logs.last_page > 1 && (
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>
-                            {logs.total} total log
-                            {logs.total !== 1 ? 's' : ''}
-                        </span>
-                        <div className="flex gap-1">
-                            {logs.links.map((link, i) => (
-                                <Button
-                                    key={i}
-                                    variant={link.active ? 'default' : 'outline'}
-                                    size="sm"
-                                    disabled={!link.url}
-                                    onClick={() =>
-                                        link.url && router.get(link.url)
-                                    }
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
+                <DataTableWithPagination
+                    columns={columns}
+                    data={logs.data}
+                    pagination={logs}
+                    emptyMessage="No activity logs found."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                    bulkActions={[
+                        {
+                            label: 'Export selected as CSV',
+                            onClick: exportSelectedAsCsv,
+                        },
+                    ]}
+                />
             </div>
         </AppLayout>
     );

@@ -6,7 +6,8 @@ import {
     ScrollText,
     Users,
 } from 'lucide-react';
-import { useCurrentUrl } from '@/hooks/use-current-url';
+import { index as activityLogs } from '@/actions/App/Http/Controllers/Admin/ActivityLogController';
+import { index as adminUsers } from '@/actions/App/Http/Controllers/Admin/UserController';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -22,9 +23,8 @@ import {
     SidebarGroup,
     SidebarGroupLabel,
 } from '@/components/ui/sidebar';
+import { useCurrentUrl } from '@/hooks/use-current-url';
 import { dashboard } from '@/routes';
-import { index as adminUsers } from '@/actions/App/Http/Controllers/Admin/UserController';
-import { index as activityLogs } from '@/actions/App/Http/Controllers/Admin/ActivityLogController';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [

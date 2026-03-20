@@ -1,7 +1,4 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
-import { login } from '@/routes';
-import AppLogoIcon from '@/components/app-logo-icon';
 import {
     PenTool as Repair,
     ShieldCheck,
@@ -29,7 +26,10 @@ import {
     Linkedin,
     Facebook,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
+import { login } from '@/routes';
 
 interface ServiceOrder {
     tracking_number: string;
@@ -82,8 +82,11 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
     }, [order?.tracking_number]);
 
     const formatDate = (raw: string) => {
-        try { return new Date(raw).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); }
-        catch { return raw; }
+        try {
+ return new Date(raw).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); 
+} catch {
+ return raw; 
+}
     };
 
     // Back to Top Logic
@@ -93,6 +96,7 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
             setShowBackToTop(window.scrollY > 500);
         };
         window.addEventListener('scroll', handleScroll);
+
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -103,6 +107,7 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
     const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         e.preventDefault();
         const element = document.getElementById(id.replace('#', ''));
+
         if (element) {
             const headerOffset = 80;
             const elementPosition = element.getBoundingClientRect().top;
@@ -115,6 +120,7 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
             window.history.pushState(null, '', id);
         }
     };
+
     return (
         <div className="min-h-screen bg-bm-dark text-bm-white selection:bg-bm-gold/30 selection:text-bm-white">
             <Head title="Brassmonkey | Precision Mechanical Excellence" />
@@ -309,6 +315,7 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                                                     const isActive = i === currentStatusIndex;
                                                     const isPending = i > currentStatusIndex;
                                                     const isLast = i === statusSteps.length - 1;
+
                                                     return (
                                                         <div key={step.key} className="relative flex gap-6">
                                                             {!isLast && (

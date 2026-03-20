@@ -1,6 +1,4 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import AppLogoIcon from '@/components/app-logo-icon';
-import { home, login } from '@/routes';
 import {
     Search,
     Package,
@@ -16,8 +14,10 @@ import {
     Calendar,
     ArrowRight,
 } from 'lucide-react';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { home, login } from '@/routes';
 
 interface ServiceOrder {
     tracking_number: string;

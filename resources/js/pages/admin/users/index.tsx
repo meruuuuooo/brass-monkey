@@ -1,5 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, CheckCircle2, Search, UserCheck, UserX, XCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -159,6 +159,7 @@ export default function UsersIndex({ users, filters, roles }: Props) {
                 header: 'Role',
                 cell: ({ row }) => {
                     const user = row.original;
+
                     return (
                         <div className="space-x-1 flex flex-wrap gap-1">
                             {user.roles.map((role) => (
@@ -240,6 +241,7 @@ export default function UsersIndex({ users, filters, roles }: Props) {
                 header: () => <div className="text-right">Actions</div>,
                 cell: ({ row }) => {
                     const user = row.original;
+
                     return (
                         <div className="flex items-center justify-end gap-2">
                             <Button

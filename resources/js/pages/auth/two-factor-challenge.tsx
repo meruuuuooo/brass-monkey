@@ -1,7 +1,7 @@
 import { Form, Head, Link, usePage } from '@inertiajs/react'; // Add Link and usePage
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { useState } from 'react';
 import { Mail, Loader2, ShieldCheck, Clock, Shield, KeyRound, RefreshCcw } from 'lucide-react'; // Add Shield, KeyRound, RefreshCcw
+import { useState } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
