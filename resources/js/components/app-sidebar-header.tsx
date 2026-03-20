@@ -1,7 +1,10 @@
 import { usePage } from '@inertiajs/react';
 import {
+    Bell,
+    BellOff,
     ChevronDown,
     EllipsisVertical,
+    ExternalLink,
     MoonIcon,
     Palette,
     RotateCcw,
@@ -184,18 +187,21 @@ export function AppSidebarHeader() {
     };
 
     return (
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-sidebar-border/50 px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
+        <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border/40 bg-background/60 px-6 backdrop-blur-lg transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
             <div className="flex items-center gap-2">
-                <SidebarTrigger className="-ml-1" />
+                <SidebarTrigger className="-ml-1 transition-all duration-300 hover:scale-110 hover:text-amber-600 active:scale-95" />
             </div>
 
-            <div className="flex flex-1 items-center justify-center gap-3 px-4 md:ml-8">
-                <img
-                    src="/brass-monkey-logo.png"
-                    alt="Brass Monkey Repair and Rental"
-                    className="h-10 w-auto rounded-full border border-sidebar-border/50 bg-white object-contain p-0.6 shadow-sm"
-                />
-                <h3 className="hidden truncate text-sm font-bold md:block sm:text-base lg:text-lg">
+            <div className="group flex flex-1 cursor-default items-center justify-center gap-4 px-4 transition-all duration-300 md:ml-8">
+                <div className="relative">
+                    <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-amber-500/10 to-orange-500/10 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-100" />
+                    <img
+                        src="/brass-monkey-logo.png"
+                        alt="Brass Monkey Repair and Rental"
+                        className="bm-logo-glow relative h-10 w-auto rounded-full border border-amber-600/20 bg-white object-contain p-0.5 shadow-sm transition-all duration-700 group-hover:scale-110 group-hover:border-amber-600/40"
+                    />
+                </div>
+                <h3 className="hidden truncate bg-gradient-to-br from-foreground via-foreground to-foreground/50 bg-clip-text text-sm font-black tracking-tight text-transparent transition-all duration-500 group-hover:tracking-normal md:block sm:text-base lg:text-xl">
                     Brass Monkey Repair and Rental
                 </h3>
             </div>
@@ -214,12 +220,12 @@ export function AppSidebarHeader() {
                             ? 'Switch to light mode'
                             : 'Switch to dark mode'
                     }
-                    className="hidden cursor-pointer items-center gap-2 rounded border border-sidebar-border/50 p-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none md:flex"
+                    className="hidden size-9 cursor-pointer items-center justify-center rounded-xl border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-90 md:flex"
                 >
                     {isDarkMode ? (
-                        <SunIcon className="size-4" />
+                        <SunIcon className="size-5 transition-transform duration-500 group-hover:rotate-45" />
                     ) : (
-                        <MoonIcon className="size-4" />
+                        <MoonIcon className="size-5 transition-transform duration-500 group-hover:-rotate-12" />
                     )}
                 </button>
 
@@ -229,31 +235,31 @@ export function AppSidebarHeader() {
                             type="button"
                             aria-label="Open theme settings"
                             title="Open theme settings"
-                            className="flex cursor-pointer items-center gap-2 rounded border border-sidebar-border/50 p-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none"
+                            className="flex size-9 cursor-pointer items-center justify-center rounded-xl border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-90"
                         >
-                            <Palette className="size-4" />
+                            <Palette className="size-5" />
                         </button>
                     </DrawerTrigger>
 
                     <DrawerContent className="w-full sm:max-w-sm">
                         <DrawerHeader>
-                            <DrawerTitle>Advanced Theme Customization</DrawerTitle>
+                            <DrawerTitle className="text-xl font-bold tracking-tight">Advanced Theme Customization</DrawerTitle>
                             <DrawerDescription>
                                 Customize all colors and design tokens. Changes are saved automatically.
                             </DrawerDescription>
                         </DrawerHeader>
 
-                        <div className="h-[60vh] w-full overflow-y-auto">
+                        <div className="h-[60vh] w-full overflow-y-auto font-sans">
                             <div className="space-y-6 px-4 py-4">
                                 {/* Presets */}
                                 <div className="space-y-3">
-                                    <h3 className="text-sm font-semibold">Presets</h3>
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/70">Presets</h3>
                                     <div className="flex flex-wrap gap-2 pl-2">
                                         <Button
                                             variant="outline"
                                             size="sm"
                                             onClick={() => applyPreset(BRASS_MONKEY_COLORS)}
-                                            className="h-8 border-amber-600/50 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-100"
+                                            className="h-9 rounded-xl border-amber-600/30 bg-amber-50/50 text-amber-900 transition-all hover:bg-amber-100/80 hover:shadow-sm dark:bg-amber-900/10 dark:text-amber-100"
                                         >
                                             Brass Monkey
                                         </Button>
@@ -261,9 +267,9 @@ export function AppSidebarHeader() {
                                 </div>
 
                                 {/* Light Mode Colors */}
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-semibold">Light Mode Colors</h3>
-                                    <div className="space-y-2 pl-2">
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/70">Light Mode Colors</h3>
+                                    <div className="space-y-3 pl-2">
                                         <ColorInput
                                             label="Background"
                                             value={colors.background}
@@ -308,9 +314,9 @@ export function AppSidebarHeader() {
                                 </div>
 
                                 {/* Chart Colors */}
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-semibold">Chart Colors</h3>
-                                    <div className="space-y-2 pl-2">
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/70">Chart Colors</h3>
+                                    <div className="space-y-3 pl-2">
                                         {[
                                             { key: 'chart1' as const, label: 'Chart 1' },
                                             { key: 'chart2' as const, label: 'Chart 2' },
@@ -329,9 +335,9 @@ export function AppSidebarHeader() {
                                 </div>
 
                                 {/* Sidebar Colors */}
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-semibold">Sidebar Colors</h3>
-                                    <div className="space-y-2 pl-2">
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/70">Sidebar Colors</h3>
+                                    <div className="space-y-3 pl-2">
                                         <ColorInput
                                             label="Sidebar Background"
                                             value={colors.sidebar}
@@ -356,12 +362,12 @@ export function AppSidebarHeader() {
                                 </div>
 
                                 {/* Border Radius */}
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-semibold">Spacing</h3>
-                                    <div className="space-y-2 pl-2">
-                                        <div className="space-y-1">
-                                            <Label htmlFor="theme-radius" className="text-xs">
-                                                Border Radius
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/70">Spacing</h3>
+                                    <div className="space-y-3 pl-2">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="theme-radius" className="text-xs font-semibold text-muted-foreground">
+                                                Corner Radius
                                             </Label>
                                             <Input
                                                 id="theme-radius"
@@ -369,7 +375,7 @@ export function AppSidebarHeader() {
                                                 value={colors.radius}
                                                 onChange={(e) => updateColor('radius', e.target.value)}
                                                 placeholder="0.625rem"
-                                                className="font-mono text-xs"
+                                                className="h-9 rounded-xl font-mono text-xs focus:ring-amber-500/20"
                                             />
                                         </div>
                                     </div>
@@ -377,18 +383,18 @@ export function AppSidebarHeader() {
                             </div>
                         </div>
 
-                        <DrawerFooter>
+                        <DrawerFooter className="border-t border-border/40 bg-muted/10 pt-4">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={resetAllColors}
-                                className="gap-2"
+                                className="gap-2 rounded-xl transition-all hover:bg-destructive hover:text-destructive-foreground active:scale-95"
                             >
                                 <RotateCcw className="size-4" />
                                 Reset All
                             </Button>
                             <DrawerClose asChild>
-                                <Button type="button">Done</Button>
+                                <Button type="button" className="rounded-xl active:scale-95">Done</Button>
                             </DrawerClose>
                         </DrawerFooter>
                     </DrawerContent>
@@ -399,47 +405,74 @@ export function AppSidebarHeader() {
                         <DropdownMenuTrigger asChild>
                             <button
                                 type="button"
-                                className="flex cursor-pointer items-center gap-2 rounded border border-sidebar-border/50 p-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none"
+                                aria-label="Notifications"
+                                title="Notifications"
+                                className="flex size-9 cursor-pointer items-center justify-center rounded-xl border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-90"
                             >
-                                <p className="whitespace-nowrap">Notification</p>
-
-                                <ChevronDown className="size-3.5 opacity-60" />
+                                <Bell className="size-5" />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
-                            className="min-w-56 rounded-lg"
+                            className="w-80 overflow-hidden rounded-2xl border-border/40 bg-background/80 p-0 shadow-2xl backdrop-blur-xl"
                             align="end"
                             side="bottom"
-                        />
+                        >
+                            <div className="flex items-center justify-between border-b border-border/40 px-4 py-3">
+                                <h3 className="text-sm font-bold tracking-tight">Notifications</h3>
+                            </div>
+
+                            <div className="flex flex-col items-center justify-center space-y-3 px-6 py-10 text-center">
+                                <div className="relative">
+                                    <div className="absolute -inset-4 rounded-full bg-amber-500/10 blur-2xl dark:bg-amber-900/20" />
+                                    <div className="relative flex size-16 items-center justify-center rounded-full border border-amber-600/10 bg-amber-500/5 dark:bg-amber-900/10">
+                                        <BellOff className="size-7 text-amber-600/40" />
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-sm font-bold text-foreground">No notifications yet</p>
+                                    <p className="text-xs text-muted-foreground">We'll let you know when something important happens.</p>
+                                </div>
+                            </div>
+
+                            <div className="border-t border-border/40 bg-muted/20 p-2">
+                                <Button
+                                    variant="outline"
+                                    className="h-10 w-full gap-2 rounded-xl border-amber-600/20 bg-amber-500/5 text-sm font-bold text-amber-600 transition-all hover:bg-amber-500 hover:text-white dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-400 dark:hover:bg-amber-600 dark:hover:text-white"
+                                >
+                                    <ExternalLink className="size-4" />
+                                    View All Notifications
+                                </Button>
+                            </div>
+                        </DropdownMenuContent>
                     </DropdownMenu>
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button
                                 type="button"
-                                className="flex cursor-pointer items-center gap-2 rounded border border-sidebar-border/50 p-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none"
+                                className="flex h-9 cursor-pointer items-center gap-2 rounded-xl border border-border/40 bg-muted/30 p-1 pr-4 text-sm font-semibold text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-95 focus-visible:outline-none"
                             >
                                 <div className="relative">
-                                    <Avatar className="size-5 bg-muted">
-                                        <AvatarFallback className="font-semibold">
+                                    <Avatar className="size-7 ring-2 ring-border/20 transition-all group-hover:ring-amber-500/30">
+                                        <AvatarFallback className="bg-gradient-to-br from-neutral-200 to-neutral-300 text-[10px] font-black tracking-tighter text-black dark:from-neutral-700 dark:to-neutral-800 dark:text-white">
                                             {initials}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <span className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full border border-background bg-emerald-500" />
+                                    <span className="absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full border-2 border-background bg-emerald-500 shadow-sm transition-transform duration-300 group-hover:scale-125" />
                                 </div>
 
                                 <p className="whitespace-nowrap">
                                     Welcome!{' '}
-                                    <span className="font-semibold text-foreground">
+                                    <span className="font-black text-foreground">
                                         {displayName}
                                     </span>
                                 </p>
 
-                                <ChevronDown className="size-3.5 opacity-60" />
+                                <ChevronDown className="size-4 opacity-50 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
-                            className="min-w-56 rounded-lg"
+                            className="min-w-60 rounded-xl border-border/40 bg-background/80 p-2 shadow-2xl backdrop-blur-xl"
                             align="end"
                             side="bottom"
                         >
@@ -454,32 +487,34 @@ export function AppSidebarHeader() {
                             type="button"
                             aria-label="Open menu"
                             title="Open menu"
-                            className="flex cursor-pointer items-center rounded border border-sidebar-border/50 p-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none md:hidden"
+                            className="flex size-9 cursor-pointer items-center justify-center rounded-xl border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground active:scale-90 md:hidden"
                         >
-                            <EllipsisVertical className="size-4" />
+                            <EllipsisVertical className="size-5" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                        className="min-w-56 rounded-lg md:hidden"
+                        className="min-w-56 rounded-xl border-border/40 bg-background/80 p-2 shadow-2xl backdrop-blur-xl md:hidden"
                         align="end"
                         side="bottom"
                     >
-                        <DropdownMenuItem onClick={toggleAppearance}>
+                        <DropdownMenuItem onClick={toggleAppearance} className="rounded-lg py-2.5 transition-all focus:bg-amber-500/10 focus:text-amber-600 dark:focus:bg-amber-500/20">
                             {isDarkMode ? (
-                                <SunIcon className="mr-2 size-4" />
+                                <SunIcon className="mr-3 size-4.5" />
                             ) : (
-                                <MoonIcon className="mr-2 size-4" />
+                                <MoonIcon className="mr-3 size-4.5" />
                             )}
-                            <span>
+                            <span className="font-medium">
                                 {isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
                             </span>
                         </DropdownMenuItem>
 
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator className="my-2 bg-border/40" />
 
-                        <DropdownMenuItem>Notification</DropdownMenuItem>
+                        <DropdownMenuItem className="rounded-lg py-2.5 transition-all focus:bg-amber-500/10 focus:text-amber-600 dark:focus:bg-amber-500/20">
+                            <span className="font-medium">Notification</span>
+                        </DropdownMenuItem>
 
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator className="my-2 bg-border/40" />
 
                         <UserMenuContent user={auth.user} />
                     </DropdownMenuContent>
