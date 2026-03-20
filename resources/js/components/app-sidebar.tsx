@@ -131,6 +131,7 @@ const adminNavItems: NavItem[] = [
 export function AppSidebar() {
     const { auth } = usePage().props;
     const roles: string[] = auth.roles ?? [];
+    const primaryRole = roles[0] ?? 'Client';
     const isAdminOrManager =
         roles.includes('Admin') || roles.includes('Manager');
     const mainNavItems = isAdminOrManager
@@ -152,7 +153,7 @@ export function AppSidebar() {
                             className="h-13 rounded-xl px-2.5 hover:bg-transparent active:bg-transparent data-open:hover:bg-transparent"
                         >
                             <Link href={dashboard()} prefetch>
-                                <AppLogo />
+                                <AppLogo subtitle={primaryRole} />
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
