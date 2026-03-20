@@ -2,16 +2,17 @@ import { Transition } from '@headlessui/react';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
-import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 import type { BreadcrumbItem } from '@/types';
+import { User, Mail, Save, UserCircle } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -36,112 +37,110 @@ export default function Profile({
             <h1 className="sr-only">Profile settings</h1>
 
             <SettingsLayout>
-                <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Profile information"
-                        description="Update your name and email address"
-                    />
+                <Card className="w-full border-border/50 shadow-sm overflow-hidden rounded-3xl">
+                    <div className="p-6 md:p-8 bg-muted/10 border-b border-border/40 flex items-center gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-muted/40 border border-border/50 text-foreground">
+                            <UserCircle className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl md:text-2xl font-black tracking-tight text-foreground">Profile Information</h2>
+                            <p className="text-sm font-medium text-muted-foreground mt-1">Update your account's profile information and email address.</p>
+                        </div>
+                    </div>
 
-                    <Form
-                        {...ProfileController.update.form()}
-                        options={{
-                            preserveScroll: true,
-                        }}
-                        className="space-y-6"
-                    >
-                        {({ processing, recentlySuccessful, errors }) => (
-                            <>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                    <CardContent className="p-6 md:p-8">
+                        <Form
+                            {...ProfileController.update.form()}
+                            options={{ preserveScroll: true }}
+                            className="space-y-8 max-w-2xl"
+                        >
+                            {({ processing, recentlySuccessful, errors }) => (
+                                <>
+                                    <div className="grid gap-3 group">
+                                        <Label htmlFor="name" className="text-xs font-black tracking-widest text-muted-foreground uppercase ml-1">Full Name</Label>
+                                        <div className="relative">
+                                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/60 transition-colors group-focus-within:text-bm-gold" />
+                                            <Input
+                                                id="name"
+                                                className="pl-11 h-12 rounded-xl border-border/60 bg-muted/5 focus:bg-background transition-all"
+                                                defaultValue={auth.user.name}
+                                                name="name"
+                                                required
+                                                autoComplete="name"
+                                                placeholder="Enter your full name"
+                                            />
+                                        </div>
+                                        <InputError className="ml-1" message={errors.name} />
+                                    </div>
 
-                                    <Input
-                                        id="name"
-                                        className="mt-1 block w-full"
-                                        defaultValue={auth.user.name}
-                                        name="name"
-                                        required
-                                        autoComplete="name"
-                                        placeholder="Full name"
-                                    />
+                                    <div className="grid gap-3 group">
+                                        <Label htmlFor="email" className="text-xs font-black tracking-widest text-muted-foreground uppercase ml-1">Email Address</Label>
+                                        <div className="relative">
+                                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/60 transition-colors group-focus-within:text-bm-gold" />
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                className="pl-11 h-12 rounded-xl border-border/60 bg-muted/5 focus:bg-background transition-all"
+                                                defaultValue={auth.user.email}
+                                                name="email"
+                                                required
+                                                autoComplete="username"
+                                                placeholder="Enter your email address"
+                                            />
+                                        </div>
+                                        <InputError className="ml-1" message={errors.email} />
+                                    </div>
 
-                                    <InputError
-                                        className="mt-2"
-                                        message={errors.name}
-                                    />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
-
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        className="mt-1 block w-full"
-                                        defaultValue={auth.user.email}
-                                        name="email"
-                                        required
-                                        autoComplete="username"
-                                        placeholder="Email address"
-                                    />
-
-                                    <InputError
-                                        className="mt-2"
-                                        message={errors.email}
-                                    />
-                                </div>
-
-                                {mustVerifyEmail &&
-                                    auth.user.email_verified_at === null && (
-                                        <div>
-                                            <p className="-mt-4 text-sm text-muted-foreground">
-                                                Your email address is
-                                                unverified.{' '}
+                                    {mustVerifyEmail && auth.user.email_verified_at === null && (
+                                        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/20 dark:bg-amber-500/10">
+                                            <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
+                                                Your email address is unverified.{' '}
                                                 <Link
                                                     href={send()}
                                                     as="button"
-                                                    className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                                    className="font-bold underline decoration-amber-300 underline-offset-4 hover:text-amber-900 dark:hover:text-amber-200 transition-colors"
                                                 >
-                                                    Click here to resend the
-                                                    verification email.
+                                                    Click here to resend the verification email.
                                                 </Link>
                                             </p>
-
-                                            {status ===
-                                                'verification-link-sent' && (
-                                                <div className="mt-2 text-sm font-medium text-green-600">
-                                                    A new verification link has
-                                                    been sent to your email
-                                                    address.
+                                            {status === 'verification-link-sent' && (
+                                                <div className="mt-2 text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                                    A new verification link has been sent to your email address.
                                                 </div>
                                             )}
                                         </div>
                                     )}
 
-                                <div className="flex items-center gap-4">
-                                    <Button
-                                        disabled={processing}
-                                        data-test="update-profile-button"
-                                    >
-                                        Save
-                                    </Button>
+                                    <div className="flex items-center gap-5 pt-4 border-t border-border/40">
+                                        <Button
+                                            disabled={processing}
+                                            data-test="update-profile-button"
+                                            className="h-11 px-8 rounded-xl font-bold bg-bm-gold text-black hover:bg-bm-gold/90 shadow-lg shadow-bm-gold/20"
+                                        >
+                                            <Save className="w-4 h-4 mr-2" />
+                                            Save Changes
+                                        </Button>
 
-                                    <Transition
-                                        show={recentlySuccessful}
-                                        enter="transition ease-in-out"
-                                        enterFrom="opacity-0"
-                                        leave="transition ease-in-out"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <p className="text-sm text-neutral-600">
-                                            Saved
-                                        </p>
-                                    </Transition>
-                                </div>
-                            </>
-                        )}
-                    </Form>
-                </div>
+                                        <Transition
+                                            show={recentlySuccessful}
+                                            enter="transition ease-out duration-300"
+                                            enterFrom="opacity-0 translate-y-1"
+                                            enterTo="opacity-100 translate-y-0"
+                                            leave="transition ease-in duration-200"
+                                            leaveFrom="opacity-100 translate-y-0"
+                                            leaveTo="opacity-0 translate-y-1"
+                                        >
+                                            <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 flex items-center bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-full">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+                                                Preferences Saved
+                                            </p>
+                                        </Transition>
+                                    </div>
+                                </>
+                            )}
+                        </Form>
+                    </CardContent>
+                </Card>
 
                 <DeleteUser />
             </SettingsLayout>

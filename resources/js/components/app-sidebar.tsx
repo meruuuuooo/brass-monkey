@@ -18,6 +18,7 @@ import {
     User,
     Users,
     Wrench,
+    ClipboardList,
 } from 'lucide-react';
 
 import { index as activityLogs } from '@/actions/App/Http/Controllers/Admin/ActivityLogController';
@@ -26,6 +27,7 @@ import AdminActions from '@/actions/App/Http/Controllers/Admin';
 import { index as users } from '@/actions/App/Http/Controllers/Admin/UserController';
 
 const announcements = AdminActions.AnnouncementController;
+import AppLayout from '@/layouts/app-layout';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import {
@@ -41,6 +43,8 @@ import {
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { dashboard } from '@/routes';
+import admin from '@/routes/admin';
+import services from '@/routes/services';
 import { edit as editProfile } from '@/routes/profile';
 import type { NavItem } from '@/types';
 
@@ -62,7 +66,7 @@ const clientMainNavItems: NavItem[] = [
     },
     {
         title: 'Services',
-        href: null,
+        href: services.index.url(),
         icon: Wrench,
     },
     {
@@ -72,7 +76,7 @@ const clientMainNavItems: NavItem[] = [
     },
     {
         title: 'My Orders',
-        href: null,
+        href: '/my-orders',
         icon: PackageCheck,
     },
     {
@@ -117,19 +121,19 @@ const adminNavItems: NavItem[] = [
         icon: Megaphone,
     },
     {
-        title: 'Announcements',
-        href: announcements.index.url(),
-        icon: MessageCircle,
-    },
-    {
-        title: 'Inventory',
-        href: null,
-        icon: Boxes,
-    },
-    {
         title: 'Blog Management',
         href: null,
         icon: BookText,
+    },
+    {
+        title: 'Services Management',
+        href: admin.services.index.url(),
+        icon: Wrench,
+    },
+    {
+        title: 'Service Bookings',
+        href: '/admin/service-requests',
+        icon: ClipboardList,
     },
     {
         title: 'History',

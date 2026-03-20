@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bell, BellOff, ChevronRight, ExternalLink, Package, Search, Sparkles, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import services from '@/routes/services';
 
 interface WorkOrder {
     id: number;
@@ -210,9 +211,11 @@ export default function ClientDashboard({
                                 <h3 className="text-3xl font-black tracking-tighter">Premium Brass Monkey Services</h3>
                                 <p className="text-muted-foreground text-lg max-w-md font-medium">Explore our premium repair, custom builds, and rental services tailored just for you.</p>
                             </div>
-                            <Button className="bg-foreground text-background hover:bg-foreground/90 font-black px-12 h-14 rounded-2xl shadow-xl transition-all hover:scale-105">
-                                Browse All Services
-                            </Button>
+                            <Button className="bg-foreground text-background hover:bg-foreground/90 font-black px-12 h-14 rounded-2xl shadow-xl transition-all hover:scale-105" asChild>
+                        <Link href={services.index.url()}>
+                            Browse All Services
+                        </Link>
+                    </Button>
                         </div>
                     )}
 
