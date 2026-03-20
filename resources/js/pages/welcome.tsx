@@ -83,9 +83,9 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
 
     const formatDate = (raw: string) => {
         try {
- return new Date(raw).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+ return new Date(raw).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); 
 } catch {
- return raw;
+ return raw; 
 }
     };
 
@@ -144,9 +144,9 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                                 { name: 'About', href: '#about' },
                                 { name: 'Product', href: '#product' }
                             ].map((item) => (
-                                <a
-                                    key={item.name}
-                                    href={item.href}
+                                <a 
+                                    key={item.name} 
+                                    href={item.href} 
                                     onClick={(e) => handleScrollToSection(e, item.href)}
                                     className="text-[13px] font-bold text-bm-muted transition-colors hover:text-bm-gold uppercase tracking-wider cursor-pointer"
                                 >
@@ -156,8 +156,8 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                         </nav>
 
                         <div className="flex items-center gap-6 border-l border-bm-white/10 pl-8">
-                            <Link
-                                href={login()}
+                            <Link 
+                                href={login()} 
                                 className="text-[13px] font-bold text-bm-white transition-colors hover:text-bm-gold uppercase tracking-wider"
                             >
                                 Login
@@ -171,9 +171,9 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                 {/* Hero Section */}
                 <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
                     <div className="absolute inset-0 z-0 opacity-40">
-                        <img
-                            src="/images/landing/hero-gears.png"
-                            alt="Mechanical Gears"
+                        <img 
+                            src="/images/landing/hero-gears.png" 
+                            alt="Mechanical Gears" 
                             className="h-full w-full object-cover scale-110 animate-pulse duration-[8000ms]"
                         />
                         <div className="absolute inset-0 bg-gradient-to-b from-bm-dark via-bm-dark/60 to-bm-dark" />
@@ -183,13 +183,13 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                         <div className="mb-6 inline-flex items-center rounded-full border border-bm-gold/30 bg-bm-gold/5 px-4 py-1.5 backdrop-blur-sm">
                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-bm-gold">Premium Service Excellence</span>
                         </div>
-
+                        
                         <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight sm:text-7xl lg:text-8xl">
-                            Precision Test Pull. <br />
+                            Precision. <br />
                             Craftsmanship. <br />
                             <span className="text-bm-gold underline decoration-bm-gold/20 underline-offset-8">Performance.</span>
                         </h1>
-
+                        
                         <p className="mx-auto mt-10 max-w-2xl text-lg font-medium leading-relaxed text-bm-muted/90">
                             Premium technical maintenance and artisanal mechanical services for those who demand excellence. Where precision engineering meets uncompromising craftsmanship.
                         </p>
@@ -437,7 +437,7 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                 {/* About Us Section */}
                 <section id="about" className="bg-bm-cream py-32 text-bm-dark overflow-hidden relative">
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-bm-gold/5 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2" />
-
+                    
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="grid items-center gap-16 lg:grid-cols-2">
                             <div className="relative">
@@ -453,7 +453,7 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                                 <p className="mt-6 text-lg font-medium leading-relaxed text-bm-dark/70">
                                     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                                 </p>
-
+                                
                                 <div className="mt-12 grid grid-cols-2 gap-8 border-t border-bm-dark/10 pt-10">
                                     <div className="flex items-start gap-4">
                                         <div className="rounded-full bg-bm-gold/20 p-2 group shadow-sm">
@@ -475,10 +475,10 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                                     </div>
                                 </div>
                             </div>
-
+                            
                             <div className="relative group lg:mt-0 mt-12">
                                 <div className="absolute inset-0 -rotate-3 scale-105 rounded-3xl bg-bm-gold/20 blur-2xl opacity-50 transition-transform group-hover:rotate-0" />
-                                <img
+                                <img 
                                     src="/images/landing/about-tools.png"
                                     alt="Mechanical Tools"
                                     className="relative rounded-3xl shadow-2xl object-cover h-[500px] w-full border border-bm-dark/5"
@@ -491,7 +491,7 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                 {/* Services Section */}
                 <section id="services" className="bg-bm-dark py-32 relative overflow-hidden">
                     <div className="absolute top-1/2 left-0 w-96 h-96 bg-bm-gold/[0.03] blur-[150px] rounded-full -translate-x-1/2 -translate-y-1/2" />
-
+                    
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="text-center">
                             <div className="mb-6 inline-block rounded-full border border-bm-gold/20 bg-bm-gold/5 px-4 py-1.5 backdrop-blur-sm">
@@ -572,20 +572,20 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
 
                         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                             {[
-                                {
-                                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                                    author: "Marcus Rivera",
-                                    role: "Manufacturing Director"
+                                { 
+                                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
+                                    author: "Marcus Rivera", 
+                                    role: "Manufacturing Director" 
                                 },
-                                {
-                                    text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.",
-                                    author: "Sarah Chen",
-                                    role: "Operations Manager"
+                                { 
+                                    text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.", 
+                                    author: "Sarah Chen", 
+                                    role: "Operations Manager" 
                                 },
-                                {
-                                    text: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis.",
-                                    author: "David Thompson",
-                                    role: "Fleet Supervisor"
+                                { 
+                                    text: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis.", 
+                                    author: "David Thompson", 
+                                    role: "Fleet Supervisor" 
                                 }
                             ].map((tm, i) => (
                                 <div key={i} className="bg-white/50 backdrop-blur-sm rounded-2xl p-10 border border-bm-dark/5 shadow-xl hover:shadow-2xl transition-shadow group flex flex-col h-full">
@@ -661,13 +661,13 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                                 ))}
                             </div>
                         </div>
-
+                        
                         {/* Column 2: Track Service */}
                         <div>
                             <h4 className="font-bold text-bm-white mb-8 uppercase tracking-[0.2em] text-xs text-bm-gold/80">Track Your Service</h4>
                             <p className="text-bm-muted text-sm mb-6 font-medium">Have a tracking ID? Monitor your mechanical restoration live.</p>
-                            <Link
-                                href="#track-order"
+                            <Link 
+                                href="#track-order" 
                                 className="inline-flex items-center gap-2 text-bm-gold font-bold text-sm hover:underline underline-offset-4 group"
                             >
                                 Track Now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -708,9 +708,9 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                             <h4 className="font-bold text-bm-white mb-8 uppercase tracking-[0.2em] text-xs text-bm-gold/80">Newsletter</h4>
                             <p className="text-bm-muted text-sm mb-6 font-medium">Join our mailing list for technical insights and project showcases.</p>
                             <div className="relative">
-                                <input
-                                    type="email"
-                                    placeholder="your@email.com"
+                                <input 
+                                    type="email" 
+                                    placeholder="your@email.com" 
                                     className="w-full bg-bm-white/5 border border-bm-white/10 rounded-lg h-12 px-4 text-sm text-bm-white focus:outline-none focus:border-bm-gold transition-colors placeholder:text-bm-muted/30"
                                 />
                                 <button className="absolute right-1 top-1 h-10 px-4 bg-bm-gold text-bm-dark rounded-md text-xs font-bold hover:bg-bm-gold-hover transition-colors">
@@ -722,7 +722,7 @@ export default function Welcome({ canRegister = true, auth, order, query }: Prop
                             </p>
                         </div>
                     </div>
-
+                    
                     <div className="mt-24 pt-8 border-t border-bm-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                         <p className="text-[11px] font-bold tracking-widest text-bm-muted/30 uppercase">
                             © 2026 Brass Monkey Co. All Engineering Rights Reserved.
