@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TrackOrderController;
 use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
@@ -9,7 +10,11 @@ use Laravel\Fortify\Features;
 
 Route::get('/', function (Request $request) {
     if (auth()->check()) {
-        return redirect()->route('dashboard');
+        if (auth()->user()->hasRole(['Admin', 'Manager'])) {
+            return redirect()->route('dashboard');
+        }
+
+        return redirect()->route('profile.edit');
     }
 
     $order = null;
@@ -29,7 +34,7 @@ Route::get('/', function (Request $request) {
 Route::get('/track-order', [TrackOrderController::class, 'index'])->name('track-order');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 require __DIR__.'/settings.php';

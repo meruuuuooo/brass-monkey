@@ -171,3 +171,29 @@
     --font-serif:
         'Roboto Slab Variable', serif;
 }
+
+@layer utilities {
+    .scrollbar-premium {
+        scrollbar-width: thin;
+        scrollbar-color: var(--bm-gold) transparent;
+    }
+
+    .scrollbar-premium::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .scrollbar-premium::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-premium::-webkit-scrollbar-thumb {
+        background: var(--bm-gold);
+        border-radius: 20px;
+        opacity: 0.5;
+    }
+
+    .scrollbar-premium::-webkit-scrollbar-thumb:hover {
+        background: var(--bm-gold);
+        opacity: 1;
+    }
+}

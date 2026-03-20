@@ -6,6 +6,9 @@ import {
     Boxes,
     HelpCircle,
     LayoutGrid,
+    LogOut,
+    Megaphone,
+    MessageCircle,
     MessageSquare,
     PackageCheck,
     ScrollText,
@@ -13,9 +16,16 @@ import {
     ShoppingCart,
     Truck,
     User,
+    Users,
     Wrench,
 } from 'lucide-react';
+
 import { index as activityLogs } from '@/actions/App/Http/Controllers/Admin/ActivityLogController';
+import { index as ads } from '@/actions/App/Http/Controllers/Admin/AdvertisementController';
+import AdminActions from '@/actions/App/Http/Controllers/Admin';
+import { index as users } from '@/actions/App/Http/Controllers/Admin/UserController';
+
+const announcements = AdminActions.AnnouncementController;
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import {
@@ -95,6 +105,21 @@ const adminNavItems: NavItem[] = [
         title: 'Rentals Management',
         href: null,
         icon: PackageCheck,
+    },
+    {
+        title: 'Users',
+        href: users.url(),
+        icon: Users,
+    },
+    {
+        title: 'Advertisements',
+        href: ads.url(),
+        icon: Megaphone,
+    },
+    {
+        title: 'Announcements',
+        href: announcements.index.url(),
+        icon: MessageCircle,
     },
     {
         title: 'Inventory',
