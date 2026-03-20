@@ -338,20 +338,6 @@ export default function ClientDashboard({
                                 )}
                             </div>
 
-                            {/* Promotional Box */}
-                            <div className="p-6 bg-muted/20 border-t border-border/40 mt-auto">
-                                <div className="group relative overflow-hidden rounded-2xl bg-bm-gold/5 border border-dashed border-bm-gold/20 p-4 transition-all hover:bg-bm-gold/10 hover:border-bm-gold/30">
-                                    <div className="absolute top-0 right-0 p-2 opacity-10">
-                                        <Sparkles className="size-8 text-bm-gold rotate-12" />
-                                    </div>
-                                    <p className="text-[10px] font-black text-bm-gold uppercase tracking-[0.2em]">PROMOTION</p>
-                                    <p className="text-sm font-black mt-1 leading-tight tracking-tight">20% Off Custom Component Fabrication</p>
-                                    <p className="text-[10px] text-muted-foreground mt-1 font-medium italic">Limited time offer for loyal clients.</p>
-                                    <Button variant="link" className="p-0 h-auto text-[10px] font-black uppercase text-bm-gold mt-3 hover:no-underline group-hover:translate-x-1 transition-transform">
-                                        Claim Offer <ChevronRight className="size-3 ml-1" />
-                                    </Button>
-                                </div>
-                            </div>
                         </CardContent>
                     </Card>
                 </div>
