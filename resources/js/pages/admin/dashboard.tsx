@@ -17,9 +17,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
     totalClients: number;
+    calendarItems?: Array<{ date: string; status: 'urgent' | 'pending' | 'completed' }>;
+    serviceOrders?: Array<{
+        id: number;
+        tracking_number: string;
+        customer_name: string;
+        service_type: string;
+        status: string;
+        estimated_completion: string | null;
+        created_at: string;
+    }>;
 }
 
-export default function Dashboard({ totalClients }: Props) {
+export default function Dashboard({ totalClients, calendarItems = [], serviceOrders = [] }: Props) {
     const { auth } = usePage().props;
     const userName = auth.user.name;
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -27,13 +37,6 @@ export default function Dashboard({ totalClients }: Props) {
     const stats = [
         { label: 'Sales', v: '$12,450.00', icon: ShoppingCart, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
         { label: 'Rentals', v: '84 Units', icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    ];
-
-    // Mock data for calendar dots
-    const calendarItems = [
-        { date: new Date().toISOString().split('T')[0], status: 'urgent' as const },
-        { date: new Date(Date.now() + 86400000).toISOString().split('T')[0], status: 'urgent' as const },
-        { date: new Date(Date.now() - 86400000).toISOString().split('T')[0], status: 'completed' as const },
     ];
 
     // Helper component for stats cards
@@ -113,6 +116,7 @@ export default function Dashboard({ totalClients }: Props) {
                             <DashboardDueDates 
                                 selectedDate={selectedDate} 
                                 onClearSelection={() => setSelectedDate(null)}
+                                serviceOrders={serviceOrders}
                             />
                         </CardContent>
                     </Card>

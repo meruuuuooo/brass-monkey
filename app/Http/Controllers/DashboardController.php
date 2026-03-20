@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Advertisement;
 use App\Models\Announcement;
+use App\Models\ServiceOrder;
 use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,8 +20,23 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         if ($user->hasRole(['Admin', 'Manager'])) {
+            $serviceOrders = ServiceOrder::all()->toArray();
+
+            $calendarItems = collect($serviceOrders)
+                ->map(function (array $order) {
+                    $displayDate = $order['estimated_completion'] ?? $order['created_at'];
+
+                    return [
+                        'date' => (new \DateTime($displayDate))->format('Y-m-d'),
+                        'status' => $this->mapStatusToCalendarStatus($order['status']),
+                    ];
+                })
+                ->toArray();
+
             return Inertia::render('admin/dashboard', [
                 'totalClients' => User::role('Client')->count(),
+                'calendarItems' => $calendarItems,
+                'serviceOrders' => $serviceOrders,
             ]);
         }
 
@@ -42,5 +58,19 @@ class DashboardController extends Controller
                 ->latest()
                 ->get(),
         ]);
+    }
+
+    /**
+     * Map service order status to calendar status.
+     */
+    private function mapStatusToCalendarStatus(string $status): string
+    {
+        return match (strtolower($status)) {
+            'completed', 'done' => 'completed',
+            'pending', 'awaiting' => 'pending',
+            'in-progress', 'in progress' => 'pending',
+            'urgent' => 'urgent',
+            default => 'pending',
+        };
     }
 }
