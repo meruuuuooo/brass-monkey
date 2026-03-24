@@ -3,6 +3,10 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdvertisementController;
 use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\BlogCategoryController;
+use App\Http\Controllers\Admin\BlogCommentController;
+use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\BlogTagController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\CustomerSegmentController;
@@ -47,6 +51,19 @@ Route::middleware(['auth', 'verified', 'role:Admin|Manager'])->prefix('admin')->
 
     Route::resource('advertisements', AdvertisementController::class)->except(['show', 'create', 'edit']);
     Route::resource('announcements', AnnouncementController::class)->except(['show', 'create', 'edit']);
+
+    // Blog Management
+    Route::resource('blog-posts', BlogPostController::class)->except(['show', 'create', 'edit']);
+    Route::post('blog-posts/{blog_post}/publish', [BlogPostController::class, 'publish'])->name('blog-posts.publish');
+    Route::post('blog-posts/{blog_post}/archive', [BlogPostController::class, 'archive'])->name('blog-posts.archive');
+    Route::resource('blog-categories', BlogCategoryController::class)->except(['show', 'create', 'edit']);
+    Route::resource('blog-tags', BlogTagController::class)->except(['show', 'create', 'edit']);
+
+    Route::middleware('role:Admin')->group(function () {
+        Route::get('blog-comments', [BlogCommentController::class, 'index'])->name('blog-comments.index');
+        Route::post('blog-comments/{blog_comment}/approve', [BlogCommentController::class, 'approve'])->name('blog-comments.approve');
+        Route::delete('blog-comments/{blog_comment}', [BlogCommentController::class, 'destroy'])->name('blog-comments.destroy');
+    });
     Route::resource('notifications', NotificationController::class)->except(['create', 'edit']);
     Route::resource('services', ServiceController::class)->except(['show', 'create', 'edit']);
     Route::resource('service-requests', ServiceRequestController::class)->except(['create', 'edit', 'destroy']);

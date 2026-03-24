@@ -9,11 +9,6 @@ class Advertisement extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'title',
         'content',
@@ -21,18 +16,17 @@ class Advertisement extends Model
         'link_url',
         'is_active',
         'priority',
+        'display_start_at',
+        'display_duration_hours',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
             'priority' => 'integer',
+            'display_start_at' => 'datetime',
+            'display_duration_hours' => 'integer',
         ];
     }
 }

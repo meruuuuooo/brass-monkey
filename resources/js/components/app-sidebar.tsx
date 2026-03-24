@@ -17,6 +17,7 @@ import {
     MessageSquare,
     PackageCheck,
     ScrollText,
+    FileText,
     Settings,
     ShoppingCart,
     Tag,
@@ -87,6 +88,16 @@ const clientMainNavItems: NavItem[] = [
         href: '/track-order',
         icon: Truck,
     },
+    {
+        title: 'Promotions',
+        href: '/promotions',
+        icon: Megaphone,
+    },
+    {
+        title: 'Blog & News',
+        href: '/blog',
+        icon: BookText,
+    },
 ];
 
 const adminMainNavItems: NavItem[] = [
@@ -95,7 +106,18 @@ const adminMainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Promotions',
+        href: '/promotions',
+        icon: Megaphone,
+    },
+    {
+        title: 'Blog & News',
+        href: '/blog',
+        icon: BookText,
+    },
 ];
+
 
 const adminNavGroups: NavGroup[] = [
     {
@@ -164,6 +186,31 @@ const adminNavGroups: NavGroup[] = [
         ],
     },
     {
+        title: 'Blog Content',
+        items: [
+            {
+                title: 'Posts',
+                href: '/admin/blog-posts',
+                icon: FileText,
+            },
+            {
+                title: 'Categories',
+                href: '/admin/blog-categories',
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Tags',
+                href: '/admin/blog-tags',
+                icon: Tag,
+            },
+            {
+                title: 'Comments',
+                href: '/admin/blog-comments',
+                icon: MessageSquare,
+            },
+        ],
+    },
+    {
         title: 'System Management',
         items: [
             {
@@ -213,6 +260,14 @@ const managerNavGroups: NavGroup[] = [
             { title: 'Transactions', href: '/admin/transactions', icon: CreditCard },
             { title: 'Customers', href: '/admin/customers', icon: Users },
             { title: 'Segments', href: admin.customerSegments.index.url(), icon: Bookmark },
+        ],
+    },
+    {
+        title: 'Blog Content',
+        items: [
+            { title: 'Posts', href: '/admin/blog-posts', icon: FileText },
+            { title: 'Categories', href: '/admin/blog-categories', icon: Tag },
+            { title: 'Tags', href: '/admin/blog-tags', icon: Tag },
         ],
     },
     {

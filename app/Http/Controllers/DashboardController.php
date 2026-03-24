@@ -40,9 +40,28 @@ class DashboardController extends Controller
             ['id' => 3, 'number' => 'WO-2026-007', 'status' => 'Awaiting Parts', 'type' => 'Custom Exhaust Build'],
         ];
 
+        $now = now();
+
         return Inertia::render('client/dashboard', [
             'activeWorkOrders' => $activeWorkOrders,
             'advertisements' => Advertisement::where('is_active', true)
+                ->where(function ($q) use ($now) {
+                    // No scheduled start → always show
+                    $q->whereNull('display_start_at')
+                        // OR: started already
+                        ->orWhere(function ($q2) use ($now) {
+                        $q2->where('display_start_at', '<=', $now)
+                            ->where(function ($q3) use ($now) {
+                                // No duration → show indefinitely after start
+                                $q3->whereNull('display_duration_hours')
+                                    // OR: still within duration window
+                                    ->orWhereRaw(
+                                        'DATE_ADD(display_start_at, INTERVAL display_duration_hours HOUR) >= ?',
+                                        [$now]
+                                    );
+                            });
+                    });
+                })
                 ->orderBy('priority', 'desc')
                 ->latest()
                 ->get(),

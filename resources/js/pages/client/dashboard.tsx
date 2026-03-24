@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Bell, BellOff, ChevronRight, ExternalLink, Package, Search, Sparkles, Truck } from 'lucide-react';
+import { ChevronRight, ExternalLink, Package, Search, Sparkles, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import services from '@/routes/services';
 
@@ -21,26 +21,19 @@ interface Advertisement {
     content: string;
     image_path: string | null;
     link_url: string | null;
+    display_start_at: string | null;
+    display_duration_hours: number | null;
 }
 
-interface Announcement {
-    id: number;
-    title: string;
-    content: string;
-    type: 'info' | 'warning' | 'danger' | 'success';
-    priority: number;
-}
 
 interface Props {
     activeWorkOrders: WorkOrder[];
     advertisements: Advertisement[];
-    announcements: Announcement[];
 }
 
-export default function ClientDashboard({ 
-    activeWorkOrders = [], 
-    advertisements = [], 
-    announcements = [] 
+export default function ClientDashboard({
+    activeWorkOrders = [],
+    advertisements = []
 }: Props) {
     const { auth } = usePage().props;
     const userName = auth.user.name;
@@ -87,7 +80,7 @@ export default function ClientDashboard({
                     {/* Premium Advertisements Carousel */}
                     {advertisements.length > 0 ? (
                         <div className="relative group/carousel w-full">
-                            <div className="overflow-hidden rounded-[2.5rem] bg-background/50 backdrop-blur-2xl border border-white/5 shadow-2xl transition-all duration-700 hover:shadow-bm-gold/10 hover:border-bm-gold/20 h-[500px] lg:h-[450px]">
+                            <div className="overflow-hidden rounded-[2.5rem] bg-background/50 backdrop-blur-2xl border border-white/5 shadow-2xl transition-all duration-700 hover:shadow-bm-gold/10 hover:border-bm-gold/20 h-[400px] lg:h-[280px]">
                                 {advertisements.map((ad, index) => (
                                     <div
                                         key={ad.id}
@@ -101,61 +94,61 @@ export default function ClientDashboard({
                                             {/* Image Area with Cinematic Backdrop */}
                                             {ad.image_path ? (
                                                 <div className={cn(
-                                                    "relative lg:w-2/5 overflow-hidden h-1/2 lg:h-full shrink-0 group/ad-image",
+                                                    "relative lg:w-2/5 overflow-hidden h-[160px] lg:h-full shrink-0 group/ad-image",
                                                     index % 2 === 1 ? "lg:order-last border-l border-white/5" : "border-r border-white/5"
                                                 )}>
                                                     {/* Blurred Backdrop for "Accurate Sizes" feeling */}
-                                                    <div 
+                                                    <div
                                                         className="absolute inset-0 scale-110 blur-2xl opacity-30 transition-transform duration-1000 group-hover/ad-image:scale-125"
-                                                        style={{ 
+                                                        style={{
                                                             backgroundImage: `url(/storage/${ad.image_path})`,
                                                             backgroundSize: 'cover',
                                                             backgroundPosition: 'center'
                                                         }}
                                                     />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent lg:hidden z-10" />
-                                                    
+                                                    <div className="absolute inset-0 bg-linear-to-t from-background/90 via-transparent to-transparent lg:hidden z-10" />
+
                                                     {/* Main Image - Contain for accuracy */}
                                                     <img
                                                         src={`/storage/${ad.image_path}`}
                                                         alt={ad.title}
                                                         className="relative z-10 h-full w-full object-contain p-4 transition-all duration-1000 group-hover/ad-image:scale-105"
                                                     />
-                                                    
+
                                                     <div className="absolute inset-0 bg-bm-gold/5 mix-blend-overlay z-20" />
                                                 </div>
                                             ) : (
-                                                <div className="lg:w-2/5 bg-bm-gold/5 flex items-center justify-center border-r border-border/40 h-1/2 lg:h-full shrink-0">
+                                                <div className="lg:w-2/5 bg-bm-gold/5 flex items-center justify-center border-r border-border/40 h-[160px] lg:h-full shrink-0">
                                                     <Sparkles className="size-24 text-bm-gold/20 animate-pulse" />
                                                 </div>
                                             )}
 
                                             {/* Content Area */}
-                                            <div className="flex-1 flex flex-col justify-center p-6 lg:p-12 z-20 overflow-hidden">
-                                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-bm-gold/10 border border-bm-gold/20 text-bm-gold text-[10px] uppercase font-black tracking-[0.2em] mb-4 lg:mb-6 w-fit shrink-0">
+                                            <div className="flex-1 flex flex-col justify-center p-6 lg:p-8 z-20 overflow-hidden">
+                                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-bm-gold/10 border border-bm-gold/20 text-bm-gold text-[10px] uppercase font-black tracking-[0.2em] mb-3 lg:mb-4 w-fit shrink-0">
                                                     <Sparkles className="size-3" />
                                                     Featured Promotion
                                                 </div>
 
-                                                <h2 className="text-2xl lg:text-5xl font-black tracking-tighter text-foreground mb-4 lg:mb-6 leading-[0.95] break-words line-clamp-2 lg:line-clamp-3">
+                                                <h2 className="text-xl lg:text-3xl font-black tracking-tighter text-foreground mb-3 lg:mb-4 leading-[1.1] wrap-break-word line-clamp-2 lg:line-clamp-3">
                                                     {ad.title}
                                                 </h2>
 
-                                                <p className="text-base lg:text-lg text-muted-foreground/80 leading-relaxed font-medium mb-6 lg:mb-8 max-w-xl break-words line-clamp-3 lg:line-clamp-4">
+                                                <p className="text-sm lg:text-base text-muted-foreground/80 leading-relaxed font-medium mb-4 lg:mb-6 max-w-xl wrap-break-word line-clamp-3 lg:line-clamp-3">
                                                     {ad.content}
                                                 </p>
 
                                                 {ad.link_url && (
                                                     <Button
-                                                        className="w-fit bg-bm-gold hover:bg-bm-gold/90 text-black font-black px-8 lg:px-10 h-12 lg:h-14 rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(235,188,72,0.4)] group/btn overflow-hidden shrink-0"
+                                                        className="w-fit bg-bm-gold hover:bg-bm-gold/90 text-black font-black px-6 lg:px-8 h-10 lg:h-12 rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(235,188,72,0.4)] group/btn overflow-hidden shrink-0"
                                                         asChild
                                                     >
                                                         <a href={ad.link_url} target="_blank" rel="noopener noreferrer">
-                                                            <span className="relative z-10 flex items-center gap-2 text-sm lg:text-base">
+                                                            <span className="relative z-10 flex items-center gap-2 text-sm lg:text-sm">
                                                                 View Details
-                                                                <ChevronRight className="size-4 lg:size-5 transition-transform group-hover/btn:translate-x-1" />
+                                                                <ChevronRight className="size-4 lg:size-4 transition-transform group-hover/btn:translate-x-1" />
                                                             </span>
-                                                            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+                                                            <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 ease-in-out" />
                                                         </a>
                                                     </Button>
                                                 )}
@@ -212,10 +205,10 @@ export default function ClientDashboard({
                                 <p className="text-muted-foreground text-lg max-w-md font-medium">Explore our premium repair, custom builds, and rental services tailored just for you.</p>
                             </div>
                             <Button className="bg-foreground text-background hover:bg-foreground/90 font-black px-12 h-14 rounded-2xl shadow-xl transition-all hover:scale-105" asChild>
-                        <Link href={services.index.url()}>
-                            Browse All Services
-                        </Link>
-                    </Button>
+                                <Link href={services.index.url()}>
+                                    Browse All Services
+                                </Link>
+                            </Button>
                         </div>
                     )}
 
@@ -275,75 +268,12 @@ export default function ClientDashboard({
                             )}
                         </CardContent>
                     </Card>
+
+
+
                 </div>
 
-                {/* Announcements Column */}
-                <div className="w-full lg:w-[350px] shrink-0">
-                    <Card className="h-full border-border/40 bg-background/50 shadow-sm backdrop-blur-sm rounded-[2rem] flex flex-col overflow-hidden">
-                        <CardHeader className="pb-4 pt-6 border-b border-border/40 px-6">
-                            <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-bm-gold flex items-center gap-2">
-                                <Bell className="size-4" />
-                                Live Announcements
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex-1 p-0 flex flex-col overflow-hidden">
-                            <div className="flex-1 overflow-y-auto px-6 py-6 scrollbar-premium max-h-[calc(100vh-320px)]">
-                                {announcements.length > 0 ? (
-                                    <div className="space-y-8">
-                                        {announcements.map((announcement) => (
-                                            <div key={announcement.id} className="space-y-3 group/announcement relative pl-4">
-                                                <div className={cn(
-                                                    "absolute left-0 top-1 bottom-1 w-0.5 rounded-full transition-all group-hover/announcement:w-1",
-                                                    announcement.type === 'danger' ? "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" :
-                                                    announcement.type === 'warning' ? "bg-orange-500" :
-                                                    announcement.type === 'success' ? "bg-emerald-500" : "bg-bm-gold"
-                                                )} />
-                                                
-                                                <div className="flex items-center gap-2">
-                                                    <Badge 
-                                                        variant="outline" 
-                                                        className={cn(
-                                                            "rounded-md px-1.5 py-0 text-[9px] uppercase font-black tracking-wider transition-all",
-                                                            announcement.type === 'danger' ? "border-red-500/30 bg-red-500/10 text-red-500" :
-                                                            announcement.type === 'warning' ? "border-orange-500/30 bg-orange-500/10 text-orange-500" :
-                                                            announcement.type === 'success' ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-500" : 
-                                                            "border-bm-gold/30 bg-bm-gold/10 text-bm-gold"
-                                                        )}
-                                                    >
-                                                        {announcement.type === 'danger' ? 'Urgent' : 
-                                                         announcement.type === 'warning' ? 'Notice' : 
-                                                         announcement.type === 'success' ? 'Update' : 'Info'}
-                                                    </Badge>
-                                                    {announcement.priority >= 5 && (
-                                                        <Sparkles className="size-3 text-bm-gold animate-pulse" />
-                                                    )}
-                                                </div>
 
-                                                <div className="space-y-1.5">
-                                                    <h4 className="text-sm font-black leading-tight group-hover/announcement:text-bm-gold transition-colors tracking-tight">
-                                                        {announcement.title}
-                                                    </h4>
-                                                    <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-4">
-                                                        {announcement.content}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-40">
-                                        <div className="size-16 rounded-3xl bg-muted/20 flex items-center justify-center mb-6">
-                                            <BellOff className="size-8 text-muted-foreground" />
-                                        </div>
-                                        <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">No Broadcasts</p>
-                                        <p className="text-[10px] text-muted-foreground mt-2 font-medium">All systems normal. We'll notify you here of any updates.</p>
-                                    </div>
-                                )}
-                            </div>
-
-                        </CardContent>
-                    </Card>
-                </div>
 
             </div>
         </AppLayout>

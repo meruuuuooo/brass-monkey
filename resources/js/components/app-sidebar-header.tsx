@@ -167,10 +167,10 @@ function ColorInput({ label, value, onChange }: ColorInputProps) {
 }
 
 export function AppSidebarHeader() {
-    const { auth } = usePage().props;
+    const { auth } = usePage<any>().props;
     const { resolvedAppearance, updateAppearance } = useAppearance();
     const { colors, updateColor, resetAllColors, applyPreset } = useAdvancedThemeCustomization();
-    const displayName = auth.user?.name ?? 'User';
+    const displayName = auth.user?.name ?? 'Guest';
 
     const typeConfig: Record<string, { color: string; icon: React.ElementType }> = {
         system: { color: 'text-blue-500 bg-blue-500/10 border-blue-500/20', icon: Info },
@@ -184,7 +184,7 @@ export function AppSidebarHeader() {
 
     const initials = displayName
         .split(' ')
-        .map((part) => part[0])
+        .map((part: string) => part[0])
         .join('')
         .slice(0, 2)
         .toUpperCase();
@@ -209,7 +209,7 @@ export function AppSidebarHeader() {
 
             <div className="group flex flex-1 cursor-default items-center justify-center gap-4 px-4 transition-all duration-300 md:ml-8">
                 <div className="relative">
-                    <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-amber-500/10 to-orange-500/10 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-100" />
+                    <div className="absolute -inset-2 rounded-full bg-linear-to-tr from-amber-500/10 to-orange-500/10 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-100" />
                     <img
                         src="/brass-monkey-logo.png"
                         alt="Brass Monkey Repair and Rental"
@@ -423,152 +423,163 @@ export function AppSidebarHeader() {
                     </DrawerContent>
                 </Drawer>
 
-                <div className="hidden items-center gap-3 md:flex">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <button
-                                type="button"
-                                aria-label="Notifications"
-                                title="Notifications"
-                                className="relative flex size-9 cursor-pointer items-center justify-center rounded-xl border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-90"
-                            >
-                                <Bell className="size-5" />
-                                {auth.unread_notifications_count > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-bm-gold px-1 text-[10px] font-black text-black ring-2 ring-background">
-                                        {auth.unread_notifications_count > 9 ? '9+' : auth.unread_notifications_count}
-                                    </span>
-                                )}
-                            </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            className="w-80 overflow-hidden rounded-2xl border-border/40 bg-background/95 p-0 shadow-2xl backdrop-blur-xl"
-                            align="end"
-                            side="bottom"
-                        >
-                            <div className="flex items-center justify-between border-b border-border/40 px-4 py-3 bg-muted/20">
-                                <h3 className="text-sm font-bold tracking-tight">Notifications</h3>
-                                {auth.unread_notifications_count > 0 && (
-                                    <button
-                                        onClick={markAllRead}
-                                        className="text-[10px] font-black uppercase tracking-widest text-bm-gold hover:text-bm-gold/80 transition-colors"
-                                    >
-                                        Clear All
-                                    </button>
-                                )}
-                            </div>
-
-                            <div className="max-h-[400px] overflow-y-auto">
-                                {auth.recent_notifications.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center space-y-3 px-6 py-10 text-center">
-                                        <div className="relative">
-                                            <div className="absolute -inset-4 rounded-full bg-amber-500/10 blur-2xl dark:bg-amber-900/20" />
-                                            <div className="relative flex size-16 items-center justify-center rounded-full border border-amber-600/10 bg-amber-500/5 dark:bg-amber-900/10">
-                                                <BellOff className="size-7 text-amber-600/40" />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-bold text-foreground">No notifications yet</p>
-                                            <p className="text-xs text-muted-foreground">We'll let you know when something important happens.</p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="py-2">
-                                        {auth.recent_notifications.map((notif) => {
-                                            const cfg = typeConfig[notif.type] || typeConfig.info;
-                                            const Icon = cfg.icon;
-                                            const isRead = notif.pivot?.is_read;
-
-                                            return (
-                                                <div
-                                                    key={notif.id}
-                                                    className={cn(
-                                                        "group/item relative px-4 py-3 hover:bg-muted/40 transition-colors border-l-2",
-                                                        isRead ? "border-transparent" : "border-bm-gold bg-bm-gold/5"
-                                                    )}
-                                                >
-                                                    <div className="flex gap-3">
-                                                        <div className={cn("size-8 rounded-lg flex items-center justify-center shrink-0 border", cfg.color)}>
-                                                            <Icon className="size-4" />
-                                                        </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <div className="flex items-start justify-between gap-2">
-                                                                <p className={cn("text-xs font-bold leading-none", isRead ? "text-foreground/80" : "text-foreground")}>
-                                                                    {notif.title}
-                                                                </p>
-                                                                <span className="text-[9px] text-muted-foreground whitespace-nowrap">
-                                                                    {new Date(notif.created_at).toLocaleDateString()}
-                                                                </span>
-                                                            </div>
-                                                            <p className={cn("text-[11px] mt-1 line-clamp-2 leading-relaxed", isRead ? "text-muted-foreground/70" : "text-muted-foreground")}>
-                                                                {notif.message}
-                                                            </p>
-                                                            {!isRead && (
-                                                                <button
-                                                                    onClick={() => markAsRead(notif.id)}
-                                                                    className="mt-2 flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-bm-gold opacity-0 group-hover/item:opacity-100 transition-opacity"
-                                                                >
-                                                                    <Check className="size-3" /> Mark Read
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="border-t border-border/40 bg-muted/20 p-2">
-                                <Button
-                                    variant="outline"
-                                    asChild
-                                    className="h-9 w-full gap-2 rounded-xl border-amber-600/20 bg-amber-500/5 text-xs font-bold text-amber-600 transition-all hover:bg-amber-500 hover:text-white dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-400 dark:hover:bg-amber-600 dark:hover:text-white"
+                {auth.user ? (
+                    <div className="hidden items-center gap-3 md:flex">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    type="button"
+                                    aria-label="Notifications"
+                                    title="Notifications"
+                                    className="relative flex size-9 cursor-pointer items-center justify-center rounded-xl border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-90"
                                 >
-                                    <Link href="/notifications">
-                                        <ExternalLink className="size-3" />
-                                        View All Notifications
-                                    </Link>
-                                </Button>
-                            </div>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <button
-                                type="button"
-                                className="flex h-9 cursor-pointer items-center gap-2 rounded-xl border border-border/40 bg-muted/30 p-1 pr-4 text-sm font-semibold text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-95 focus-visible:outline-none"
+                                    <Bell className="size-5" />
+                                    {auth.unread_notifications_count > 0 && (
+                                        <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-bm-gold px-1 text-[10px] font-black text-black ring-2 ring-background">
+                                            {auth.unread_notifications_count > 9 ? '9+' : auth.unread_notifications_count}
+                                        </span>
+                                    )}
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                className="w-80 overflow-hidden rounded-2xl border-border/40 bg-background/95 p-0 shadow-2xl backdrop-blur-xl"
+                                align="end"
+                                side="bottom"
                             >
-                                <div className="relative">
-                                    <Avatar className="size-7 ring-2 ring-border/20 transition-all group-hover:ring-amber-500/30">
-                                        <AvatarImage src={auth.user.avatar} alt={auth.user.name} className="object-cover" />
-                                        <AvatarFallback className="bg-gradient-to-br from-neutral-200 to-neutral-300 text-[10px] font-black tracking-tighter text-black dark:from-neutral-700 dark:to-neutral-800 dark:text-white">
-                                            {initials}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <span className="absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full border-2 border-background bg-emerald-500 shadow-sm transition-transform duration-300 group-hover:scale-125" />
+                                <div className="flex items-center justify-between border-b border-border/40 px-4 py-3 bg-muted/20">
+                                    <h3 className="text-sm font-bold tracking-tight">Notifications</h3>
+                                    {auth.unread_notifications_count > 0 && (
+                                        <button
+                                            onClick={markAllRead}
+                                            className="text-[10px] font-black uppercase tracking-widest text-bm-gold hover:text-bm-gold/80 transition-colors"
+                                        >
+                                            Clear All
+                                        </button>
+                                    )}
                                 </div>
 
-                                <p className="whitespace-nowrap">
-                                    Welcome!{' '}
-                                    <span className="font-black text-foreground">
-                                        {displayName}
-                                    </span>
-                                </p>
+                                <div className="max-h-[400px] overflow-y-auto">
+                                    {(!auth.recent_notifications || auth.recent_notifications.length === 0) ? (
+                                        <div className="flex flex-col items-center justify-center space-y-3 px-6 py-10 text-center">
+                                            <div className="relative">
+                                                <div className="absolute -inset-4 rounded-full bg-amber-500/10 blur-2xl dark:bg-amber-900/20" />
+                                                <div className="relative flex size-16 items-center justify-center rounded-full border border-amber-600/10 bg-amber-500/5 dark:bg-amber-900/10">
+                                                    <BellOff className="size-7 text-amber-600/40" />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-sm font-bold text-foreground">No notifications yet</p>
+                                                <p className="text-xs text-muted-foreground">We'll let you know when something important happens.</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="py-2">
+                                            {auth.recent_notifications.map((notif: any) => {
+                                                const cfg = typeConfig[notif.type] || typeConfig.info;
+                                                const Icon = cfg.icon;
+                                                const isRead = notif.pivot?.is_read;
 
-                                <ChevronDown className="size-4 opacity-50 transition-transform duration-300 group-data-[state=open]:rotate-180" />
-                            </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            className="min-w-60 rounded-xl border-border/40 bg-background/80 p-2 shadow-2xl backdrop-blur-xl"
-                            align="end"
-                            side="bottom"
-                        >
-                            <UserMenuContent user={auth.user} />
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+                                                return (
+                                                    <div
+                                                        key={notif.id}
+                                                        className={cn(
+                                                            "group/item relative px-4 py-3 hover:bg-muted/40 transition-colors border-l-2",
+                                                            isRead ? "border-transparent" : "border-bm-gold bg-bm-gold/5"
+                                                        )}
+                                                    >
+                                                        <div className="flex gap-3">
+                                                            <div className={cn("size-8 rounded-lg flex items-center justify-center shrink-0 border", cfg.color)}>
+                                                                <Icon className="size-4" />
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-start justify-between gap-2">
+                                                                    <p className={cn("text-xs font-bold leading-none", isRead ? "text-foreground/80" : "text-foreground")}>
+                                                                        {notif.title}
+                                                                    </p>
+                                                                    <span className="text-[9px] text-muted-foreground whitespace-nowrap">
+                                                                        {new Date(notif.created_at).toLocaleDateString()}
+                                                                    </span>
+                                                                </div>
+                                                                <p className={cn("text-[11px] mt-1 line-clamp-2 leading-relaxed", isRead ? "text-muted-foreground/70" : "text-muted-foreground")}>
+                                                                    {notif.message}
+                                                                </p>
+                                                                {!isRead && (
+                                                                    <button
+                                                                        onClick={() => markAsRead(notif.id)}
+                                                                        className="mt-2 flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-bm-gold opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                                                    >
+                                                                        <Check className="size-3" /> Mark Read
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="border-t border-border/40 bg-muted/20 p-2">
+                                    <Button
+                                        variant="outline"
+                                        asChild
+                                        className="h-9 w-full gap-2 rounded-xl border-amber-600/20 bg-amber-500/5 text-xs font-bold text-amber-600 transition-all hover:bg-amber-500 hover:text-white dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-400 dark:hover:bg-amber-600 dark:hover:text-white"
+                                    >
+                                        <Link href="/notifications">
+                                            <ExternalLink className="size-3" />
+                                            View All Notifications
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    type="button"
+                                    className="flex h-9 cursor-pointer items-center gap-2 rounded-xl border border-border/40 bg-muted/30 p-1 pr-4 text-sm font-semibold text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-95 focus-visible:outline-none"
+                                >
+                                    <div className="relative">
+                                        <Avatar className="size-7 ring-2 ring-border/20 transition-all group-hover:ring-amber-500/30">
+                                            <AvatarImage src={auth.user.avatar} alt={auth.user.name} className="object-cover" />
+                                            <AvatarFallback className="bg-linear-to-br from-neutral-200 to-neutral-300 text-[10px] font-black tracking-tighter text-black dark:from-neutral-700 dark:to-neutral-800 dark:text-white">
+                                                {initials}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <span className="absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full border-2 border-background bg-emerald-500 shadow-sm transition-transform duration-300 group-hover:scale-125" />
+                                    </div>
+
+                                    <p className="whitespace-nowrap">
+                                        Welcome!{' '}
+                                        <span className="font-black text-foreground">
+                                            {displayName}
+                                        </span>
+                                    </p>
+
+                                    <ChevronDown className="size-4 opacity-50 transition-transform duration-300 group-data-[state=open]:rotate-180" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                className="min-w-60 rounded-xl border-border/40 bg-background/80 p-2 shadow-2xl backdrop-blur-xl"
+                                align="end"
+                                side="bottom"
+                            >
+                                <UserMenuContent user={auth.user} />
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                ) : (
+                    <div className="hidden items-center gap-3 md:flex">
+                        <Button variant="ghost" asChild className="rounded-xl font-bold">
+                            <Link href="/login">Login</Link>
+                        </Button>
+                        <Button asChild className="rounded-xl bg-bm-gold text-black font-bold hover:bg-bm-gold/90 transition-all">
+                            <Link href="/register">Register</Link>
+                        </Button>
+                    </div>
+                )}
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -603,9 +614,12 @@ export function AppSidebarHeader() {
                             <span className="font-medium">Notification</span>
                         </DropdownMenuItem>
 
-                        <DropdownMenuSeparator className="my-2 bg-border/40" />
-
-                        <UserMenuContent user={auth.user} />
+                        {auth.user && (
+                            <>
+                                <DropdownMenuSeparator className="my-2 bg-border/40" />
+                                <UserMenuContent user={auth.user} />
+                            </>
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
