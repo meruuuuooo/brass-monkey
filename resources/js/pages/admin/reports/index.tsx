@@ -14,7 +14,7 @@ export default function ReportsIndex() {
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Reports', href: '#' }]}>
             <Head title="Reports" />
-            <div className="flex flex-col gap-6 p-4 md:p-6">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <Heading title="Reports" description="Generate and view system reports." />
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {reports.map((r) => (

@@ -121,7 +121,7 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Service Jobs', href: '#' }]}>
             <Head title="Service Jobs" />
-            <div className="flex flex-col gap-6 p-4 md:p-6">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex items-center justify-between">
                     <Heading title="Service Jobs" description="Manage repair requests, estimates, and service pipeline." />
                     <Dialog open={open} onOpenChange={setOpen}>

@@ -60,7 +60,7 @@ export default function OrderShow({ order }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={order.order_number} />
-            <div className="flex flex-col gap-6 p-4 md:p-6 max-w-5xl">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 {/* Header */}
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">

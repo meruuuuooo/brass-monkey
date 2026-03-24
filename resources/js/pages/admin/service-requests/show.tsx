@@ -99,7 +99,7 @@ export default function ServiceRequestShow({ job, technicians }: Props) {
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Service Jobs', href: '/admin/service-requests' }, { title: job.tracking_number, href: '#' }]}>
             <Head title={`Job ${job.tracking_number}`} />
-            <div className="flex flex-col gap-6 p-4 md:p-6 max-w-6xl mx-auto">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 {/* Header */}
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">

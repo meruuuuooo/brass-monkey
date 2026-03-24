@@ -83,7 +83,7 @@ export default function CustomerShow({ customer, segments }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={customer.name} />
-            <div className="flex flex-col gap-6 p-4 md:p-6 max-w-4xl">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 {/* Header Card */}
                 <div className="rounded-3xl border border-border/40 bg-card p-6 flex items-start gap-6">
                     <div className="size-16 rounded-2xl bg-bm-gold/10 flex items-center justify-center shrink-0">

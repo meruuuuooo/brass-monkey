@@ -63,7 +63,7 @@ export default function NotificationShow({ notification, readCount }: Props) {
             <Head title={notification.title} />
             <div className="flex flex-col gap-6 p-4 md:p-6 max-w-4xl">
                 {/* Header */}
-                <div className="flex items-start justify-between">
+                <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => router.get('/admin/notifications')}><ArrowLeft className="size-5" /></Button>
                         <div>

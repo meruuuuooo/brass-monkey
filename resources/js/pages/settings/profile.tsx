@@ -12,7 +12,10 @@ import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 import type { BreadcrumbItem } from '@/types';
-import { User, Mail, Save, UserCircle } from 'lucide-react';
+import { User, Mail, Save, UserCircle, Camera } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useInitials } from '@/hooks/use-initials';
+import { useState, ChangeEvent } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,6 +32,15 @@ export default function Profile({
     status?: string;
 }) {
     const { auth } = usePage().props;
+    const getInitials = useInitials();
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -56,6 +68,35 @@ export default function Profile({
                         >
                             {({ processing, recentlySuccessful, errors }) => (
                                 <>
+                                    <div className="flex flex-col gap-6 md:flex-row md:items-center pb-6 mb-2 border-b border-border/40">
+                                        <div className="relative group">
+                                            <Avatar className="h-24 w-24 border-2 border-border/50 shadow-inner">
+                                                <AvatarImage src={previewUrl || (auth.user.avatar as string)} className="object-cover" />
+                                                <AvatarFallback className="text-2xl font-black bg-bm-gold/10 text-bm-gold">
+                                                    {getInitials(auth.user.name)}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <label
+                                                htmlFor="avatar-upload"
+                                                className="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer backdrop-blur-[2px]"
+                                            >
+                                                <Camera className="w-8 h-8" />
+                                            </label>
+                                            <input
+                                                id="avatar-upload"
+                                                name="avatar"
+                                                type="file"
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={handleAvatarChange}
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <h3 className="text-lg font-bold text-foreground">Profile Image</h3>
+                                            <p className="text-sm font-medium text-muted-foreground">Click the image to select a new one. <br />Recommended: Square, JPG or PNG. Max 2MB.</p>
+                                            <InputError className="mt-2" message={errors.avatar} />
+                                        </div>
+                                    </div>
                                     <div className="grid gap-3 group">
                                         <Label htmlFor="name" className="text-xs font-black tracking-widest text-muted-foreground uppercase ml-1">Full Name</Label>
                                         <div className="relative">

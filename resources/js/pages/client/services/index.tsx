@@ -72,7 +72,7 @@ export default function ServicesIndex({ services }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Our Services" />
 
-            <div className="flex flex-col gap-10 p-4 max-w-7xl mx-auto pb-20">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 {/* Header Section */}
                 <div className="text-center space-y-4 max-w-2xl mx-auto pt-4">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bm-gold/10 text-bm-gold text-xs font-bold tracking-widest uppercase">

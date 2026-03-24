@@ -31,7 +31,7 @@ export default function NotificationsIndex({ notifications }: Props) {
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Notifications', href: '#' }]}>
             <Head title="Notifications" />
-            <div className="flex flex-col gap-6 p-4 md:p-6 max-w-4xl mx-auto w-full">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="Notifications" description="Stay updated with order alerts and service news." />
                     {notifications.data.some(n => !n.pivot.is_read) && (

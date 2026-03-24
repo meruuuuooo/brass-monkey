@@ -14,7 +14,7 @@ import {
     Megaphone,
     AlertTriangle,
 } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -542,6 +542,7 @@ export function AppSidebarHeader() {
                             >
                                 <div className="relative">
                                     <Avatar className="size-7 ring-2 ring-border/20 transition-all group-hover:ring-amber-500/30">
+                                        <AvatarImage src={auth.user.avatar} alt={auth.user.name} className="object-cover" />
                                         <AvatarFallback className="bg-gradient-to-br from-neutral-200 to-neutral-300 text-[10px] font-black tracking-tighter text-black dark:from-neutral-700 dark:to-neutral-800 dark:text-white">
                                             {initials}
                                         </AvatarFallback>

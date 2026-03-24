@@ -100,7 +100,7 @@ export default function TransactionsIndex({ transactions, filters }: Props) {
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Transactions', href: '#' }]}>
             <Head title="Transactions" />
-            <div className="flex flex-col gap-6 p-4 md:p-6">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <Heading title="Transactions" description="View all payment and refund records." />
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="relative flex-1">

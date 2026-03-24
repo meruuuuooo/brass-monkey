@@ -220,7 +220,7 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Purchase Orders" />
-            <div className="flex flex-col gap-6 p-4 md:p-6">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="Purchase Orders" description="Create and manage purchase orders to restock inventory." />
                     <Button className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl gap-2" onClick={() => setIsCreateOpen(true)}>

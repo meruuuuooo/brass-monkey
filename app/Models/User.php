@@ -25,10 +25,21 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
+        'avatar',
         'password',
         'is_active',
         'email_verified_at',
     ];
+
+    /**
+     * Get the user's avatar URL.
+     *
+     * @return string
+     */
+    public function getAvatarAttribute(?string $value): ?string
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

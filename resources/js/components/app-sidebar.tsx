@@ -34,7 +34,7 @@ import { index as users } from '@/actions/App/Http/Controllers/Admin/UserControl
 
 const announcements = AdminActions.AnnouncementController;
 import AppLayout from '@/layouts/app-layout';
-import AppLogo from '@/components/app-logo';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { NavMain } from '@/components/nav-main';
 import {
     Sidebar,
@@ -48,6 +48,7 @@ import {
     SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
+import { useInitials } from '@/hooks/use-initials';
 import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
 import services from '@/routes/services';
@@ -84,11 +85,6 @@ const clientMainNavItems: NavItem[] = [
         title: 'Track Service',
         href: '/track-order',
         icon: Truck,
-    },
-    {
-        title: 'Notifications',
-        href: '/notifications',
-        icon: Bell,
     },
 ];
 
@@ -194,11 +190,6 @@ const adminNavGroups: NavGroup[] = [
                 href: activityLogs.url(),
                 icon: Activity,
             },
-            {
-                title: 'Notifications',
-                href: '/admin/notifications',
-                icon: Bell,
-            },
         ],
     },
 ];
@@ -241,6 +232,7 @@ export function AppSidebar() {
     const mainNavItems = isAdminOrManager
         ? adminMainNavItems
         : clientMainNavItems;
+    const getInitials = useInitials();
 
     return (
         <Sidebar
@@ -256,8 +248,21 @@ export function AppSidebar() {
                             asChild
                             className="h-13 rounded-xl px-2.5 hover:bg-transparent active:bg-transparent data-open:hover:bg-transparent"
                         >
-                            <Link href={dashboard()} prefetch>
-                                <AppLogo subtitle={primaryRole} />
+                            <Link href={dashboard()} prefetch className="flex items-center gap-3">
+                                <Avatar className="h-9 w-9 rounded-lg border border-sidebar-border/50">
+                                    <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                    <AvatarFallback className="rounded-lg bg-bm-gold/10 text-bm-gold font-bold">
+                                        {getInitials(auth.user.name)}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                                    <span className="truncate font-black tracking-tight text-sidebar-foreground">
+                                        {auth.user.name}
+                                    </span>
+                                    <span className="truncate text-[10px] font-bold uppercase tracking-widest text-sidebar-foreground/60">
+                                        {primaryRole}
+                                    </span>
+                                </div>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

@@ -151,7 +151,7 @@ export default function OrdersIndex({ orders, customers, products, filters }: Pr
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Orders', href: '#' }]}>
             <Head title="Orders" />
-            <div className="flex flex-col gap-6 p-4 md:p-6">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="Orders" description="View all orders and create new sales." />
                     <Button className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl gap-2" onClick={() => setIsCreateOpen(true)}>

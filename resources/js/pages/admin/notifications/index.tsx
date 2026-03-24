@@ -123,7 +123,7 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Notifications', href: '#' }]}>
             <Head title="Notifications" />
             <div className="flex flex-col gap-6 p-4 md:p-6">
-                <div className="flex items-center justify-between">
+                <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                     <Heading title="Notifications" description="Manage system and promotional notifications." />
                     <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>

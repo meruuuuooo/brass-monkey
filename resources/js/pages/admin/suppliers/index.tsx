@@ -186,7 +186,7 @@ export default function SuppliersIndex({ suppliers }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Suppliers" />
-            <div className="flex flex-col gap-6 p-4 md:p-6">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="Suppliers" description="Manage your supplier directory." />
                     <Button className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl gap-2" onClick={handleCreate}>

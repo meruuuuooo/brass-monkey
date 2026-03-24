@@ -63,7 +63,7 @@ export default function ClientProductsIndex({ products, categories, filters }: P
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Shop', href: '#' }]}>
             <Head title="Shop Products" />
-            <div className="flex flex-col gap-6 p-4 md:p-6 max-w-7xl mx-auto w-full">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <Heading title="Shop" description="Browse our parts, upgrades, and merchandise." />
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
