@@ -15,6 +15,8 @@ class ActivityLog extends Model
         'ip_address',
         'user_agent',
         'properties',
+        'subject_type',
+        'subject_id',
     ];
 
     protected function casts(): array

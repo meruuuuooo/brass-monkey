@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,8 @@ use Inertia\Response;
 
 class OrderController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $logger) {}
+
     public function index(Request $request): Response
     {
         $query = Order::with(['customer:id,name,email', 'createdBy:id,name'])
@@ -29,7 +32,7 @@ class OrderController extends Controller
             $s = $request->input('search');
             $query->where(function ($q) use ($s) {
                 $q->where('order_number', 'like', "%{$s}%")
-                    ->orWhereHas('customer', fn($c) => $c->where('name', 'like', "%{$s}%")->orWhere('email', 'like', "%{$s}%"));
+                    ->orWhereHas('customer', fn ($c) => $c->where('name', 'like', "%{$s}%")->orWhere('email', 'like', "%{$s}%"));
             });
         }
 
@@ -58,7 +61,9 @@ class OrderController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
 
-        DB::transaction(function () use ($validated, $request) {
+        $order = null;
+
+        DB::transaction(function () use ($validated, $request, &$order) {
             $subtotal = 0;
 
             $order = Order::create([
@@ -114,6 +119,17 @@ class OrderController extends Controller
             }
         });
 
+        if ($order) {
+            $this->logger->log(
+                $request->user(),
+                'order_created',
+                "Created order {$order->order_number} totalling \${$order->total_amount}",
+                properties: ['order_number' => $order->order_number, 'total' => $order->total_amount],
+                subjectType: 'Order',
+                subjectId: $order->id,
+            );
+        }
+
         return redirect()->route('admin.orders.index')
             ->with('success', 'Order created successfully.');
     }
@@ -143,7 +159,7 @@ class OrderController extends Controller
 
         // Refund: create refund transaction and restore stock
         if ($newStatus === 'refunded' && $oldStatus !== 'refunded') {
-            if (!$request->user()->hasRole('Admin')) {
+            if (! $request->user()->hasRole('Admin')) {
                 return back()->with('error', 'Only Administrators can process refunds.');
             }
 
@@ -165,6 +181,15 @@ class OrderController extends Controller
                 $order->update(['status' => 'refunded']);
             });
 
+            $this->logger->log(
+                $request->user(),
+                'order_refunded',
+                "Refunded order {$order->order_number} (\${$order->total_amount})",
+                properties: ['order_number' => $order->order_number, 'amount' => $order->total_amount],
+                subjectType: 'Order',
+                subjectId: $order->id,
+            );
+
             return back()->with('success', 'Order refunded and stock restored.');
         }
 
@@ -177,10 +202,28 @@ class OrderController extends Controller
                 $order->update(['status' => 'cancelled']);
             });
 
+            $this->logger->log(
+                $request->user(),
+                'order_cancelled',
+                "Cancelled order {$order->order_number}",
+                properties: ['order_number' => $order->order_number, 'old_status' => $oldStatus],
+                subjectType: 'Order',
+                subjectId: $order->id,
+            );
+
             return back()->with('success', 'Order cancelled and stock restored.');
         }
 
         $order->update(['status' => $newStatus]);
+
+        $this->logger->log(
+            $request->user(),
+            'order_status_changed',
+            "Order {$order->order_number} status changed from {$oldStatus} to {$newStatus}",
+            properties: ['order_number' => $order->order_number, 'old_status' => $oldStatus, 'new_status' => $newStatus],
+            subjectType: 'Order',
+            subjectId: $order->id,
+        );
 
         return back()->with('success', 'Order status updated.');
     }

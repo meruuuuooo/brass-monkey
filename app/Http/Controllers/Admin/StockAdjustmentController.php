@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\StockAdjustment;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class StockAdjustmentController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $logger) {}
+
     public function index(Request $request): Response
     {
         $query = StockAdjustment::with(['product:id,name,sku', 'adjustedBy:id,name']);
@@ -43,10 +46,12 @@ class StockAdjustmentController extends Controller
             'reason' => 'nullable|string|max:255',
         ]);
 
-        DB::transaction(function () use ($validated, $request) {
+        $adjustment = null;
+
+        DB::transaction(function () use ($validated, $request, &$adjustment) {
             $product = Product::findOrFail($validated['product_id']);
 
-            StockAdjustment::create([
+            $adjustment = StockAdjustment::create([
                 ...$validated,
                 'adjusted_by' => $request->user()->id,
             ]);
@@ -64,6 +69,24 @@ class StockAdjustmentController extends Controller
                 $product->update(['stock_quantity' => $validated['quantity']]);
             }
         });
+
+        if ($adjustment) {
+            $product = Product::find($validated['product_id']);
+            $this->logger->log(
+                $request->user(),
+                'stock_adjusted',
+                "Stock {$validated['type']} of {$validated['quantity']} units for {$product?->name} ({$product?->sku})",
+                properties: [
+                    'product' => $product?->name,
+                    'sku' => $product?->sku,
+                    'type' => $validated['type'],
+                    'quantity' => $validated['quantity'],
+                    'reason' => $validated['reason'] ?? null,
+                ],
+                subjectType: 'StockAdjustment',
+                subjectId: $adjustment->id,
+            );
+        }
 
         return redirect()->route('admin.stock-adjustments.index')
             ->with('success', 'Stock adjustment recorded.');

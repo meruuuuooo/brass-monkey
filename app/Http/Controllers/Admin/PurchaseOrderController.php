@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\Supplier;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,8 @@ use Inertia\Response;
 
 class PurchaseOrderController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $logger) {}
+
     public function index(Request $request): Response
     {
         $query = PurchaseOrder::with(['supplier:id,name', 'orderedBy:id,name', 'approvedBy:id,name'])
@@ -54,7 +57,9 @@ class PurchaseOrderController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
 
-        DB::transaction(function () use ($validated, $request) {
+        $po = null;
+
+        DB::transaction(function () use ($validated, $request, &$po) {
             $po = PurchaseOrder::create([
                 'supplier_id' => $validated['supplier_id'],
                 'order_number' => PurchaseOrder::generateOrderNumber(),
@@ -80,6 +85,18 @@ class PurchaseOrderController extends Controller
 
             $po->update(['total_amount' => $total]);
         });
+
+        if ($po) {
+            $supplier = Supplier::find($validated['supplier_id']);
+            $this->logger->log(
+                $request->user(),
+                'purchase_order_created',
+                "Created PO {$po->order_number} for {$supplier?->name} (\${$po->total_amount})",
+                properties: ['order_number' => $po->order_number, 'supplier' => $supplier?->name, 'total' => $po->total_amount],
+                subjectType: 'PurchaseOrder',
+                subjectId: $po->id,
+            );
+        }
 
         return redirect()->route('admin.purchase-orders.index')
             ->with('success', 'Purchase order created successfully.');
@@ -111,7 +128,7 @@ class PurchaseOrderController extends Controller
         $purchaseOrder->update([
             'status' => $newStatus,
             'approved_by' => $newStatus === 'approved' ? $request->user()->id : $purchaseOrder->approved_by,
-            'ordered_at' => $newStatus === 'submitted' && !$purchaseOrder->ordered_at ? now() : $purchaseOrder->ordered_at,
+            'ordered_at' => $newStatus === 'submitted' && ! $purchaseOrder->ordered_at ? now() : $purchaseOrder->ordered_at,
             'received_at' => $newStatus === 'received' ? now() : $purchaseOrder->received_at,
         ]);
 
@@ -121,6 +138,15 @@ class PurchaseOrderController extends Controller
                 $item->product->increment('stock_quantity', $item->quantity);
             }
         }
+
+        $this->logger->log(
+            $request->user(),
+            'purchase_order_status_changed',
+            "PO {$purchaseOrder->order_number} status changed from {$oldStatus} to {$newStatus}",
+            properties: ['order_number' => $purchaseOrder->order_number, 'old_status' => $oldStatus, 'new_status' => $newStatus],
+            subjectType: 'PurchaseOrder',
+            subjectId: $purchaseOrder->id,
+        );
 
         return redirect()->route('admin.purchase-orders.index')
             ->with('success', 'Purchase order status updated.');
@@ -133,7 +159,19 @@ class PurchaseOrderController extends Controller
                 ->with('error', 'Only draft purchase orders can be deleted.');
         }
 
+        $orderNumber = $purchaseOrder->order_number;
+        $poId = $purchaseOrder->id;
+
         $purchaseOrder->delete();
+
+        $this->logger->log(
+            request()->user(),
+            'purchase_order_deleted',
+            "Deleted purchase order {$orderNumber}",
+            properties: ['order_number' => $orderNumber],
+            subjectType: 'PurchaseOrder',
+            subjectId: $poId,
+        );
 
         return redirect()->route('admin.purchase-orders.index')
             ->with('success', 'Purchase order deleted successfully.');

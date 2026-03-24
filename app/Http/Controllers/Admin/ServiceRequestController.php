@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ServiceOrder;
-use App\Models\ServiceJobNote;
 use App\Models\Service;
+use App\Models\ServiceOrder;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,18 +14,22 @@ use Inertia\Response;
 
 class ServiceRequestController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $logger) {}
+
     public function index(Request $request): Response
     {
         $query = ServiceOrder::with(['customer:id,name,email', 'assignee:id,name', 'service:id,name'])
             ->latest();
 
         if ($status = $request->input('status')) {
-            if ($status !== 'all')
+            if ($status !== 'all') {
                 $query->where('status', $status);
+            }
         }
         if ($priority = $request->input('priority')) {
-            if ($priority !== 'all')
+            if ($priority !== 'all') {
                 $query->where('priority', $priority);
+            }
         }
         if ($assignedTo = $request->input('assigned_to')) {
             if ($assignedTo === 'unassigned') {
@@ -65,14 +69,23 @@ class ServiceRequestController extends Controller
             'estimated_cost' => 'nullable|numeric|min:0',
         ]);
 
-        $trackingNumber = 'JOB-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
+        $trackingNumber = 'JOB-'.date('Ymd').'-'.strtoupper(substr(uniqid(), -5));
 
-        ServiceOrder::create([
+        $job = ServiceOrder::create([
             ...$validated,
             'tracking_number' => $trackingNumber,
             'status' => 'pending',
             'service_type' => Service::find($validated['service_id'])->name,
         ]);
+
+        $this->logger->log(
+            $request->user(),
+            'service_job_created',
+            "Created service job {$trackingNumber} for {$validated['customer_name']}",
+            properties: ['tracking_number' => $trackingNumber, 'service' => $job->service_type, 'priority' => $validated['priority']],
+            subjectType: 'ServiceJob',
+            subjectId: $job->id,
+        );
 
         return back()->with('success', 'Service job created successfully.');
     }
@@ -83,7 +96,7 @@ class ServiceRequestController extends Controller
             'customer:id,name,email',
             'assignee:id,name',
             'service:id,name,price',
-            'notes.author:id,name'
+            'notes.author:id,name',
         ]);
 
         $technicians = User::role(['Admin', 'Manager'])->select('id', 'name')->get();
@@ -104,11 +117,28 @@ class ServiceRequestController extends Controller
             'actual_cost' => 'nullable|numeric|min:0',
         ]);
 
+        $oldStatus = $service_request->status;
+
         if (isset($validated['status']) && $validated['status'] === 'completed' && $service_request->status !== 'completed') {
             $validated['completed_at'] = now();
         }
 
         $service_request->update($validated);
+
+        $changes = [];
+        if (isset($validated['status']) && $validated['status'] !== $oldStatus) {
+            $changes['old_status'] = $oldStatus;
+            $changes['new_status'] = $validated['status'];
+        }
+
+        $this->logger->log(
+            $request->user(),
+            'service_job_updated',
+            "Updated service job {$service_request->tracking_number}".(isset($changes['new_status']) ? " (status: {$oldStatus} → {$changes['new_status']})" : ''),
+            properties: array_merge(['tracking_number' => $service_request->tracking_number], $changes, array_filter($validated)),
+            subjectType: 'ServiceJob',
+            subjectId: $service_request->id,
+        );
 
         return back()->with('success', 'Service job updated successfully.');
     }
@@ -124,6 +154,15 @@ class ServiceRequestController extends Controller
             ...$validated,
             'user_id' => auth()->id(),
         ]);
+
+        $this->logger->log(
+            $request->user(),
+            'service_note_added',
+            "Added {$validated['type']} to job {$service_request->tracking_number}",
+            properties: ['tracking_number' => $service_request->tracking_number, 'note_type' => $validated['type']],
+            subjectType: 'ServiceJob',
+            subjectId: $service_request->id,
+        );
 
         return back()->with('success', 'Note added successfully.');
     }
