@@ -1,9 +1,14 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
+    Activity,
     BarChart3,
+    Bell,
     Bookmark,
     BookText,
     Boxes,
+    ClipboardCheck,
+    ClipboardList,
+    CreditCard,
     HelpCircle,
     LayoutGrid,
     LogOut,
@@ -14,11 +19,12 @@ import {
     ScrollText,
     Settings,
     ShoppingCart,
+    Tag,
     Truck,
     User,
+    UserCircle2,
     Users,
     Wrench,
-    ClipboardList,
 } from 'lucide-react';
 
 import { index as activityLogs } from '@/actions/App/Http/Controllers/Admin/ActivityLogController';
@@ -46,7 +52,7 @@ import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
 import services from '@/routes/services';
 import { edit as editProfile } from '@/routes/profile';
-import type { NavItem } from '@/types';
+import type { NavItem, NavGroup } from '@/types';
 
 const clientMainNavItems: NavItem[] = [
     {
@@ -56,23 +62,13 @@ const clientMainNavItems: NavItem[] = [
     },
     {
         title: 'Shop',
-        href: null,
+        href: '/products',
         icon: ShoppingCart,
     },
     {
-        title: 'Rentals',
-        href: null,
-        icon: Truck,
-    },
-    {
         title: 'Services',
-        href: services.index.url(),
+        href: '/services',
         icon: Wrench,
-    },
-    {
-        title: 'Blog',
-        href: null,
-        icon: Bookmark,
     },
     {
         title: 'My Orders',
@@ -80,14 +76,19 @@ const clientMainNavItems: NavItem[] = [
         icon: PackageCheck,
     },
     {
-        title: 'Profile',
-        href: editProfile(),
-        icon: User,
+        title: 'Repair Jobs',
+        href: '/my-jobs',
+        icon: Activity,
     },
     {
-        title: 'Support',
-        href: null,
-        icon: HelpCircle,
+        title: 'Track Service',
+        href: '/track-order',
+        icon: Truck,
+    },
+    {
+        title: 'Notifications',
+        href: '/notifications',
+        icon: Bell,
     },
 ];
 
@@ -99,61 +100,135 @@ const adminMainNavItems: NavItem[] = [
     },
 ];
 
-const adminNavItems: NavItem[] = [
+const adminNavGroups: NavGroup[] = [
     {
-        title: 'POS / Sales',
-        href: null,
-        icon: ShoppingCart,
+        title: 'Inventory',
+        items: [
+            {
+                title: 'Products',
+                href: '/admin/products',
+                icon: Boxes,
+            },
+            {
+                title: 'Categories',
+                href: '/admin/categories',
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Suppliers',
+                href: '/admin/suppliers',
+                icon: Truck,
+            },
+            {
+                title: 'Purchase Orders',
+                href: '/admin/purchase-orders',
+                icon: ClipboardList,
+            },
+            {
+                title: 'Stock Adjustments',
+                href: '/admin/stock-adjustments',
+                icon: ClipboardCheck,
+            },
+        ],
     },
     {
-        title: 'Rentals Management',
-        href: null,
-        icon: PackageCheck,
+        title: 'CRM',
+        items: [
+            {
+                title: 'Customers',
+                href: '/admin/customers',
+                icon: UserCircle2,
+            },
+            {
+                title: 'Customer Segments',
+                href: '/admin/customer-segments',
+                icon: Tag,
+            },
+        ],
     },
     {
-        title: 'Users',
-        href: users.url(),
-        icon: Users,
+        title: 'Sales & Analytics',
+        items: [
+            {
+                title: 'Orders',
+                href: '/admin/orders',
+                icon: ShoppingCart,
+            },
+            {
+                title: 'Transactions',
+                href: '/admin/transactions',
+                icon: CreditCard,
+            },
+            {
+                title: 'Reports',
+                href: '/admin/reports',
+                icon: BarChart3,
+            },
+        ],
     },
     {
-        title: 'Advertisements',
-        href: ads.url(),
-        icon: Megaphone,
+        title: 'System Management',
+        items: [
+            {
+                title: 'Users',
+                href: users.url(),
+                icon: Users,
+            },
+            {
+                title: 'Advertisements',
+                href: ads.url(),
+                icon: Megaphone,
+            },
+            {
+                title: 'Services Management',
+                href: admin.services.index.url(),
+                icon: Wrench,
+            },
+            {
+                title: 'Service Bookings',
+                href: '/admin/service-requests',
+                icon: ClipboardList,
+            },
+            {
+                title: 'Activity Logs',
+                href: activityLogs.url(),
+                icon: Activity,
+            },
+            {
+                title: 'Notifications',
+                href: '/admin/notifications',
+                icon: Bell,
+            },
+        ],
+    },
+];
+
+const managerNavGroups: NavGroup[] = [
+    {
+        title: 'Inventory',
+        items: [
+            { title: 'Products', href: admin.products.index.url(), icon: PackageCheck },
+            { title: 'Categories', href: admin.categories.index.url(), icon: Tag },
+            { title: 'Suppliers', href: admin.suppliers.index.url(), icon: Truck },
+            { title: 'Purchase Orders', href: admin.purchaseOrders.index.url(), icon: ClipboardCheck },
+            { title: 'Stock Adjustments', href: admin.stockAdjustments.index.url(), icon: Boxes },
+        ],
     },
     {
-        title: 'Blog Management',
-        href: null,
-        icon: BookText,
+        title: 'Sales & CRM',
+        items: [
+            { title: 'Orders', href: admin.orders.index.url(), icon: ShoppingCart },
+            { title: 'Transactions', href: '/admin/transactions', icon: CreditCard },
+            { title: 'Customers', href: '/admin/customers', icon: Users },
+            { title: 'Segments', href: admin.customerSegments.index.url(), icon: Bookmark },
+        ],
     },
     {
-        title: 'Services Management',
-        href: admin.services.index.url(),
-        icon: Wrench,
-    },
-    {
-        title: 'Service Bookings',
-        href: '/admin/service-requests',
-        icon: ClipboardList,
-    },
-    {
-        title: 'History',
-        href: activityLogs.url(),
-        icon: ScrollText,
-    },
-    {
-        title: 'Messaging',
-        href: null,
-        icon: MessageSquare,
-    },
-    {
-        title: 'Reports',
-        href: null,
-        icon: BarChart3,
-    },
-    {
-        title: 'Settings',
-        href: editProfile(),
-        icon: Settings,
+        title: 'Services',
+        items: [
+            { title: 'Service Jobs', href: '/admin/service-requests', icon: Wrench },
+            { title: 'Services Catalog', href: admin.services.index.url(), icon: BookText },
+        ],
     },
 ];
 
@@ -191,7 +266,8 @@ export function AppSidebar() {
 
             <SidebarContent className="py-3">
                 <NavMain items={mainNavItems} />
-                {isAdminOrManager && <NavAdmin items={adminNavItems} />}
+                {roles.includes('Admin') && <NavAdmin groups={adminNavGroups} />}
+                {roles.includes('Manager') && !roles.includes('Admin') && <NavAdmin groups={managerNavGroups} />}
             </SidebarContent>
 
             <SidebarFooter />
@@ -199,42 +275,46 @@ export function AppSidebar() {
     );
 }
 
-function NavAdmin({ items }: { items: NavItem[] }) {
+function NavAdmin({ groups }: { groups: NavGroup[] }) {
     const { isCurrentUrl } = useCurrentUrl();
 
     return (
-        <SidebarGroup className="px-3 py-2">
-            <SidebarGroupLabel className="px-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-sidebar-foreground/70">
-                Administration
-            </SidebarGroupLabel>
-            <SidebarMenu className="gap-1">
-                {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                        {item.href ? (
-                            <SidebarMenuButton
-                                asChild
-                                isActive={isCurrentUrl(item.href)}
-                                tooltip={{ children: item.title }}
-                                className="h-9 rounded-lg px-2.5 text-sm font-medium transition-all duration-150 hover:bg-sidebar-accent/70 hover:pl-3 data-active:bg-sidebar-primary/85 data-active:text-sidebar-primary-foreground data-active:shadow-[inset_3px_0_0_0_hsl(var(--sidebar-primary-foreground)/0.35)]"
-                            >
-                                <Link href={item.href} prefetch>
-                                    {item.icon && <item.icon />}
-                                    <span>{item.title}</span>
-                                </Link>
-                            </SidebarMenuButton>
-                        ) : (
-                            <SidebarMenuButton
-                                disabled
-                                tooltip={{ children: `${item.title} (Coming soon)` }}
-                                className="h-9 cursor-not-allowed rounded-lg px-2.5 text-sm font-medium text-sidebar-foreground/45 opacity-80"
-                            >
-                                {item.icon && <item.icon />}
-                                <span>{item.title}</span>
-                            </SidebarMenuButton>
-                        )}
-                    </SidebarMenuItem>
-                ))}
-            </SidebarMenu>
-        </SidebarGroup>
+        <>
+            {groups.map((group) => (
+                <SidebarGroup key={group.title} className="px-3 py-2">
+                    <SidebarGroupLabel className="px-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-sidebar-foreground/70">
+                        {group.title}
+                    </SidebarGroupLabel>
+                    <SidebarMenu className="gap-1">
+                        {group.items.map((item) => (
+                            <SidebarMenuItem key={item.title}>
+                                {item.href ? (
+                                    <SidebarMenuButton
+                                        asChild
+                                        isActive={isCurrentUrl(item.href)}
+                                        tooltip={{ children: item.title }}
+                                        className="h-9 rounded-lg px-2.5 text-sm font-medium transition-all duration-150 hover:bg-sidebar-accent/70 hover:pl-3 data-active:bg-sidebar-primary/85 data-active:text-sidebar-primary-foreground data-active:shadow-[inset_3px_0_0_0_hsl(var(--sidebar-primary-foreground)/0.35)]"
+                                    >
+                                        <Link href={item.href} prefetch>
+                                            {item.icon && <item.icon />}
+                                            <span>{item.title}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                ) : (
+                                    <SidebarMenuButton
+                                        disabled
+                                        tooltip={{ children: `${item.title} (Coming soon)` }}
+                                        className="h-9 cursor-not-allowed rounded-lg px-2.5 text-sm font-medium text-sidebar-foreground/45 opacity-80"
+                                    >
+                                        {item.icon && <item.icon />}
+                                        <span>{item.title}</span>
+                                    </SidebarMenuButton>
+                                )}
+                            </SidebarMenuItem>
+                        ))}
+                    </SidebarMenu>
+                </SidebarGroup>
+            ))}
+        </>
     );
 }

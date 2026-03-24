@@ -41,8 +41,14 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'roles' => $request->user()?->getRoleNames() ?? [],
+                'unread_notifications_count' => $request->user()?->notifications()->wherePivot('is_read', false)->count() ?? 0,
+                'recent_notifications' => $request->user() ? $request->user()->notifications()
+                    ->withPivot('is_read', 'read_at')
+                    ->latest()
+                    ->take(5)
+                    ->get() : [],
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
 }

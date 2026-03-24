@@ -114,6 +114,42 @@ export const BRASS_MONKEY_COLORS: ThemeColors = {
     radius: '0.625rem',
 };
 
+export const BRASS_MONKEY_V2_COLORS: ThemeColors = {
+    background: 'oklch(0.25 0.01 20)', // #131313 approx dark
+    foreground: 'oklch(0.92 0.01 20)', // #e5e2e1
+    card: 'oklch(0.28 0.01 20)', // #1c1b1b
+    cardForeground: 'oklch(0.92 0.01 20)',
+    popover: 'oklch(0.32 0.01 20)', // #2a2a2a
+    popoverForeground: 'oklch(0.92 0.01 20)',
+    primary: 'oklch(0.85 0.16 85)', // #f2ca50 Radiant Primary
+    primaryForeground: 'oklch(0.24 0.05 85)', // #3c2f00
+    secondary: 'oklch(0.28 0.01 20)', // #1c1b1b
+    secondaryForeground: 'oklch(0.85 0.12 85)', // primary approx
+    muted: 'oklch(0.32 0.01 20)', // #2a2a2a
+    mutedForeground: 'oklch(0.75 0.02 20)', // #d0c5af
+    accent: 'oklch(0.78 0.14 85)', // #d4af37
+    accentForeground: 'oklch(0.24 0.05 85)',
+    destructive: 'oklch(0.55 0.22 25)',
+    destructiveForeground: 'oklch(0.98 0.01 25)',
+    border: 'oklch(0.35 0.02 75)', // #4d4635
+    input: 'oklch(0.22 0.01 20)', // #0e0e0e recessed
+    ring: 'oklch(0.85 0.16 85)',
+    chart1: 'oklch(0.85 0.16 85)',
+    chart2: 'oklch(0.78 0.14 85)',
+    chart3: 'oklch(0.28 0.01 20)',
+    chart4: 'oklch(0.92 0.01 20)',
+    chart5: 'oklch(0.55 0.22 25)',
+    sidebar: 'oklch(0.25 0.01 20)',
+    sidebarForeground: 'oklch(0.92 0.01 20)',
+    sidebarPrimary: 'oklch(0.85 0.16 85)',
+    sidebarPrimaryForeground: 'oklch(0.24 0.05 85)',
+    sidebarAccent: 'oklch(0.28 0.01 20)',
+    sidebarAccentForeground: 'oklch(0.85 0.16 85)',
+    sidebarBorder: 'oklch(0.3 0.01 20)',
+    sidebarRing: 'oklch(0.85 0.16 85)',
+    radius: '0.375rem', // Machined md rounding
+};
+
 /**
  * Apply theme colors to document root by injecting CSS
  */

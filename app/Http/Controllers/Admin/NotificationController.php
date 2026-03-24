@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class NotificationController extends Controller
+{
+    public function index(Request $request): Response
+    {
+        $query = Notification::with('creator:id,name')
+            ->withCount('recipients')
+            ->latest();
+
+        if ($type = $request->input('type')) {
+            $query->where('type', $type);
+        }
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('message', 'like', "%{$search}%");
+            });
+        }
+
+        return Inertia::render('admin/notifications/index', [
+            'notifications' => $query->paginate(15)->withQueryString(),
+            'filters' => $request->only(['type', 'status', 'search']),
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'message' => 'required|string|max:2000',
+            'type' => 'required|in:system,promotional,alert,info',
+            'target' => 'required|in:all,admins,clients',
+            'channel' => 'required|in:in_app,email,both',
+            'send_now' => 'boolean',
+        ]);
+
+        $notification = Notification::create([
+            ...$validated,
+            'status' => 'draft',
+            'created_by' => auth()->id(),
+        ]);
+
+        if ($request->boolean('send_now')) {
+            $notification->sendToTargetUsers();
+        }
+
+        return back()->with('success', $request->boolean('send_now')
+            ? 'Notification sent successfully!'
+            : 'Notification saved as draft.');
+    }
+
+    public function show(Notification $notification): Response
+    {
+        $notification->load([
+            'creator:id,name',
+            'recipients' => fn($q) => $q->select('users.id', 'name', 'email')->latest('notification_user.created_at')->limit(50),
+        ]);
+        $notification->loadCount('recipients');
+        $readCount = $notification->recipients()->wherePivot('is_read', true)->count();
+
+        return Inertia::render('admin/notifications/show', [
+            'notification' => $notification,
+            'readCount' => $readCount,
+        ]);
+    }
+
+    public function update(Request $request, Notification $notification): RedirectResponse
+    {
+        $action = $request->input('action');
+
+        if ($action === 'send' && $notification->status === 'draft') {
+            $notification->sendToTargetUsers();
+            return back()->with('success', 'Notification sent!');
+        }
+
+        if ($action === 'cancel' && in_array($notification->status, ['draft', 'scheduled'])) {
+            $notification->update(['status' => 'cancelled']);
+            return back()->with('success', 'Notification cancelled.');
+        }
+
+        // Edit draft
+        if ($notification->status === 'draft') {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'message' => 'required|string|max:2000',
+                'type' => 'required|in:system,promotional,alert,info',
+                'target' => 'required|in:all,admins,clients',
+                'channel' => 'required|in:in_app,email,both',
+            ]);
+            $notification->update($validated);
+            return back()->with('success', 'Notification updated.');
+        }
+
+        return back()->with('error', 'Cannot modify a sent notification.');
+    }
+
+    public function destroy(Notification $notification): RedirectResponse
+    {
+        $notification->delete();
+        return back()->with('success', 'Notification deleted.');
+    }
+}

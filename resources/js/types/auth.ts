@@ -15,6 +15,8 @@ export type User = {
 export type Auth = {
     user: User;
     roles: string[];
+    unread_notifications_count: number;
+    recent_notifications: any[];
 };
 
 export type TwoFactorSetupData = {

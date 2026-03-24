@@ -26,6 +26,7 @@ interface ServiceOrder {
     status: 'pending' | 'in-progress' | 'completed' | 'ready';
     description: string;
     estimated_completion: string;
+    notes?: { id: number; type: string; content: string; created_at: string }[];
 }
 
 interface Props {
@@ -61,6 +62,7 @@ export default function TrackOrder({ order, query }: Props) {
     const currentStatusIndex = Math.max(statusSteps.findIndex((s) => s.key === order?.status), 0);
     const progressPercent = (currentStatusIndex / (statusSteps.length - 1)) * 100;
     const statusCfg = order ? (STATUS_CONFIG[order.status] ?? STATUS_CONFIG['in-progress']) : null;
+    const latestNote = order?.notes?.[0];
 
     return (
         <div className="min-h-screen bg-bm-dark text-bm-white selection:bg-bm-gold/30 relative overflow-hidden">
@@ -245,16 +247,14 @@ export default function TrackOrder({ order, query }: Props) {
                                                     {/* Step text */}
                                                     <div className={`pb-10 ${isLast ? 'pb-0' : ''}`}>
                                                         <p
-                                                            className={`text-sm font-bold uppercase tracking-wider transition-colors ${
-                                                                isDone || isActive ? 'text-bm-white' : 'text-bm-muted/30'
-                                                            }`}
+                                                            className={`text-sm font-bold uppercase tracking-wider transition-colors ${isDone || isActive ? 'text-bm-white' : 'text-bm-muted/30'
+                                                                }`}
                                                         >
                                                             {step.label}
                                                         </p>
                                                         <p
-                                                            className={`mt-1 text-xs leading-relaxed ${
-                                                                isActive ? 'text-bm-muted' : 'text-bm-muted/30'
-                                                            }`}
+                                                            className={`mt-1 text-xs leading-relaxed ${isActive ? 'text-bm-muted' : 'text-bm-muted/30'
+                                                                }`}
                                                         >
                                                             {step.sub}
                                                         </p>
@@ -294,20 +294,24 @@ export default function TrackOrder({ order, query }: Props) {
                                 {/* Latest Update */}
                                 <div className="rounded-2xl border border-bm-white/10 bg-bm-white/[0.03] p-8 backdrop-blur-xl">
                                     <h3 className="mb-6 text-[11px] font-bold uppercase tracking-[0.2em] text-bm-muted">Latest Update</h3>
-                                    <div className="flex gap-4">
-                                        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bm-gold/10 text-bm-gold">
-                                            <Clock className="h-4 w-4" />
+                                    {latestNote ? (
+                                        <div className="flex gap-4">
+                                            <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bm-gold/10 text-bm-gold">
+                                                <Clock className="h-4 w-4" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold capitalize">{latestNote.type.replace('_', ' ')}</p>
+                                                <p className="mt-2 text-xs leading-relaxed text-bm-muted whitespace-pre-wrap">
+                                                    {latestNote.content}
+                                                </p>
+                                                <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-bm-muted/40">
+                                                    {new Date(latestNote.created_at).toLocaleString()}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-bold">Technician Note</p>
-                                            <p className="mt-2 text-xs leading-relaxed text-bm-muted">
-                                                Alignment diagnostics complete. Calibration sequence initiated — final balancing in progress.
-                                            </p>
-                                            <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-bm-muted/40">
-                                                Just now
-                                            </p>
-                                        </div>
-                                    </div>
+                                    ) : (
+                                        <div className="text-sm text-bm-muted/50 py-4 text-center border border-dashed border-bm-white/10 rounded-xl">No updates posted yet.</div>
+                                    )}
                                 </div>
 
                                 {/* Need Help */}

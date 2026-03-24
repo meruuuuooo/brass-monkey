@@ -1,4 +1,4 @@
-import { usePage } from '@inertiajs/react';
+import { usePage, router, Link } from '@inertiajs/react';
 import {
     Bell,
     BellOff,
@@ -9,6 +9,10 @@ import {
     Palette,
     RotateCcw,
     SunIcon,
+    Check,
+    Info,
+    Megaphone,
+    AlertTriangle,
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -20,8 +24,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserMenuContent } from '@/components/user-menu-content';
-import { useAdvancedThemeCustomization, BRASS_MONKEY_COLORS } from '@/hooks/use-advanced-theme-customization';
+import { useAdvancedThemeCustomization, BRASS_MONKEY_COLORS, BRASS_MONKEY_V2_COLORS } from '@/hooks/use-advanced-theme-customization';
 import { useAppearance } from '@/hooks/use-appearance';
+import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from './ui/drawer';
 import { Input } from './ui/input';
@@ -167,6 +172,16 @@ export function AppSidebarHeader() {
     const { colors, updateColor, resetAllColors, applyPreset } = useAdvancedThemeCustomization();
     const displayName = auth.user?.name ?? 'User';
 
+    const typeConfig: Record<string, { color: string; icon: React.ElementType }> = {
+        system: { color: 'text-blue-500 bg-blue-500/10 border-blue-500/20', icon: Info },
+        promotional: { color: 'text-bm-gold bg-bm-gold/10 border-bm-gold/20', icon: Megaphone },
+        alert: { color: 'text-red-500 bg-red-500/10 border-red-500/20', icon: AlertTriangle },
+        info: { color: 'text-slate-500 bg-slate-500/10 border-slate-500/20', icon: Info },
+    };
+
+    const markAllRead = () => router.post('/notifications/mark-all-read', {}, { preserveScroll: true });
+    const markAsRead = (id: number) => router.post(`/notifications/${id}/read`, {}, { preserveScroll: true });
+
     const initials = displayName
         .split(' ')
         .map((part) => part[0])
@@ -201,7 +216,7 @@ export function AppSidebarHeader() {
                         className="bm-logo-glow relative h-10 w-auto rounded-full border border-amber-600/20 bg-white object-contain p-0.5 shadow-sm transition-all duration-700 group-hover:scale-110 group-hover:border-amber-600/40"
                     />
                 </div>
-                <h3 className="hidden truncate bg-gradient-to-br from-foreground via-foreground to-foreground/50 bg-clip-text text-sm font-black tracking-tight text-transparent transition-all duration-500 group-hover:tracking-normal md:block sm:text-base lg:text-xl">
+                <h3 className="hidden truncate bg-linear-to-br from-foreground via-foreground to-foreground/50 bg-clip-text text-sm font-black tracking-tight text-transparent transition-all duration-500 group-hover:tracking-normal md:block sm:text-base lg:text-xl">
                     Brass Monkey Repair and Rental
                 </h3>
             </div>
@@ -262,6 +277,14 @@ export function AppSidebarHeader() {
                                             className="h-9 rounded-xl border-amber-600/30 bg-amber-50/50 text-amber-900 transition-all hover:bg-amber-100/80 hover:shadow-sm dark:bg-amber-900/10 dark:text-amber-100"
                                         >
                                             Brass Monkey
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => applyPreset(BRASS_MONKEY_V2_COLORS)}
+                                            className="h-9 rounded-md border-amber-600/30 bg-amber-950 text-amber-100 transition-all hover:bg-amber-900 hover:shadow-[0_0_15px_rgba(242,202,80,0.2)]"
+                                        >
+                                            Brass Monkey V2
                                         </Button>
                                     </div>
                                 </div>
@@ -407,40 +430,105 @@ export function AppSidebarHeader() {
                                 type="button"
                                 aria-label="Notifications"
                                 title="Notifications"
-                                className="flex size-9 cursor-pointer items-center justify-center rounded-xl border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-90"
+                                className="relative flex size-9 cursor-pointer items-center justify-center rounded-xl border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md hover:shadow-amber-500/5 active:scale-90"
                             >
                                 <Bell className="size-5" />
+                                {auth.unread_notifications_count > 0 && (
+                                    <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-bm-gold px-1 text-[10px] font-black text-black ring-2 ring-background">
+                                        {auth.unread_notifications_count > 9 ? '9+' : auth.unread_notifications_count}
+                                    </span>
+                                )}
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
-                            className="w-80 overflow-hidden rounded-2xl border-border/40 bg-background/80 p-0 shadow-2xl backdrop-blur-xl"
+                            className="w-80 overflow-hidden rounded-2xl border-border/40 bg-background/95 p-0 shadow-2xl backdrop-blur-xl"
                             align="end"
                             side="bottom"
                         >
-                            <div className="flex items-center justify-between border-b border-border/40 px-4 py-3">
+                            <div className="flex items-center justify-between border-b border-border/40 px-4 py-3 bg-muted/20">
                                 <h3 className="text-sm font-bold tracking-tight">Notifications</h3>
+                                {auth.unread_notifications_count > 0 && (
+                                    <button
+                                        onClick={markAllRead}
+                                        className="text-[10px] font-black uppercase tracking-widest text-bm-gold hover:text-bm-gold/80 transition-colors"
+                                    >
+                                        Clear All
+                                    </button>
+                                )}
                             </div>
 
-                            <div className="flex flex-col items-center justify-center space-y-3 px-6 py-10 text-center">
-                                <div className="relative">
-                                    <div className="absolute -inset-4 rounded-full bg-amber-500/10 blur-2xl dark:bg-amber-900/20" />
-                                    <div className="relative flex size-16 items-center justify-center rounded-full border border-amber-600/10 bg-amber-500/5 dark:bg-amber-900/10">
-                                        <BellOff className="size-7 text-amber-600/40" />
+                            <div className="max-h-[400px] overflow-y-auto">
+                                {auth.recent_notifications.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center space-y-3 px-6 py-10 text-center">
+                                        <div className="relative">
+                                            <div className="absolute -inset-4 rounded-full bg-amber-500/10 blur-2xl dark:bg-amber-900/20" />
+                                            <div className="relative flex size-16 items-center justify-center rounded-full border border-amber-600/10 bg-amber-500/5 dark:bg-amber-900/10">
+                                                <BellOff className="size-7 text-amber-600/40" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-bold text-foreground">No notifications yet</p>
+                                            <p className="text-xs text-muted-foreground">We'll let you know when something important happens.</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-sm font-bold text-foreground">No notifications yet</p>
-                                    <p className="text-xs text-muted-foreground">We'll let you know when something important happens.</p>
-                                </div>
+                                ) : (
+                                    <div className="py-2">
+                                        {auth.recent_notifications.map((notif) => {
+                                            const cfg = typeConfig[notif.type] || typeConfig.info;
+                                            const Icon = cfg.icon;
+                                            const isRead = notif.pivot?.is_read;
+
+                                            return (
+                                                <div
+                                                    key={notif.id}
+                                                    className={cn(
+                                                        "group/item relative px-4 py-3 hover:bg-muted/40 transition-colors border-l-2",
+                                                        isRead ? "border-transparent" : "border-bm-gold bg-bm-gold/5"
+                                                    )}
+                                                >
+                                                    <div className="flex gap-3">
+                                                        <div className={cn("size-8 rounded-lg flex items-center justify-center shrink-0 border", cfg.color)}>
+                                                            <Icon className="size-4" />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-start justify-between gap-2">
+                                                                <p className={cn("text-xs font-bold leading-none", isRead ? "text-foreground/80" : "text-foreground")}>
+                                                                    {notif.title}
+                                                                </p>
+                                                                <span className="text-[9px] text-muted-foreground whitespace-nowrap">
+                                                                    {new Date(notif.created_at).toLocaleDateString()}
+                                                                </span>
+                                                            </div>
+                                                            <p className={cn("text-[11px] mt-1 line-clamp-2 leading-relaxed", isRead ? "text-muted-foreground/70" : "text-muted-foreground")}>
+                                                                {notif.message}
+                                                            </p>
+                                                            {!isRead && (
+                                                                <button
+                                                                    onClick={() => markAsRead(notif.id)}
+                                                                    className="mt-2 flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-bm-gold opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                                                >
+                                                                    <Check className="size-3" /> Mark Read
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="border-t border-border/40 bg-muted/20 p-2">
                                 <Button
                                     variant="outline"
-                                    className="h-10 w-full gap-2 rounded-xl border-amber-600/20 bg-amber-500/5 text-sm font-bold text-amber-600 transition-all hover:bg-amber-500 hover:text-white dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-400 dark:hover:bg-amber-600 dark:hover:text-white"
+                                    asChild
+                                    className="h-9 w-full gap-2 rounded-xl border-amber-600/20 bg-amber-500/5 text-xs font-bold text-amber-600 transition-all hover:bg-amber-500 hover:text-white dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-400 dark:hover:bg-amber-600 dark:hover:text-white"
                                 >
-                                    <ExternalLink className="size-4" />
-                                    View All Notifications
+                                    <Link href="/notifications">
+                                        <ExternalLink className="size-3" />
+                                        View All Notifications
+                                    </Link>
                                 </Button>
                             </div>
                         </DropdownMenuContent>

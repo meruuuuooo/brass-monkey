@@ -41,9 +41,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
     Route::post('/services/book', [ServiceController::class, 'book'])->name('services.book');
 
+    // Shop / Catalog
+    Route::get('/products', [\App\Http\Controllers\Client\ProductController::class, 'index'])->name('client.products.index');
+    Route::post('/products/{product}/purchase', [\App\Http\Controllers\Client\ProductController::class, 'purchase'])->name('client.products.purchase');
+
     // My Orders
     Route::get('/my-orders', [\App\Http\Controllers\Client\OrderController::class, 'index'])->name('client.orders.index');
+
+    // My Service Jobs
+    Route::get('/my-jobs', [\App\Http\Controllers\Client\ServiceJobController::class, 'index'])->name('client.jobs.index');
+    Route::get('/my-jobs/{job}', [\App\Http\Controllers\Client\ServiceJobController::class, 'show'])->name('client.jobs.show');
+    Route::post('/my-jobs/{job}/approve', [\App\Http\Controllers\Client\ServiceJobController::class, 'approveEstimate'])->name('client.jobs.approve');
+    Route::post('/my-jobs/{job}/review', [\App\Http\Controllers\Client\ServiceJobController::class, 'submitReview'])->name('client.jobs.review');
+
+    // Notifications
+    Route::get('/notifications', [\App\Http\Controllers\Client\NotificationController::class, 'index'])->name('client.notifications.index');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\Client\NotificationController::class, 'markAsRead'])->name('client.notifications.read');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Client\NotificationController::class, 'markAllAsRead'])->name('client.notifications.read-all');
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/admin.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/admin.php';

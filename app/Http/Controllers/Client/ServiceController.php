@@ -31,11 +31,13 @@ class ServiceController extends Controller
         $user = $request->user();
 
         $order = ServiceOrder::create([
-            'tracking_number' => 'SRV-'.strtoupper(Str::random(8)),
+            'tracking_number' => 'SRV-' . strtoupper(Str::random(8)),
+            'user_id' => $user->id,
+            'service_id' => $service->id,
             'customer_name' => $user->name,
             'service_type' => $service->name,
             'status' => 'pending',
-            'description' => $request->notes ?? 'Booking for '.$service->name,
+            'description' => $request->notes ?? 'Booking for ' . $service->name,
             'estimated_completion' => now()->addDays(7), // Default estimate
         ]);
 

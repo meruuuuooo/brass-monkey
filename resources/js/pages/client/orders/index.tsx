@@ -1,248 +1,105 @@
-import { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
-import { 
-    PackageCheck, 
-    Calendar,
-    Clock,
-    Wrench,
-    CheckCircle2,
-    XCircle,
-    Info,
-    Hash,
-    MoreVertical,
-    Eye,
-    ClipboardList
-} from 'lucide-react';
-
 import AppLayout from '@/layouts/app-layout';
-import { Card } from '@/components/ui/card';
+import { Head } from '@inertiajs/react';
+import { ShoppingBag, Package, Calendar, DollarSign, Download, ArrowRight, CreditCard } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
-import { BreadcrumbItem } from '@/types';
+import Heading from '@/components/heading';
+import { Pagination } from '@/components/ui/pagination';
 
-interface Order {
-    id: number;
-    tracking_number: string;
-    customer_name: string;
-    service_type: string;
-    status: 'pending' | 'accepted' | 'completed' | 'rejected';
-    description: string | null;
-    estimated_completion: string | null;
-    created_at: string;
+interface OrderItem {
+    id: number; quantity: number; unit_price: number; total_price: number; product_name: string;
+    product: { id: number; name: string; image_path: string | null } | null;
 }
 
-interface PaginatedData<T> {
-    data: T[];
-    links: any[];
-    current_page: number;
-    last_page: number;
-    total: number;
+interface Order {
+    id: number; order_number: string; status: string; total_amount: number; created_at: string;
+    items: OrderItem[]; payment_method: string | null;
 }
 
 interface Props {
-    orders: PaginatedData<Order>;
+    orders: { data: Order[]; links: any[]; current_page: number; last_page: number };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'My Orders', href: '/my-orders' },
-];
+const statusColors: Record<string, string> = {
+    pending: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+    processing: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+    completed: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+    refunded: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+    cancelled: 'bg-slate-500/10 text-slate-500 border-slate-500/20',
+};
 
-export default function MyOrders({ orders }: Props) {
-    const [viewOrder, setViewOrder] = useState<Order | null>(null);
-
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case 'pending': 
-                return <Badge variant="outline" className="bg-amber-50 text-amber-600 hover:bg-amber-50 hover:text-amber-600 border-amber-200"><Clock className="w-3 h-3 mr-1" /> Pending</Badge>;
-            case 'accepted': 
-                return <Badge variant="outline" className="bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600 border-blue-200"><Info className="w-3 h-3 mr-1" /> Accepted</Badge>;
-            case 'completed': 
-                return <Badge variant="outline" className="bg-emerald-50 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-600 border-emerald-200"><CheckCircle2 className="w-3 h-3 mr-1" /> Completed</Badge>;
-            case 'rejected': 
-                return <Badge variant="outline" className="bg-rose-50 text-rose-600 hover:bg-rose-50 hover:text-rose-600 border-rose-200"><XCircle className="w-3 h-3 mr-1" /> Rejected</Badge>;
-            default: 
-                return <Badge variant="outline">Unknown</Badge>;
-        }
-    };
-
+export default function ClientOrdersIndex({ orders }: Props) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Order History', href: '#' }]}>
             <Head title="My Orders" />
+            <div className="flex flex-col gap-6 p-4 md:p-6 max-w-5xl mx-auto w-full">
+                <Heading title="Order History" description="View your past purchases and download receipts." />
 
-            <div className="flex flex-col gap-6 p-4 md:p-8 w-full pb-20">
-                {/* Header Section */}
-                <div className="flex items-center justify-between pt-2">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">My Orders</h1>
-                        <p className="text-muted-foreground">View the status and updates of your service requests.</p>
+                {orders.data.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center p-12 mt-4 space-y-4 rounded-2xl border border-dashed border-border/60 bg-muted/20">
+                        <ShoppingBag className="size-10 text-muted-foreground" />
+                        <h4 className="text-lg font-bold">No Orders Found</h4>
+                        <p className="text-muted-foreground text-sm">You haven't made any purchases yet.</p>
+                        <Button variant="outline" className="rounded-xl mt-2" asChild>
+                            <a href="/products">Browse Shop</a>
+                        </Button>
                     </div>
-                </div>
-
-                {/* Orders Table */}
-                <Card className="border-sidebar-border/50 shadow-sm overflow-hidden mt-2">
-                    <Table>
-                        <TableHeader className="bg-muted/30">
-                            <TableRow>
-                                <TableHead className="w-[150px]">Tracking No.</TableHead>
-                                <TableHead>Service Type</TableHead>
-                                <TableHead>Date Requested</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {orders.data.length > 0 ? (
-                                orders.data.map((order) => (
-                                    <TableRow key={order.id} className="hover:bg-muted/20 transition-colors">
-                                        <TableCell className="font-medium text-bm-gold">{order.tracking_number}</TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-muted">
-                                                    <Wrench className="h-3 w-3 text-muted-foreground" />
+                ) : (
+                    <div className="space-y-6">
+                        {orders.data.map(order => (
+                            <Card key={order.id} className="rounded-2xl border-border/40 bg-background/50 overflow-hidden shadow-sm">
+                                <CardHeader className="bg-muted/30 border-b border-border/40 py-4 flex flex-row items-start justify-between">
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <CardTitle className="font-mono font-black text-lg tracking-tight">{order.order_number}</CardTitle>
+                                            <Badge variant="outline" className={`${statusColors[order.status] || 'bg-muted text-foreground'} uppercase text-[10px] font-black tracking-wider rounded-md`}>
+                                                {order.status}
+                                            </Badge>
+                                        </div>
+                                        <div className="text-sm text-muted-foreground flex items-center gap-4">
+                                            <span className="flex items-center gap-1.5"><Calendar className="size-3.5" /> {new Date(order.created_at).toLocaleDateString()}</span>
+                                            {order.payment_method && <span className="flex items-center gap-1.5 capitalize"><CreditCard className="size-3.5" /> {order.payment_method}</span>}
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-xl font-black font-mono tracking-tighter text-emerald-500">${Number(order.total_amount).toFixed(2)}</div>
+                                        <div className="text-xs text-muted-foreground font-semibold uppercase mt-0.5">Total</div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="p-0">
+                                    <div className="divide-y divide-border/40">
+                                        {order.items.map(item => (
+                                            <div key={item.id} className="flex items-center justify-between p-4 hover:bg-muted/10 transition-colors">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="size-12 rounded-xl bg-muted/30 border border-border/40 flex items-center justify-center overflow-hidden shrink-0">
+                                                        {item.product?.image_path ? (
+                                                            <img src={`/storage/${item.product.image_path}`} alt={item.product_name} className="object-cover w-full h-full" />
+                                                        ) : (
+                                                            <Package className="size-5 text-muted-foreground/50" />
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-sm">{item.product_name}</h4>
+                                                        <p className="text-xs text-muted-foreground mt-0.5">Qty: {item.quantity} × ${Number(item.unit_price).toFixed(2)}</p>
+                                                    </div>
                                                 </div>
-                                                <span className="font-medium">{order.service_type}</span>
+                                                <div className="font-mono font-bold text-sm text-right">
+                                                    ${Number(item.total_price).toFixed(2)}
+                                                </div>
                                             </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center text-muted-foreground">
-                                                <Calendar className="mr-1.5 h-3.5 w-3.5" />
-                                                {new Date(order.created_at).toLocaleDateString(undefined, {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric'
-                                                })}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            {getStatusBadge(order.status)}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted rounded-full">
-                                                        <MoreVertical className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-48 rounded-xl border-border/50">
-                                                    <DropdownMenuItem className="cursor-pointer" onClick={() => setViewOrder(order)}>
-                                                        <Eye className="mr-2 h-4 w-4" /> View Details & Notes
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="h-48 text-center text-muted-foreground italic">
-                                        You don't have any service bookings yet.
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </Card>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                        <Pagination
+                            links={orders.links}
+                            className="mt-6"
+                        />
+                    </div>
+                )}
             </div>
-
-            {/* View Order Details Modal */}
-            <Dialog open={!!viewOrder} onOpenChange={(open) => !open && setViewOrder(null)}>
-                <DialogContent className="sm:max-w-xl rounded-3xl border-border/50 bg-background overflow-hidden p-0">
-                    {viewOrder && (
-                        <div className="flex flex-col">
-                            <DialogHeader className="p-6 md:p-8 pb-6 border-b border-border/40 bg-muted/10">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <DialogTitle className="text-xl md:text-2xl font-black tracking-tight mb-2">
-                                            Order Details
-                                        </DialogTitle>
-                                        <DialogDescription className="text-sm font-medium">
-                                            Detailed view for order <span className="text-bm-gold font-bold">{viewOrder.tracking_number}</span>
-                                        </DialogDescription>
-                                    </div>
-                                    <div>
-                                        {getStatusBadge(viewOrder.status)}
-                                    </div>
-                                </div>
-                            </DialogHeader>
-
-                            <div className="p-6 md:p-8 space-y-8">
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Service Type</p>
-                                        <div className="flex items-center gap-2">
-                                            <Wrench className="w-3.5 h-3.5 text-muted-foreground" />
-                                            <p className="font-bold text-foreground text-sm">{viewOrder.service_type}</p>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Date Requested</p>
-                                        <div className="flex items-center gap-2">
-                                            <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
-                                            <p className="font-bold text-foreground text-sm">
-                                                {new Date(viewOrder.created_at).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    {viewOrder.estimated_completion && (
-                                        <div className="space-y-1 col-span-2 p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-400">Estimated Completion</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <Clock className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
-                                                <p className="font-bold text-amber-700 dark:text-amber-400 text-sm">
-                                                    {new Date(viewOrder.estimated_completion).toLocaleDateString()}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="space-y-3">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Request Notes</p>
-                                    <div className="bg-muted/30 rounded-2xl p-4 border border-border/50 min-h-[100px]">
-                                        {viewOrder.description ? (
-                                            <p className="text-sm font-medium leading-relaxed">
-                                                {viewOrder.description}
-                                            </p>
-                                        ) : (
-                                            <p className="text-sm italic text-muted-foreground/70">
-                                                No additional notes or description provided for this request.
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="p-6 border-t border-border/40 bg-muted/10 flex justify-end">
-                                <Button onClick={() => setViewOrder(null)}>
-                                    Close Details
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
         </AppLayout>
     );
 }

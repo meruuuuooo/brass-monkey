@@ -15,7 +15,11 @@ class TrackOrderController extends Controller
         $order = null;
 
         if ($trackingNumber) {
-            $order = ServiceOrder::where('tracking_number', $trackingNumber)->first();
+            $order = ServiceOrder::with([
+                'notes' => function ($query) {
+                    $query->latest()->limit(1);
+                }
+            ])->where('tracking_number', $trackingNumber)->first();
         }
 
         return Inertia::render('track-order', [
