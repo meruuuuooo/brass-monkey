@@ -54,6 +54,7 @@ import admin from '@/routes/admin';
 import services from '@/routes/services';
 import { edit as editProfile } from '@/routes/profile';
 import type { NavItem, NavGroup } from '@/types';
+import AppLogo from './app-logo';
 
 const clientMainNavItems: NavItem[] = [
     {
@@ -248,7 +249,7 @@ export function AppSidebar() {
                             asChild
                             className="h-13 rounded-xl px-2.5 hover:bg-transparent active:bg-transparent data-open:hover:bg-transparent"
                         >
-                            <Link href={dashboard()} prefetch className="flex items-center gap-3">
+                            {/* <Link href={dashboard()} prefetch className="flex items-center gap-3">
                                 <Avatar className="h-9 w-9 rounded-lg border border-sidebar-border/50">
                                     <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
                                     <AvatarFallback className="rounded-lg bg-bm-gold/10 text-bm-gold font-bold">
@@ -263,6 +264,9 @@ export function AppSidebar() {
                                         {primaryRole}
                                     </span>
                                 </div>
+                            </Link> */}
+                            <Link href={dashboard()} prefetch>
+                                <AppLogo subtitle={primaryRole} />
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
