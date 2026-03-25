@@ -282,7 +282,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
                                 variant="ghost"
                                 size="icon"
                                 title="Publish Now"
-                                className="size-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                                className="size-8 p-0 cursor-pointer text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
                                 onClick={() => handlePublish(row.original)}
                             >
                                 <Globe2 className="size-4" />
@@ -292,7 +292,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
                             variant="ghost"
                             size="icon"
                             title="Edit"
-                            className="size-8 p-0"
+                            className="size-8 p-0 cursor-pointer"
                             onClick={() => handleEdit(row.original)}
                         >
                             <Edit2 className="size-4" />
@@ -302,7 +302,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
                                 variant="ghost"
                                 size="icon"
                                 title="Archive"
-                                className="size-8 p-0 text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                                className="size-8 p-0 cursor-pointer text-amber-600 hover:text-amber-700 hover:bg-amber-50"
                                 onClick={() => handleArchive(row.original)}
                             >
                                 <Archive className="size-4" />
@@ -312,7 +312,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
                             variant="ghost"
                             size="icon"
                             title="Delete"
-                            className="size-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                            className="size-8 p-0 cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50"
                             onClick={() => handleDelete(row.original)}
                         >
                             <Trash2 className="size-4" />

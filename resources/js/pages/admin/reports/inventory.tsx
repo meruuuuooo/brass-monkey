@@ -69,10 +69,6 @@ export default function InventoryReport({ products, summary, recentAdjustments }
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Inventory Report" />
             <div className="flex flex-col gap-6 p-4 md:p-6">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => router.get('/admin/reports')}><ArrowLeft className="size-5" /></Button>
-                    <div><h1 className="text-2xl font-black tracking-tight">Inventory Report</h1><p className="text-sm text-muted-foreground">Stock levels and valuations.</p></div>
-                </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                     {kpis.map((k) => (

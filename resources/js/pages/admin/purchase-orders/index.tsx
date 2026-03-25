@@ -144,17 +144,17 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
                 return (
                     <div className="flex justify-end gap-1">
                         {next && (
-                            <Button variant="ghost" size="sm" className="text-xs font-bold text-bm-gold" onClick={() => handleStatusChange(po, next)}>
+                            <Button variant="ghost" size="sm" className="cursor-pointer text-xs font-bold text-bm-gold" onClick={() => handleStatusChange(po, next)}>
                                 {next === 'submitted' ? 'Submit' : next === 'approved' ? 'Approve' : 'Mark Received'}
                             </Button>
                         )}
                         {po.status !== 'received' && po.status !== 'cancelled' && (
-                            <Button variant="ghost" size="sm" className="text-xs text-red-500" onClick={() => handleStatusChange(po, 'cancelled')}>
+                            <Button variant="ghost" size="sm" className="cursor-pointer text-xs text-red-500" onClick={() => handleStatusChange(po, 'cancelled')}>
                                 Cancel
                             </Button>
                         )}
                         {po.status === 'draft' && (
-                            <Button variant="ghost" size="icon" className="size-8 text-red-500 hover:bg-red-50" onClick={() => handleDelete(po)}>
+                            <Button variant="ghost" size="icon" className="cursor-pointer size-8 text-red-500 hover:bg-red-50" onClick={() => handleDelete(po)}>
                                 <Trash2 className="size-4" />
                             </Button>
                         )}

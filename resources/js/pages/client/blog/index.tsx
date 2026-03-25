@@ -111,7 +111,7 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
                         {(filters.category || filters.tag || filters.search) && (
                             <div className="flex items-center justify-between">
                                 <span className="text-sm font-bold text-muted-foreground">Active Filters</span>
-                                <Button variant="link" size="sm" onClick={clearFilters} className="text-red-500 h-auto p-0">Clear All</Button>
+                                <Button variant="link" size="sm" onClick={clearFilters} className="text-red-500 cursor-pointer h-auto p-0">Clear All</Button>
                             </div>
                         )}
 
@@ -122,7 +122,7 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
                                     <button
                                         key={cat.id}
                                         onClick={() => handleFilter('category', cat.slug)}
-                                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors ${filters.category === cat.slug
+                                        className={`flex items-center cursor-pointer justify-between px-3 py-2 rounded-xl text-sm transition-colors ${filters.category === cat.slug
                                             ? 'bg-bm-gold text-black font-bold shadow-md shadow-bm-gold/20'
                                             : 'hover:bg-muted font-medium text-muted-foreground hover:text-foreground'
                                             }`}

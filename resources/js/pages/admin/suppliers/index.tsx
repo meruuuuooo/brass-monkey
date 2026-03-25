@@ -3,7 +3,7 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import {
-    Plus, Search, Edit2, Trash2, CheckCircle2, XCircle, Truck, Phone, Mail,
+    Plus, Search, Edit2, Trash2, CheckCircle2, XCircle, Truck, Phone, Mail, MoreVertical,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,14 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Supplier {
     id: number;
@@ -132,14 +140,34 @@ export default function SuppliersIndex({ suppliers }: Props) {
         {
             id: 'actions',
             cell: ({ row }) => (
-                <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="icon" className="size-8" onClick={() => handleEdit(row.original)}>
-                        <Edit2 className="size-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="size-8 text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(row.original)}>
-                        <Trash2 className="size-4" />
-                    </Button>
-                </div>
+                <div className="flex justify-end">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="size-8 h-8 w-8 p-0 cursor-pointer">
+                                <span className="sr-only">Open menu</span>
+                                <MoreVertical className="size-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-xl">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                onClick={() => handleEdit(row.original)}
+                            >
+                                <Edit2 className="mr-2 size-4" />
+                                Edit Supplier
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                className="cursor-pointer text-red-500 focus:text-red-500"
+                                onClick={() => handleDelete(row.original)}
+                            >
+                                <Trash2 className="mr-2 size-4" />
+                                Delete Supplier
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>  
             ),
         },
     ], []);

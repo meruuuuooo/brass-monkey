@@ -135,11 +135,11 @@ export default function BlogShow({ post, related }: Props) {
 
             <main className="pt-24 pb-16">
                 <article className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 mt-10">
-                    <div className="mb-10">
+                    {/* <div className="mb-10">
                         <Link href="/#blogs" className="inline-flex items-center text-sm font-bold text-bm-muted hover:text-bm-gold uppercase tracking-wider transition-colors group">
                             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to Articles
                         </Link>
-                    </div>
+                    </div> */}
 
                     <header className="mb-12 text-center space-y-6">
                         <div className="flex flex-wrap justify-center gap-2 mb-6">
@@ -181,7 +181,7 @@ export default function BlogShow({ post, related }: Props) {
                     {post.featured_image_path && (
                         <div className="rounded-3xl overflow-hidden border border-bm-white/10 shadow-2xl shadow-bm-gold/5 mb-16 aspect-21/9 bg-bm-dark">
                             <img
-                                src={`/storage/${post.featured_image_path}`}
+                                src={post.featured_image_path.startsWith('http') ? post.featured_image_path : `/storage/${post.featured_image_path}`}
                                 alt={post.title}
                                 className="w-full h-full object-cover"
                             />
@@ -289,7 +289,11 @@ export default function BlogShow({ post, related }: Props) {
                                     <Link key={rel.id} href={`/blog-article/${rel.slug}`} className="group h-full flex flex-col rounded-3xl border border-bm-white/10 bg-bm-white/2 overflow-hidden hover:border-bm-gold/30 hover:bg-bm-white/4 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-bm-gold/10 relative">
                                         <div className="aspect-[4/3] bg-bm-dark/50 relative overflow-hidden">
                                             {rel.featured_image_path ? (
-                                                <img src={`/storage/${rel.featured_image_path}`} alt={rel.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                                <img
+                                                    src={rel.featured_image_path.startsWith('http') ? rel.featured_image_path : `/storage/${rel.featured_image_path}`}
+                                                    alt={rel.title}
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
                                                     <FileText className="h-12 w-12 text-bm-white/10" />

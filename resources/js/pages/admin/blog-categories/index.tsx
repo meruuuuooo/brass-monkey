@@ -120,7 +120,7 @@ export default function BlogCategoriesIndex({ categories }: Props) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="size-8 h-8 w-8 p-0"
+                            className="size-8 cursor-pointer h-8 w-8 p-0"
                             onClick={() => handleEdit(row.original)}
                         >
                             <Edit2 className="size-4" />
@@ -128,7 +128,7 @@ export default function BlogCategoriesIndex({ categories }: Props) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="size-8 h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                            className="size-8 cursor-pointer h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
                             onClick={() => handleDelete(row.original)}
                         >
                             <Trash2 className="size-4" />

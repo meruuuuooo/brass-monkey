@@ -125,7 +125,7 @@ export default function BlogCommentsIndex({ comments }: Props) {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 text-xs font-medium"
+                            className="h-8 cursor-pointer text-xs font-medium"
                             onClick={() => handleToggleApprove(row.original)}
                         >
                             {row.original.is_approved ? 'Unapprove' : 'Approve'}
@@ -133,7 +133,7 @@ export default function BlogCommentsIndex({ comments }: Props) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="size-8 h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                            className="size-8 cursor-pointer h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
                             onClick={() => handleDelete(row.original)}
                         >
                             <Trash2 className="size-4" />

@@ -107,14 +107,14 @@ export default function Dashboard(props: Props) {
                 <div className="grid flex-1 gap-6 lg:grid-cols-3">
                     {/* Calendar */}
                     <Card className="flex flex-col overflow-hidden border-border/40 bg-background/50 lg:col-span-2 shadow-sm backdrop-blur-sm rounded-2xl">
-                        <CardContent className="p-6 flex-1">
+                        <CardContent className="p-5 flex-1">
                             <DashboardCalendar selectedDate={selectedDate} onDateSelect={setSelectedDate} items={calendarItems} />
                         </CardContent>
                     </Card>
 
                     {/* Due Dates */}
                     <Card className="flex flex-col overflow-hidden border-border/40 bg-background/50 shadow-sm backdrop-blur-sm rounded-2xl">
-                        <CardContent className="p-6 flex-1">
+                        <CardContent className="p-5 flex-1">
                             <DashboardDueDates selectedDate={selectedDate} onClearSelection={() => setSelectedDate(null)} serviceOrders={serviceOrders} />
                         </CardContent>
                     </Card>

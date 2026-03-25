@@ -11,6 +11,7 @@ import {
     XCircle,
     FolderTree,
     Layers,
+    MoreVertical,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +37,14 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ParentCategory {
     id: number;
@@ -165,23 +174,33 @@ export default function CategoriesIndex({ categories, parentCategories }: Props)
             {
                 id: 'actions',
                 cell: ({ row }) => (
-                    <div className="flex justify-end gap-2">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 h-8 w-8 p-0"
-                            onClick={() => handleEdit(row.original)}
-                        >
-                            <Edit2 className="size-4" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
-                            onClick={() => handleDelete(row.original)}
-                        >
-                            <Trash2 className="size-4" />
-                        </Button>
+                    <div className="flex justify-end">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="size-8 h-8 w-8 p-0 cursor-pointer">
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreVertical className="size-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="rounded-xl">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    className="cursor-pointer"
+                                    onClick={() => handleEdit(row.original)}
+                                >
+                                    <Edit2 className="mr-2 size-4" />
+                                    Edit Product
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="cursor-pointer text-red-500 focus:text-red-500"
+                                    onClick={() => handleDelete(row.original)}
+                                >
+                                    <Trash2 className="mr-2 size-4" />
+                                    Delete Product
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 ),
             },

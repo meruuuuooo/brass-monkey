@@ -52,11 +52,6 @@ export default function FinancialReport({ filters, summary, dailyTransactions }:
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Financial Summary" />
             <div className="flex flex-col gap-6 p-4 md:p-6">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => router.get('/admin/reports')}><ArrowLeft className="size-5" /></Button>
-                    <div><h1 className="text-2xl font-black tracking-tight">Financial Summary</h1><p className="text-sm text-muted-foreground">Payments, refunds, and profit overview.</p></div>
-                </div>
-
                 <div className="flex flex-wrap items-end gap-3">
                     <div className="grid gap-1.5"><Label className="text-xs font-bold uppercase text-muted-foreground/80">From</Label><Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-xl" /></div>
                     <div className="grid gap-1.5"><Label className="text-xs font-bold uppercase text-muted-foreground/80">To</Label><Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="rounded-xl" /></div>

@@ -47,14 +47,6 @@ export default function SalesReport({ filters, summary, dailyRevenue, topProduct
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Sales Report" />
             <div className="flex flex-col gap-6 p-4 md:p-6">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => router.get('/admin/reports')}><ArrowLeft className="size-5" /></Button>
-                    <div>
-                        <h1 className="text-2xl font-black tracking-tight">Sales Report</h1>
-                        <p className="text-sm text-muted-foreground">Revenue and order analytics.</p>
-                    </div>
-                </div>
-
                 {/* Date Filter */}
                 <div className="flex flex-wrap items-end gap-3">
                     <div className="grid gap-1.5">

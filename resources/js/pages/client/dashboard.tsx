@@ -268,13 +268,7 @@ export default function ClientDashboard({
                             )}
                         </CardContent>
                     </Card>
-
-
-
                 </div>
-
-
-
             </div>
         </AppLayout>
     );

@@ -14,6 +14,7 @@ import {
     X,
     Package,
     Filter,
+    MoreVertical,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,14 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Category {
     id: number;
@@ -205,10 +214,10 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
                         <Badge
                             variant="outline"
                             className={`rounded-lg text-xs font-bold ${qty === 0
-                                    ? 'bg-red-500/10 text-red-500 border-red-500/20'
-                                    : isLow
-                                        ? 'bg-amber-500/10 text-amber-600 border-amber-500/20'
-                                        : 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                                ? 'bg-red-500/10 text-red-500 border-red-500/20'
+                                : isLow
+                                    ? 'bg-amber-500/10 text-amber-600 border-amber-500/20'
+                                    : 'bg-emerald-50 text-emerald-600 border-emerald-200'
                                 }`}
                         >
                             {qty === 0 ? 'Out of Stock' : isLow ? `Low (${qty})` : qty}
@@ -234,23 +243,33 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
             {
                 id: 'actions',
                 cell: ({ row }) => (
-                    <div className="flex justify-end gap-2">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 h-8 w-8 p-0"
-                            onClick={() => handleEdit(row.original)}
-                        >
-                            <Edit2 className="size-4" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
-                            onClick={() => handleDelete(row.original)}
-                        >
-                            <Trash2 className="size-4" />
-                        </Button>
+                    <div className="flex justify-end">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="size-8 h-8 w-8 p-0 cursor-pointer">
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreVertical className="size-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="rounded-xl">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    className="cursor-pointer"
+                                    onClick={() => handleEdit(row.original)}
+                                >
+                                    <Edit2 className="mr-2 size-4" />
+                                    Edit Product
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="cursor-pointer text-red-500 focus:text-red-500"
+                                    onClick={() => handleDelete(row.original)}
+                                >
+                                    <Trash2 className="mr-2 size-4" />
+                                    Delete Product
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 ),
             },
@@ -347,7 +366,7 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
                         description="Manage your product catalog, pricing, and availability."
                     />
                     <Button
-                        className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl gap-2"
+                        className="bg-bm-gold cursor-pointer hover:bg-bm-gold/90 text-black font-bold rounded-xl gap-2"
                         onClick={handleCreate}
                     >
                         <Plus className="size-4" />

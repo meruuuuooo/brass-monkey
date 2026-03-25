@@ -51,7 +51,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
         >
             <SidebarGroup className="px-3 py-1">
                 <SidebarGroupLabel asChild>
-                    <CollapsibleTrigger className="flex w-full items-center justify-between px-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors">
+                    <CollapsibleTrigger className="flex cursor-pointer w-full items-center justify-between px-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors">
                         <span>Platform</span>
                         <ChevronRight className="size-3.5 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </CollapsibleTrigger>
