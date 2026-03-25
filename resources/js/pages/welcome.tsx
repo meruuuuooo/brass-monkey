@@ -190,14 +190,13 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                     </div>
 
                     <div className="relative z-10 mx-auto max-w-7xl px-6 text-center lg:px-8 mt-16">
-                        <div className="mb-6 inline-flex items-center rounded-full border border-bm-gold/30 bg-bm-gold/5 px-4 py-1.5 backdrop-blur-sm">
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-bm-gold">Premium Service Excellence</span>
+                        <div className="mb-6 inline-flex items-center rounded-full border border-bm-gold/30 bg-bm-gold/5 px-5 py-2 backdrop-blur-sm">
+                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-bm-gold">Premium Service Excellence</span>
                         </div>
 
                         <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight sm:text-7xl lg:text-8xl">
                             Precision. <br />
-                            Craftsmanship. <br />
-                            <span className="text-bm-gold underline decoration-bm-gold/20 underline-offset-8">Performance.</span>
+                            <span className="text-bm-gold underline decoration-bm-gold/20 underline-offset-8">Craftsmanship.</span>
                         </h1>
 
                         <p className="mx-auto mt-10 max-w-2xl text-lg font-medium leading-relaxed text-bm-muted/90">
@@ -205,19 +204,19 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                         </p>
 
                         <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
-                            <Button size="lg" className="bg-bm-gold px-10 h-14 text-bm-dark font-bold hover:bg-bm-gold-hover transition-all hover:scale-105 active:scale-95 shadow-xl shadow-bm-gold/20 rounded-lg group">
-                                Book a Service <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                            <Button size="lg" className="bg-bm-gold px-12 h-16 text-bm-dark text-lg font-bold hover:bg-bm-gold-hover transition-all hover:scale-105 active:scale-95 shadow-xl shadow-bm-gold/20 rounded-lg group">
+                                Book a Service <ArrowRight className="ml-2 h-6 w-6 transition-transform group-hover:translate-x-1" />
                             </Button>
-                            <Button variant="outline" size="lg" className="border-bm-white/30 bg-transparent px-10 h-14 text-bm-white font-bold hover:bg-bm-white/10 transition-all rounded-lg backdrop-blur-sm">
+                            <Button variant="outline" size="lg" className="border-bm-white/30 bg-transparent px-12 h-16 text-bm-white text-lg font-bold hover:bg-bm-white/10 transition-all rounded-lg backdrop-blur-sm">
                                 Explore Services
                             </Button>
                         </div>
 
                         {/* Scroll-down cue */}
-                        <div className="mt-16 animate-bounce">
-                            <a href="#track-order" className="inline-flex flex-col items-center gap-2 text-bm-muted/40 transition-colors hover:text-bm-gold">
-                                <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Track Your Order</span>
-                                <ChevronRight className="h-4 w-4 rotate-90" />
+                        <div className="mt-10 animate-bounce">
+                            <a href="#track-order" className="inline-flex flex-col items-center gap-3 text-bm-muted/60 transition-colors hover:text-bm-gold">
+                                <span className="text-xs font-bold uppercase tracking-[0.3em]">Track Your Order</span>
+                                <ChevronRight className="h-5 w-5 rotate-90" />
                             </a>
                         </div>
                     </div>
