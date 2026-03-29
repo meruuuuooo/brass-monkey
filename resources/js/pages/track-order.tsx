@@ -1,4 +1,5 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import {
     Search,
     Package,
@@ -13,11 +14,13 @@ import {
     User,
     Calendar,
     ArrowRight,
+    Eye,
 } from 'lucide-react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { home, login } from '@/routes';
+import { home, login, dashboard } from '@/routes';
+import WorkOrderModal from '@/components/work-order-modal';
 
 interface ServiceOrder {
     tracking_number: string;
@@ -42,6 +45,8 @@ const STATUS_CONFIG = {
 };
 
 export default function TrackOrder({ order, query }: Props) {
+    const { auth } = usePage().props as any;
+    const [modalOpen, setModalOpen] = useState(false);
     const { data, setData, get, processing } = useForm({
         number: query || '',
     });
@@ -96,18 +101,21 @@ export default function TrackOrder({ order, query }: Props) {
                     </Link>
 
                     <nav className="flex items-center gap-6">
-                        <Link
-                            href={home()}
-                            className="hidden text-[12px] font-bold uppercase tracking-widest text-bm-muted transition-colors hover:text-bm-white sm:block"
-                        >
-                            ← Back to Home
-                        </Link>
-                        <Link
-                            href={login()}
-                            className="rounded-lg border border-bm-white/10 bg-bm-white/5 px-5 py-2.5 text-[12px] font-bold uppercase tracking-widest text-bm-white transition-all hover:bg-bm-white/10"
-                        >
-                            Sign In
-                        </Link>
+                        {auth?.user ? (
+                            <Link
+                                href={dashboard()}
+                                className="rounded-lg border border-bm-gold/20 bg-bm-gold/5 px-5 py-2.5 text-[12px] font-bold uppercase tracking-widest text-bm-gold transition-all hover:bg-bm-gold/10"
+                            >
+                                Dashboard
+                            </Link>
+                        ) : (
+                            <Link
+                                href={login()}
+                                className="rounded-lg border border-bm-white/10 bg-bm-white/5 px-5 py-2.5 text-[12px] font-bold uppercase tracking-widest text-bm-white transition-all hover:bg-bm-white/10"
+                            >
+                                Sign In
+                            </Link>
+                        )}
                     </nav>
                 </div>
             </header>
@@ -188,6 +196,12 @@ export default function TrackOrder({ order, query }: Props) {
                                         <span>Est. Ready: </span>
                                         <span className="font-bold text-bm-white">{order.estimated_completion}</span>
                                     </p>
+                                    <button
+                                        onClick={() => setModalOpen(true)}
+                                        className="mt-2 flex items-center gap-2 rounded-lg border border-bm-gold/20 bg-bm-gold/5 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-bm-gold transition-all hover:bg-bm-gold/10 hover:scale-105 active:scale-95"
+                                    >
+                                        <Eye className="h-3.5 w-3.5" /> View Full Work Order
+                                    </button>
                                 </div>
                             </div>
 
@@ -379,6 +393,13 @@ export default function TrackOrder({ order, query }: Props) {
             <footer className="relative z-10 border-t border-bm-white/5 py-10 text-center text-[11px] font-bold uppercase tracking-[0.3em] text-bm-muted/40">
                 © {new Date().getFullYear()} Brassmonkey Mechanical Mastery
             </footer>
+
+            {/* Work Order Detail Modal */}
+            <WorkOrderModal
+                open={modalOpen}
+                onOpenChange={setModalOpen}
+                workOrderNumber={order?.tracking_number}
+            />
         </div>
     );
 }

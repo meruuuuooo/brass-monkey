@@ -24,13 +24,15 @@ import {
     Instagram,
     Twitter,
     Linkedin,
+    Eye,
     Facebook,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
-import { login } from '@/routes';
+import { login, dashboard } from '@/routes';
 import BlogSection from './blog-section';
+import WorkOrderModal from '@/components/work-order-modal';
 
 interface ServiceOrder {
     tracking_number: string;
@@ -69,6 +71,7 @@ const statusSteps = [
 ];
 
 export default function Welcome({ canRegister = true, auth, order, query, posts, categories, tags, filters, advertisements }: Props) {
+    const [modalOpen, setModalOpen] = useState(false);
     const currentStatusIndex = Math.max(statusSteps.findIndex((s) => s.key === order?.status), 0);
     const progressPercent = order ? (currentStatusIndex / (statusSteps.length - 1)) * 100 : 0;
     const statusCfg = order ? (STATUS_CONFIG[order.status] ?? STATUS_CONFIG['in-progress']) : null;
@@ -166,12 +169,21 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                         </nav>
 
                         <div className="flex items-center gap-6 border-l border-bm-white/10 pl-8">
-                            <Link
-                                href={login()}
-                                className="text-[13px] font-bold text-bm-white transition-colors hover:text-bm-gold uppercase tracking-wider"
-                            >
-                                Login
-                            </Link>
+                            {auth?.user ? (
+                                <Link
+                                    href={dashboard()}
+                                    className="text-[13px] font-bold text-bm-white transition-colors hover:text-bm-gold uppercase tracking-wider"
+                                >
+                                    Dashboard
+                                </Link>
+                            ) : (
+                                <Link
+                                    href={login()}
+                                    className="text-[13px] font-bold text-bm-white transition-colors hover:text-bm-gold uppercase tracking-wider"
+                                >
+                                    Login
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -301,6 +313,12 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                                 <Calendar className="h-3.5 w-3.5" />
                                                 Est. Ready: <span className="font-bold text-bm-white">{formatDate(order.estimated_completion)}</span>
                                             </p>
+                                            <button
+                                                onClick={() => setModalOpen(true)}
+                                                className="mt-2 flex items-center gap-2 rounded-lg border border-bm-gold/20 bg-bm-gold/5 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-bm-gold transition-all hover:bg-bm-gold/10 hover:scale-105 active:scale-95"
+                                            >
+                                                <Eye className="h-3.5 w-3.5" /> View Full Work Order
+                                            </button>
                                         </div>
                                     </div>
                                     {/* Gold progress bar */}
@@ -758,6 +776,13 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                 <ArrowUp className="h-6 w-6 transition-transform duration-300 group-hover:-translate-y-1" />
                 <div className="absolute inset-0 rounded-full border-4 border-bm-gold/20 animate-ping" />
             </button>
+
+            {/* Work Order Detail Modal */}
+            <WorkOrderModal
+                open={modalOpen}
+                onOpenChange={setModalOpen}
+                workOrderNumber={order?.tracking_number}
+            />
         </div>
     );
 }
