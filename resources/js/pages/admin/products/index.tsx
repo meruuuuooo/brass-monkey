@@ -355,6 +355,66 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
         });
     };
 
+    const renderGridItem = (product: Product) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col">
+            <div className="aspect-square bg-muted relative">
+                {product.image_path ? (
+                    <img
+                        src={`/storage/${product.image_path}`}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30">
+                        <Package className="size-12 mb-2" />
+                        <span className="text-xs font-semibold">No Image</span>
+                    </div>
+                )}
+                <div className="absolute top-2 right-2 flex gap-1 flex-wrap justify-end">
+                    {!product.is_available && (
+                        <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm text-foreground rounded-lg border-0! shadow-sm">
+                            <XCircle className="size-3 mr-1" /> Unavailable
+                        </Badge>
+                    )}
+                    {product.stock_quantity <= product.low_stock_threshold && (
+                        <Badge variant="destructive" className="bg-red-500/90 backdrop-blur-sm text-white rounded-lg border-0! shadow-sm">
+                            {product.stock_quantity === 0 ? 'Out of Stock' : `Low: ${product.stock_quantity}`}
+                        </Badge>
+                    )}
+                </div>
+
+                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="secondary" size="icon" className="size-8 rounded-full bg-background/90 backdrop-blur-sm shadow-sm hover:bg-background cursor-pointer">
+                                <MoreVertical className="size-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="rounded-xl">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEdit(product); }} className="cursor-pointer">
+                                <Edit2 className="mr-2 size-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(product); }} className="cursor-pointer text-red-500 focus:text-red-500">
+                                <Trash2 className="mr-2 size-4" /> Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+            <div className="p-4 flex flex-col flex-1">
+                <div className="flex justify-between items-start gap-2 mb-1">
+                    <h3 className="font-semibold text-base line-clamp-2">{product.name}</h3>
+                </div>
+                <div className="mt-auto pt-2 flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">{product.category?.name || 'Uncategorized'}</span>
+                    <span className="font-mono font-bold text-bm-gold text-base">₱{parseFloat(product.price).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</span>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Products" />
@@ -422,6 +482,7 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
                     pagination={products}
                     emptyMessage="No products found. Add your first product!"
                     onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
                 />
             </div>
 

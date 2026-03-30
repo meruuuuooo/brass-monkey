@@ -145,6 +145,44 @@ export default function BlogCommentsIndex({ comments }: Props) {
         []
     );
 
+    const renderGridItem = (comment: BlogComment) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+            <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-xl bg-bm-gold/10 flex items-center justify-center shrink-0">
+                        <MessageCircle className="size-5 text-bm-gold" />
+                    </div>
+                    <div className="min-w-0 pr-2">
+                        <div className="font-semibold text-base truncate">{comment.author.name}</div>
+                        <div className="text-xs text-muted-foreground truncate">on {comment.post.title}</div>
+                    </div>
+                </div>
+                <Badge variant="outline" className={`${comment.is_approved ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-amber-50 text-amber-600 border-amber-200'} rounded-lg text-[10px] font-bold shrink-0`}>
+                    {comment.is_approved ? 'Approved' : 'Pending'}
+                </Badge>
+            </div>
+
+            <div className="flex-1 flex flex-col min-h-0">
+                <p className="text-sm text-foreground line-clamp-3 mb-4 bg-muted/30 p-3 rounded-xl border border-border/40 relative z-10 italic">
+                    "{comment.body}"
+                </p>
+                <div className="mt-auto">
+                    <div className="text-xs text-muted-foreground pt-3 border-t border-border/40 flex justify-between items-center mb-3">
+                        <span>{new Date(comment.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex items-center gap-2 relative z-10">
+                        <Button variant={comment.is_approved ? "outline" : "default"} size="sm" className={`flex-1 h-8 text-xs font-bold ${comment.is_approved ? '' : 'bg-bm-gold hover:bg-bm-gold/90 text-black'}`} onClick={() => handleToggleApprove(comment)}>
+                            {comment.is_approved ? 'Unapprove' : 'Approve'}
+                        </Button>
+                        <Button variant="ghost" size="icon" className="size-8 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0 cursor-pointer" onClick={() => handleDelete(comment)}>
+                            <Trash2 className="size-4" />
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     const handleToggleApprove = (comment: BlogComment) => {
         router.post(`/admin/blog-comments/${comment.id}/approve`, {}, {
             preserveScroll: true,
@@ -202,6 +240,7 @@ export default function BlogCommentsIndex({ comments }: Props) {
                     pagination={comments}
                     emptyMessage="No blog comments found."
                     onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
                 />
             </div>
         </AppLayout>

@@ -12,6 +12,7 @@ import {
     FolderTree,
     Layers,
     MoreVertical,
+    Package,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -268,6 +269,71 @@ export default function CategoriesIndex({ categories, parentCategories }: Props)
         });
     };
 
+    const renderGridItem = (category: Category) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+            <div className="flex items-center gap-4 mb-4">
+                <div className="size-12 rounded-xl bg-bm-gold/10 flex items-center justify-center shrink-0">
+                    <Layers className="size-6 text-bm-gold" />
+                </div>
+                <div className="flex-1 min-w-0 pr-8">
+                    <h3 className="font-semibold text-lg truncate">{category.name}</h3>
+                    <p className="text-sm text-muted-foreground truncate">{category.slug}</p>
+                </div>
+
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="size-8 rounded-full hover:bg-muted cursor-pointer">
+                                <MoreVertical className="size-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-xl">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEdit(category); }} className="cursor-pointer">
+                                <Edit2 className="mr-2 size-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(category); }} className="cursor-pointer text-red-500 focus:text-red-500">
+                                <Trash2 className="mr-2 size-4" /> Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+
+            <div className="mt-auto space-y-3">
+                <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                        <FolderTree className="size-3.5" /> Parent
+                    </span>
+                    <span className="font-medium text-xs">
+                        {category.parent ? category.parent.name : 'Root'}
+                    </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                        <Package className="size-3.5" /> Products
+                    </span>
+                    <span className="font-mono font-bold bg-muted px-2 py-0.5 rounded-md border border-border/40 text-xs">
+                        {category.products_count}
+                    </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Status</span>
+                    {category.is_active ? (
+                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">
+                            <CheckCircle2 className="size-3 mr-1" /> Active
+                        </Badge>
+                    ) : (
+                        <Badge variant="outline" className="bg-muted text-muted-foreground">
+                            <XCircle className="size-3 mr-1" /> Inactive
+                        </Badge>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Categories" />
@@ -305,6 +371,7 @@ export default function CategoriesIndex({ categories, parentCategories }: Props)
                     pagination={categories}
                     emptyMessage="No categories found. Create your first category!"
                     onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
                 />
             </div>
 

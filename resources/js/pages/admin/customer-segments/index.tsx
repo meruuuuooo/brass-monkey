@@ -23,7 +23,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"; 
+} from "@/components/ui/dropdown-menu";
 
 interface Segment {
     id: number;
@@ -120,10 +120,60 @@ export default function CustomerSegmentsIndex({ segments }: Props) {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </div>      
+                </div>
             ),
         },
     ], []);
+
+    const renderGridItem = (seg: Segment) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+            <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-xl flex flex-col items-center justify-center shrink-0" style={{ backgroundColor: `${seg.color}20` }}>
+                        <Tag className="size-5" style={{ color: seg.color }} />
+                    </div>
+                    <div className="min-w-0 pr-2">
+                        <h3 className="font-semibold text-lg truncate">{seg.name}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5 truncate">{seg.slug}</p>
+                    </div>
+                </div>
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="size-8 rounded-full hover:bg-muted cursor-pointer relative z-10">
+                                <MoreVertical className="size-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-xl z-50">
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleEdit(seg)}>
+                                <Edit2 className="mr-2 size-4" /> Edit Segment
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer text-red-500 focus:text-red-500" onClick={() => handleDelete(seg)}>
+                                <Trash2 className="mr-2 size-4" /> Delete Segment
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+
+            <div className="flex-1 flex flex-col">
+                <p className="text-sm text-foreground line-clamp-2 mb-4 h-10">
+                    {seg.description || <span className="text-muted-foreground italic">No description</span>}
+                </p>
+                <div className="mt-auto pt-3 border-t border-border/40">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                            <Users className="size-4" />
+                            <span>Customers</span>
+                        </div>
+                        <Badge variant="secondary" className="font-mono text-sm rounded-lg" style={{ backgroundColor: `${seg.color}20`, color: seg.color }}>
+                            {seg.customers_count}
+                        </Badge>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 
     const handleEdit = (seg: Segment) => {
         setEditing(seg);
@@ -166,7 +216,14 @@ export default function CustomerSegmentsIndex({ segments }: Props) {
                         <Plus className="size-4" /> New Segment
                     </Button>
                 </div>
-                <DataTableWithPagination columns={columns} data={segments.data} pagination={segments} emptyMessage="No segments yet." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={segments.data}
+                    pagination={segments}
+                    emptyMessage="No segments yet."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

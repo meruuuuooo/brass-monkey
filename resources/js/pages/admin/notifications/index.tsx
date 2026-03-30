@@ -119,6 +119,51 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
         },
     ], []);
 
+    const renderGridItem = (notif: Notif) => {
+        const typeCfg = typeConfig[notif.type] || typeConfig.info;
+        const statusCfg = statusConfig[notif.status] || statusConfig.draft;
+        const TypeIcon = typeCfg.icon;
+
+        return (
+            <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+                <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${typeCfg.color}`}>
+                            <TypeIcon className="size-5" />
+                        </div>
+                        <div className="min-w-0 pr-2">
+                            <Link href={`/admin/notifications/${notif.id}`} className="font-semibold text-base hover:text-bm-gold transition-colors line-clamp-2 relative z-10">
+                                {notif.title}
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-4">
+                    <Badge variant="outline" className={`${statusCfg.color} rounded-lg text-[10px] font-bold`}>
+                        {statusCfg.label}
+                    </Badge>
+                    <Badge variant="secondary" className="rounded-lg text-[10px] font-bold capitalize">
+                        {notif.target}
+                    </Badge>
+                </div>
+
+                <div className="mt-auto space-y-3">
+                    <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                        <span className="text-muted-foreground">Recipients</span>
+                        <span className="font-mono font-medium">{notif.recipients_count}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Created: {new Date(notif.created_at).toLocaleDateString()}</span>
+                    </div>
+                </div>
+
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-bm-gold/20 rounded-2xl pointer-events-none transition-colors" />
+                <Link href={`/admin/notifications/${notif.id}`} className="absolute inset-0 z-1 opacity-0 bg-transparent text-[0px]">View Detail</Link>
+            </div>
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Notifications', href: '#' }]}>
             <Head title="Notifications" />
@@ -209,7 +254,14 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
                     </Select>
                 </div>
 
-                <DataTableWithPagination columns={columns} data={notifications.data} pagination={notifications} emptyMessage="No notifications yet." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={notifications.data}
+                    pagination={notifications}
+                    emptyMessage="No notifications yet."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
         </AppLayout>
     );

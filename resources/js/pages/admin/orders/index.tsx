@@ -148,6 +148,42 @@ export default function OrdersIndex({ orders, customers, products, filters }: Pr
         });
     };
 
+    const renderGridItem = (order: Order) => {
+        const cfg = statusConfig[order.status] || statusConfig.pending;
+        return (
+            <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+                <div className="flex items-start justify-between mb-4">
+                    <div>
+                        <Link href={`/admin/orders/${order.id}`} className="font-mono font-bold text-lg text-bm-gold hover:underline relative z-10">
+                            {order.order_number}
+                        </Link>
+                        <p className="text-sm text-foreground font-medium mt-1">{order.customer?.name ?? 'Walk-in'}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{new Date(order.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold shrink-0`}>
+                        {cfg.label}
+                    </Badge>
+                </div>
+
+                <div className="mt-auto space-y-3">
+                    <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                        <span className="text-muted-foreground">Items</span>
+                        <span className="font-mono font-medium">{order.items_count}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Total</span>
+                        <span className="font-mono font-bold text-base text-bm-gold">
+                            {fmt(parseFloat(order.total_amount))}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-bm-gold/20 rounded-2xl pointer-events-none transition-colors" />
+                <Link href={`/admin/orders/${order.id}`} className="absolute inset-0 z-1 opacity-0 bg-transparent text-[0px]">View Order</Link>
+            </div>
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Orders', href: '#' }]}>
             <Head title="Orders" />
@@ -173,7 +209,14 @@ export default function OrdersIndex({ orders, customers, products, filters }: Pr
                         </SelectContent>
                     </Select>
                 </div>
-                <DataTableWithPagination columns={columns} data={orders.data} pagination={orders} emptyMessage="No orders yet." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={orders.data}
+                    pagination={orders}
+                    emptyMessage="No orders yet."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
 
             {/* Create Order Modal */}

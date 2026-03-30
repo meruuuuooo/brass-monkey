@@ -106,6 +106,48 @@ export default function CustomersIndex({ customers, segments, filters }: Props) 
         router.get('/admin/customers', { ...filters, [key]: value }, { preserveState: true, preserveScroll: true });
     };
 
+    const renderGridItem = (customer: Customer) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+            <div className="flex items-center gap-4 mb-4">
+                <div className="size-12 rounded-xl bg-bm-gold/10 flex items-center justify-center shrink-0">
+                    <UserCircle2 className="size-6 text-bm-gold" />
+                </div>
+                <div className="flex-1 min-w-0 pr-8">
+                    <h3 className="font-semibold text-lg truncate">{customer.name}</h3>
+                    <p className="text-sm text-muted-foreground truncate flex items-center gap-1"><Mail className="size-3" /> {customer.email}</p>
+                </div>
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <Button variant="ghost" size="icon" className="size-8 rounded-full hover:bg-muted cursor-pointer" asChild>
+                        <Link href={`/admin/customers/${customer.id}`}>
+                            <Eye className="size-4" />
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+            <div className="mt-auto space-y-3">
+                <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                    <span className="text-muted-foreground">Joined</span>
+                    <span className="font-medium text-xs">{new Date(customer.created_at).toLocaleDateString()}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Notes</span>
+                    <span className="font-mono font-bold bg-muted px-2 py-0.5 rounded-md border border-border/40 text-xs">
+                        {customer.customer_notes_count}
+                    </span>
+                </div>
+                <div className="flex justify-between items-center text-sm pt-2">
+                    <div className="flex flex-wrap gap-1">
+                        {customer.segments.length > 0 ? customer.segments.map((s) => (
+                            <Badge key={s.id} variant="outline" className="rounded-lg text-[10px] font-bold" style={{ borderColor: s.color, color: s.color }}>
+                                {s.name}
+                            </Badge>
+                        )) : <span className="text-xs text-muted-foreground">—</span>}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Customers', href: '#' }]}>
             <Head title="Customers" />
@@ -140,7 +182,14 @@ export default function CustomersIndex({ customers, segments, filters }: Props) 
                     </Select>
                 </div>
 
-                <DataTableWithPagination columns={columns} data={customers.data} pagination={customers} emptyMessage="No customers found." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={customers.data}
+                    pagination={customers}
+                    emptyMessage="No customers found."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
         </AppLayout>
     );

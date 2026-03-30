@@ -137,6 +137,46 @@ export default function StockAdjustmentsIndex({ adjustments, products, filters }
         router.get('/admin/stock-adjustments', { ...filters, [key]: value }, { preserveState: true, preserveScroll: true });
     };
 
+    const renderGridItem = (adj: StockAdjustment) => {
+        const cfg = typeConfig[adj.type] || typeConfig.addition;
+        const Icon = cfg.icon;
+        const isAdd = adj.type === 'addition';
+        const isAudit = adj.type === 'audit';
+
+        return (
+            <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+                <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1 min-w-0 pr-4">
+                        <div className="font-semibold text-lg truncate">{adj.product?.name ?? '—'}</div>
+                        {adj.product?.sku && <div className="text-xs text-muted-foreground truncate mt-0.5">SKU: {adj.product.sku}</div>}
+                        <div className="text-xs text-muted-foreground mt-1">{new Date(adj.created_at).toLocaleString()}</div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                        <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold flex items-center gap-1`}>
+                            <Icon className="size-3" /> {cfg.label}
+                        </Badge>
+                        <span className={`font-mono font-bold text-lg ${isAdd ? 'text-emerald-600' : isAudit ? 'text-blue-500' : 'text-red-500'}`}>
+                            {isAdd ? '+' : isAudit ? '=' : '-'}{adj.quantity}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="mt-auto space-y-3">
+                    <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                        <span className="text-muted-foreground">Adjusted By</span>
+                        <span className="font-medium text-xs">{adj.adjusted_by?.name ?? '—'}</span>
+                    </div>
+                    <div className="text-sm">
+                        <span className="text-muted-foreground block mb-1">Reason</span>
+                        <p className="text-sm border border-border/40 bg-muted/30 rounded-lg p-2 min-h-[40px] wrap-break-word">
+                            {adj.reason || <span className="text-muted-foreground italic">No reason provided</span>}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Stock Adjustments" />
@@ -163,7 +203,14 @@ export default function StockAdjustmentsIndex({ adjustments, products, filters }
                     </Select>
                 </div>
 
-                <DataTableWithPagination columns={columns} data={adjustments.data} pagination={adjustments} emptyMessage="No stock adjustments recorded." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={adjustments.data}
+                    pagination={adjustments}
+                    emptyMessage="No stock adjustments recorded."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

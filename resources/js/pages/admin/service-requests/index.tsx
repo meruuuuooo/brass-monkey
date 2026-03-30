@@ -118,6 +118,58 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
         },
     ], []);
 
+    const renderGridItem = (req: any) => {
+        const statusCfg = statusConfig[req.status] || statusConfig.pending;
+        const priorityCfg = priorityConfig[req.priority] || priorityConfig.normal;
+        const StatusIcon = statusCfg.icon;
+
+        return (
+            <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+                <div className="flex items-start justify-between mb-4">
+                    <div className="pr-4">
+                        <Link href={`/admin/service-requests/${req.id}`} className="font-mono font-bold text-lg text-bm-gold hover:underline relative z-10 break-all">
+                            {req.tracking_number}
+                        </Link>
+                        <div className="font-medium mt-1 truncate">{req.customer_name}</div>
+                        {req.customer?.email && <div className="text-xs text-muted-foreground truncate">{req.customer.email}</div>}
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                        <Badge variant="outline" className={`${statusCfg.color} rounded-lg text-[10px] font-bold flex items-center gap-1`}>
+                            <StatusIcon className="size-3" />{statusCfg.label}
+                        </Badge>
+                        <Badge variant="outline" className={`${priorityCfg.color} rounded-lg text-[10px] font-bold`}>
+                            {priorityCfg.label}
+                        </Badge>
+                    </div>
+                </div>
+
+                <div className="mt-auto space-y-3">
+                    <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                        <span className="text-muted-foreground">Service</span>
+                        <span className="font-medium text-xs truncate max-w-[150px]">{req.service?.name || req.service_type}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Assignee</span>
+                        {req.assignee ? (
+                            <div className="flex items-center gap-1.5 text-sm font-medium truncate max-w-[150px]">
+                                <UserCircle2 className="size-4 shrink-0 text-muted-foreground" />
+                                <span className="truncate">{req.assignee.name}</span>
+                            </div>
+                        ) : (
+                            <span className="text-sm text-muted-foreground italic truncate">Unassigned</span>
+                        )}
+                    </div>
+                    <div className="text-xs text-muted-foreground pt-1 flex justify-between">
+                        <span>Created: {new Date(req.created_at).toLocaleDateString()}</span>
+                    </div>
+                </div>
+
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-bm-gold/20 rounded-2xl pointer-events-none transition-colors" />
+                <Link href={`/admin/service-requests/${req.id}`} className="absolute inset-0 z-1 opacity-0 bg-transparent text-[0px]">View Job</Link>
+            </div>
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Service Jobs', href: '#' }]}>
             <Head title="Service Jobs" />
@@ -205,7 +257,14 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
                     </Select>
                 </div>
 
-                <DataTableWithPagination columns={columns} data={requests.data} pagination={requests} emptyMessage="No service jobs found." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={requests.data}
+                    pagination={requests}
+                    emptyMessage="No service jobs found."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
         </AppLayout>
     );

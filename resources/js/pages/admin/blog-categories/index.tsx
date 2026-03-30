@@ -199,6 +199,42 @@ export default function BlogCategoriesIndex({ categories }: Props) {
         });
     };
 
+    const renderGridItem = (category: BlogCategory) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+            <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-xl bg-bm-gold/10 flex items-center justify-center shrink-0">
+                        <Layers className="size-5 text-bm-gold" />
+                    </div>
+                    <div className="min-w-0 pr-2">
+                        <h3 className="font-semibold text-lg truncate">{category.name}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5 truncate">{category.slug}</p>
+                    </div>
+                </div>
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex">
+                    <Button variant="ghost" size="icon" className="size-8 cursor-pointer hover:bg-muted relative z-10 rounded-full" onClick={() => handleEdit(category)}>
+                        <Edit2 className="size-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="size-8 cursor-pointer text-red-500 hover:bg-red-50 relative z-10 rounded-full" onClick={() => handleDelete(category)}>
+                        <Trash2 className="size-3.5" />
+                    </Button>
+                </div>
+            </div>
+
+            <div className="flex-1 flex flex-col">
+                <p className="text-sm text-foreground line-clamp-2 mb-4 h-10">
+                    {category.description || <span className="text-muted-foreground italic">No description</span>}
+                </p>
+                <div className="mt-auto">
+                    <div className="flex items-center justify-between text-sm pt-3 border-t border-border/40">
+                        <span className="text-muted-foreground">Posts in Category</span>
+                        <span className="font-mono font-bold bg-bm-gold/10 text-bm-gold px-2 py-0.5 rounded-md">{category.posts_count}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Blog Categories" />
@@ -236,6 +272,7 @@ export default function BlogCategoriesIndex({ categories }: Props) {
                     pagination={categories}
                     emptyMessage="No blog categories found. Create your first category!"
                     onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
                 />
             </div>
 

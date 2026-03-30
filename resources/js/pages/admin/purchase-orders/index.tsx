@@ -42,6 +42,8 @@ interface PurchaseOrder {
 interface PaginatedPOs {
     data: PurchaseOrder[];
     current_page: number; last_page: number; per_page: number; total: number;
+    prev_page_url: string | null;
+    next_page_url: string | null;
     links: { url: string | null; label: string; active: boolean }[];
 }
 
@@ -217,6 +219,59 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
         router.get('/admin/purchase-orders', { ...filters, [key]: value }, { preserveState: true, preserveScroll: true });
     };
 
+    const renderGridItem = (po: PurchaseOrder) => {
+        const cfg = statusConfig[po.status] || statusConfig.draft;
+        const Icon = cfg.icon;
+        const nextStatus: Record<string, string> = { draft: 'submitted', submitted: 'approved', approved: 'received' };
+        const next = nextStatus[po.status];
+
+        return (
+            <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+                <div className="flex items-start justify-between mb-4">
+                    <div className="min-w-0 pr-2">
+                        <div className="font-mono font-bold text-lg truncate">{po.order_number}</div>
+                        <div className="font-medium mt-1 truncate">{po.supplier?.name ?? '—'}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5 truncate">{new Date(po.created_at).toLocaleDateString()}</div>
+                    </div>
+                    <Badge variant="outline" className={`${cfg.color} rounded-lg text-[10px] font-bold flex items-center gap-1 shrink-0`}>
+                        <Icon className="size-3" /> {cfg.label}
+                    </Badge>
+                </div>
+
+                <div className="mt-auto space-y-3">
+                    <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                        <span className="text-muted-foreground">Items</span>
+                        <span className="font-mono font-medium">{po.items_count}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Total</span>
+                        <span className="font-mono font-bold text-bm-gold text-base">
+                            ₱{parseFloat(po.total_amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-1 pt-2 border-t border-border/40 mt-3 relative z-10">
+                    {next && (
+                        <Button variant="ghost" size="sm" className="h-7 cursor-pointer text-xs font-bold text-bm-gold inline-flex shrink-0" onClick={() => handleStatusChange(po, next)}>
+                            {next === 'submitted' ? 'Submit' : next === 'approved' ? 'Approve' : 'Mark Rcvd'}
+                        </Button>
+                    )}
+                    {po.status !== 'received' && po.status !== 'cancelled' && (
+                        <Button variant="ghost" size="sm" className="h-7 cursor-pointer text-xs text-red-500 inline-flex shrink-0" onClick={() => handleStatusChange(po, 'cancelled')}>
+                            Cancel
+                        </Button>
+                    )}
+                    {po.status === 'draft' && (
+                        <Button variant="ghost" size="icon" className="h-7 w-7 cursor-pointer text-red-500 hover:bg-red-50 shrink-0" onClick={() => handleDelete(po)}>
+                            <Trash2 className="size-3.5" />
+                        </Button>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Purchase Orders" />
@@ -254,7 +309,14 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
                     </Select>
                 </div>
 
-                <DataTableWithPagination columns={columns} data={purchaseOrders.data} pagination={purchaseOrders} emptyMessage="No purchase orders yet." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={purchaseOrders.data}
+                    pagination={purchaseOrders}
+                    emptyMessage="No purchase orders yet."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
 
             {/* Create PO Modal */}

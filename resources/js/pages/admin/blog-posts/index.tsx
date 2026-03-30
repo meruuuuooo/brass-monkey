@@ -439,6 +439,100 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
         });
     };
 
+    const renderGridItem = (postItem: BlogPost) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col">
+            {postItem.featured_image_path ? (
+                <div className="h-40 w-full overflow-hidden bg-muted relative shrink-0">
+                    <img
+                        src={`/storage/${postItem.featured_image_path}`}
+                        alt="Post thumbnail"
+                        className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+                        <Badge variant="secondary" className="bg-background/90 backdrop-blur-md border-transparent font-medium py-0.5 px-2">
+                            {postItem.categories[0]?.name || 'Uncategorized'}
+                        </Badge>
+                        {postItem.is_featured && (
+                            <Badge className="bg-bm-gold text-black border-transparent font-bold hover:bg-bm-gold shadow-md">
+                                Featured
+                            </Badge>
+                        )}
+                    </div>
+                </div>
+            ) : (
+                <div className="h-40 w-full bg-bm-gold/5 flex items-center justify-center shrink-0 border-b border-border/40 relative">
+                    <FileText className="size-10 text-bm-gold/40" />
+                    <div className="absolute bottom-3 left-3 flex justify-between items-end right-3">
+                        <Badge variant="secondary" className="bg-background/90 backdrop-blur-md border-transparent font-medium py-0.5 px-2">
+                            {postItem.categories[0]?.name || 'Uncategorized'}
+                        </Badge>
+                        {postItem.is_featured && (
+                            <Badge className="bg-bm-gold text-black border-transparent font-bold hover:bg-bm-gold shadow-md">
+                                Featured
+                            </Badge>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            <div className="p-5 flex flex-col flex-1">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                    <h3 className="font-semibold text-lg line-clamp-2 leading-tight flex-1">{postItem.title}</h3>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
+                    <div className="flex items-center gap-1.5 font-medium">
+                        <div className="size-5 rounded-full bg-muted flex items-center justify-center border border-border/50">
+                            {postItem.author.name.charAt(0)}
+                        </div>
+                        {postItem.author.name}
+                    </div>
+                </div>
+
+                <div className="mt-auto pt-4 border-t border-border/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                        {postItem.status === 'published' ? (
+                            <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">
+                                Published
+                            </Badge>
+                        ) : postItem.status === 'archived' ? (
+                            <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200">
+                                Archived
+                            </Badge>
+                        ) : (
+                            <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">
+                                Draft
+                            </Badge>
+                        )}
+                        <span className="text-xs font-mono text-muted-foreground">
+                            {new Date(postItem.created_at).toLocaleDateString()}
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-1 relative z-10 justify-end">
+                        {postItem.status !== 'published' && (
+                            <Button variant="ghost" size="icon" title="Publish" className="h-8 w-8 cursor-pointer text-emerald-600 hover:bg-emerald-50" onClick={() => handlePublish(postItem)}>
+                                <Globe2 className="size-4" />
+                            </Button>
+                        )}
+                        <Button variant="ghost" size="icon" title="Edit" className="h-8 w-8 cursor-pointer" onClick={() => handleEdit(postItem)}>
+                            <Edit2 className="size-4" />
+                        </Button>
+                        {postItem.status !== 'archived' && (
+                            <Button variant="ghost" size="icon" title="Archive" className="h-8 w-8 cursor-pointer text-amber-600 hover:bg-amber-50" onClick={() => handleArchive(postItem)}>
+                                <Archive className="size-4" />
+                            </Button>
+                        )}
+                        <Button variant="ghost" size="icon" title="Delete" className="h-8 w-8 cursor-pointer text-red-500 hover:bg-red-50" onClick={() => handleDelete(postItem)}>
+                            <Trash2 className="size-4" />
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Blog Posts" />
@@ -498,6 +592,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
                     pagination={posts}
                     emptyMessage="No blog posts found. Write your first post!"
                     onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
                 />
             </div>
 

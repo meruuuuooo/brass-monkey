@@ -193,6 +193,40 @@ export default function BlogTagsIndex({ tags }: Props) {
         });
     };
 
+    const renderGridItem = (tag: BlogTag) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+            <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-xl bg-bm-gold/10 flex items-center justify-center shrink-0">
+                        <Tag className="size-5 text-bm-gold" />
+                    </div>
+                    <div className="min-w-0 pr-2">
+                        <h3 className="font-semibold text-lg truncate">{tag.name}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5 truncate">{tag.slug}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex-1 flex flex-col">
+                <div className="mt-auto">
+                    <div className="flex items-center justify-between text-sm pt-3 border-t border-border/40 mb-3">
+                        <span className="text-muted-foreground">Posts Using Tag</span>
+                        <span className="font-mono font-medium bg-muted px-2 py-0.5 rounded-md border border-border/40">{tag.posts_count}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 relative z-10 pt-2">
+                        <Button variant="outline" size="sm" className="flex-1 h-8 text-xs font-bold" onClick={() => handleEdit(tag)}>
+                            <Edit2 className="size-3.5 mr-1.5" /> Edit
+                        </Button>
+                        <Button variant="ghost" size="icon" className="size-8 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0 cursor-pointer" onClick={() => handleDelete(tag)}>
+                            <Trash2 className="size-3.5" />
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Blog Tags" />
@@ -230,6 +264,7 @@ export default function BlogTagsIndex({ tags }: Props) {
                     pagination={tags}
                     emptyMessage="No blog tags found. Create your first tag!"
                     onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
                 />
             </div>
 

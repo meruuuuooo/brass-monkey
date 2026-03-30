@@ -97,6 +97,46 @@ export default function TransactionsIndex({ transactions, filters }: Props) {
         router.get('/admin/transactions', { ...filters, [k]: v }, { preserveState: true });
     };
 
+    const renderGridItem = (txn: Txn) => {
+        const cfg = typeConfig[txn.type] || typeConfig.payment;
+        const Icon = cfg.icon;
+        const isRefund = txn.type === 'refund';
+        return (
+            <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+                <div className="flex items-start justify-between mb-4">
+                    <div>
+                        <div className="font-mono font-bold text-base">{txn.transaction_number}</div>
+                        <p className="text-sm font-medium mt-1 capitalize">{txn.payment_method || '—'}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{new Date(txn.created_at).toLocaleString()}</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                        <span className={`font-mono font-bold text-lg ${isRefund ? 'text-red-500' : 'text-emerald-600'}`}>
+                            {isRefund ? '-' : '+'}{fmt(parseFloat(txn.amount))}
+                        </span>
+                        <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold flex items-center gap-1`}>
+                            <Icon className="size-3" /> {cfg.label}
+                        </Badge>
+                    </div>
+                </div>
+
+                <div className="mt-auto space-y-3">
+                    <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                        <span className="text-muted-foreground">Processed By</span>
+                        <span className="font-medium text-xs">{txn.processed_by?.name ?? '—'}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Order</span>
+                        {txn.order ? (
+                            <Link href={`/admin/orders/${txn.order.id}`} className="font-mono text-sm text-bm-gold hover:underline flex items-center gap-1 z-10 relative">
+                                <LinkIcon className="size-3" />{txn.order.order_number}
+                            </Link>
+                        ) : <span className="text-muted-foreground">—</span>}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Transactions', href: '#' }]}>
             <Head title="Transactions" />
@@ -117,7 +157,14 @@ export default function TransactionsIndex({ transactions, filters }: Props) {
                         </SelectContent>
                     </Select>
                 </div>
-                <DataTableWithPagination columns={columns} data={transactions.data} pagination={transactions} emptyMessage="No transactions yet." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={transactions.data}
+                    pagination={transactions}
+                    emptyMessage="No transactions yet."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
         </AppLayout>
     );

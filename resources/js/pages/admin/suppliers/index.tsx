@@ -167,7 +167,7 @@ export default function SuppliersIndex({ suppliers }: Props) {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </div>  
+                </div>
             ),
         },
     ], []);
@@ -211,6 +211,58 @@ export default function SuppliersIndex({ suppliers }: Props) {
         });
     };
 
+    const renderGridItem = (s: Supplier) => (
+        <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
+            <div className="flex items-center gap-4 mb-4">
+                <div className="size-12 rounded-xl bg-bm-gold/10 flex items-center justify-center shrink-0">
+                    <Truck className="size-6 text-bm-gold" />
+                </div>
+                <div className="flex-1 min-w-0 pr-8">
+                    <h3 className="font-semibold text-lg truncate">{s.name}</h3>
+                    <p className="text-sm text-muted-foreground truncate">{s.contact_name || 'No contact person'}</p>
+                </div>
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="size-8 rounded-full hover:bg-muted cursor-pointer relative z-10">
+                                <MoreVertical className="size-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-xl z-50">
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleEdit(s)}>
+                                <Edit2 className="mr-2 size-4" /> Edit Supplier
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer text-red-500 focus:text-red-500" onClick={() => handleDelete(s)}>
+                                <Trash2 className="mr-2 size-4" /> Delete Supplier
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+            <div className="mt-auto space-y-3">
+                <div className="flex items-center justify-between text-sm border-t border-border/40 pt-3">
+                    <span className="text-muted-foreground">Orders</span>
+                    <span className="font-mono font-medium">{s.purchase_orders_count}</span>
+                </div>
+                <div className="flex flex-col gap-1 text-sm pt-2">
+                    {s.email && <span className="flex items-center gap-2 text-muted-foreground truncate"><Mail className="size-3 shrink-0" /> {s.email}</span>}
+                    {s.phone && <span className="flex items-center gap-2 text-muted-foreground truncate"><Phone className="size-3 shrink-0" /> {s.phone}</span>}
+                </div>
+                <div className="pt-2">
+                    {s.is_active ? (
+                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 flex items-center gap-1 w-fit">
+                            <CheckCircle2 className="size-3" /> Active
+                        </Badge>
+                    ) : (
+                        <Badge variant="outline" className="bg-muted text-muted-foreground flex items-center gap-1 w-fit">
+                            <XCircle className="size-3" /> Inactive
+                        </Badge>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Suppliers" />
@@ -225,7 +277,14 @@ export default function SuppliersIndex({ suppliers }: Props) {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input placeholder="Search suppliers..." className="pl-9 rounded-xl border-border/40" value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
-                <DataTableWithPagination columns={columns} data={filteredData} pagination={suppliers} emptyMessage="No suppliers found." onPageChange={(url) => router.get(url)} />
+                <DataTableWithPagination
+                    columns={columns}
+                    data={filteredData}
+                    pagination={suppliers}
+                    emptyMessage="No suppliers found."
+                    onPageChange={(url) => router.get(url)}
+                    renderGridItem={renderGridItem}
+                />
             </div>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
