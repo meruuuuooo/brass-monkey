@@ -21,6 +21,8 @@ class ActivityLogger
         string $description,
         ?User $causer = null,
         ?array $properties = null,
+        ?string $subjectType = null,
+        ?int $subjectId = null,
     ): ActivityLog {
         return ActivityLog::create([
             'user_id' => $user->id,
@@ -30,6 +32,8 @@ class ActivityLogger
             'ip_address' => $this->request->ip(),
             'user_agent' => $this->request->userAgent(),
             'properties' => $properties,
+            'subject_type' => $subjectType,
+            'subject_id' => $subjectId,
         ]);
     }
 }

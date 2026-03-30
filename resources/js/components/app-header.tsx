@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Menu, Search, Bell } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -98,7 +98,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 <div className="flex h-full flex-1 flex-col space-y-4 p-4">
                                     <div className="flex h-full flex-col justify-between text-sm">
                                         <div className="flex flex-col space-y-4">
-                                            {mainNavItems.map((item) => (
+                                            {mainNavItems.map((item) => item.href && (
                                                 <Link
                                                     key={item.title}
                                                     href={item.href}
@@ -113,10 +113,10 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                         </div>
 
                                         <div className="flex flex-col space-y-4">
-                                            {rightNavItems.map((item) => (
+                                            {rightNavItems.map((item) => item.href && (
                                                 <a
                                                     key={item.title}
-                                                    href={toUrl(item.href)}
+                                                    href={toUrl(item.href as string)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex items-center space-x-2 font-medium"
@@ -146,7 +146,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     <div className="ml-6 hidden h-full items-center space-x-6 lg:flex">
                         <NavigationMenu className="flex h-full items-stretch">
                             <NavigationMenuList className="flex h-full items-stretch space-x-2">
-                                {mainNavItems.map((item, index) => (
+                                {mainNavItems.map((item, index) => item.href && (
                                     <NavigationMenuItem
                                         key={index}
                                         className="relative flex h-full items-center"
@@ -183,14 +183,26 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 size="icon"
                                 className="group h-9 w-9 cursor-pointer"
                             >
-                                <Search className="!size-5 opacity-80 group-hover:opacity-100" />
+                                <Search className="size-5! opacity-80 group-hover:opacity-100" />
                             </Button>
+                            <Link
+                                href="/notifications"
+                                className="relative group inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent transition-colors"
+                            >
+                                <Bell className="size-5 opacity-80 group-hover:opacity-100" />
+                                {auth.unread_notifications_count > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-bm-gold px-1 text-[10px] font-black text-black">
+                                        {auth.unread_notifications_count > 9 ? '9+' : auth.unread_notifications_count}
+                                    </span>
+                                )}
+                                <span className="sr-only">Notifications</span>
+                            </Link>
                             <div className="ml-1 hidden gap-1 lg:flex">
-                                {rightNavItems.map((item) => (
+                                {rightNavItems.map((item) => item.href && (
                                     <Tooltip key={item.title}>
                                         <TooltipTrigger>
                                             <a
-                                                href={toUrl(item.href)}
+                                                href={toUrl(item.href as string)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="group inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"

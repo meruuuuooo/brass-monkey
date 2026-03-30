@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { Home } from 'lucide-react';
+import { LayoutDashboard } from 'lucide-react';
 import { Fragment } from 'react';
 import {
     Breadcrumb,
@@ -30,14 +30,14 @@ export function Breadcrumbs({
                                 <Fragment key={index}>
                                     <BreadcrumbItem>
                                         {isLast ? (
-                                            <BreadcrumbPage className="flex items-center">
-                                                {isDashboard && <Home className="h-3 w-3" />}
+                                            <BreadcrumbPage className="flex items-center gap-2 font-bold tracking-tight text-foreground">
+                                                {isDashboard && <LayoutDashboard className="size-4 text-amber-600 dark:text-amber-400" />}
                                                 {item.title}
                                             </BreadcrumbPage>
                                         ) : (
-                                            <BreadcrumbLink asChild className="flex items-center">
+                                            <BreadcrumbLink asChild className="flex items-center transition-colors hover:text-foreground">
                                                 <Link href={item.href} className="flex items-center gap-2">
-                                                    {isDashboard && <Home className="h-3 w-3" />}
+                                                    {isDashboard && <LayoutDashboard className="size-4 opacity-50" />}
                                                     {item.title}
                                                 </Link>
                                             </BreadcrumbLink>

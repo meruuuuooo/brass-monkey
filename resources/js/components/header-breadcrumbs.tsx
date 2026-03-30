@@ -61,18 +61,23 @@ export function HeaderBreadcrumbs({
     }, []);
 
     return (
-        <header className="m-4 rounded-sm flex h-10 shrink-0 items-center justify-between border border-sidebar-border/50 px-4 shadow-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-3">
+        <header className="m-4 flex h-12 shrink-0 items-center justify-between rounded-xl border border-border/40 bg-background/40 px-4 shadow-sm backdrop-blur-md transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 md:px-5">
             <div className="flex items-center">
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
 
-            <div className="flex items-center gap-2 text-[10px] text-muted-foreground md:gap-3 md:text-xs">
-                <span className="hidden italic md:inline">Current Version : {appVersion}</span>
-                <span className="hidden md:inline">|</span>
-                <span>{clockInfo.date}</span>
-                <span>|</span>
-                <span>{clockInfo.time}</span>
-                <span className="hidden rounded-full bg-sky-100 px-2 py-0.5 text-sky-700 dark:bg-sky-950 dark:text-sky-300 md:inline-flex">
+            <div className="flex items-center gap-3 text-[10px] text-muted-foreground md:gap-4 md:text-xs">
+                <div className="hidden items-center gap-1.5 md:flex">
+                    <span className="font-medium tracking-tight opacity-50">VERSION</span>
+                    <span className="font-bold text-foreground/80">{appVersion}</span>
+                </div>
+                <span className="hidden opacity-20 md:inline">|</span>
+                <div className="flex items-center gap-3">
+                    <span className="font-medium tabular-nums">{clockInfo.date}</span>
+                    <span className="opacity-20">|</span>
+                    <span className="font-bold tabular-nums text-foreground/80">{clockInfo.time}</span>
+                </div>
+                <span className="hidden rounded-lg bg-amber-500/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 md:inline-flex">
                     {clockInfo.zone}
                 </span>
             </div>
