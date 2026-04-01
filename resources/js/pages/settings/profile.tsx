@@ -183,7 +183,7 @@ export default function Profile({
                     </CardContent>
                 </Card>
 
-                <DeleteUser />
+                {/* <DeleteUser /> */}
             </SettingsLayout>
         </AppLayout>
     );
