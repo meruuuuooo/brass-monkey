@@ -1,5 +1,4 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
 import {
     ArrowLeft,
     Wrench,
@@ -10,12 +9,13 @@ import {
     ArrowUp,
     Sparkles,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import serviceRoutes from '@/routes/services';
-import Swal from 'sweetalert2';
 
 interface Service {
     id: number;
@@ -46,6 +46,7 @@ export default function ServiceShow({ service }: Props) {
             setShowBackToTop(window.scrollY > 500);
         };
         window.addEventListener('scroll', handleScroll);
+
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -55,6 +56,7 @@ export default function ServiceShow({ service }: Props) {
 
     const handleBooking = (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!auth?.user) {
             Swal.fire({
                 icon: 'warning',
@@ -62,8 +64,10 @@ export default function ServiceShow({ service }: Props) {
                 text: 'Please log in to book this service.',
                 confirmButtonColor: '#ffc107',
             });
+
             return;
         }
+
         post(serviceRoutes.book().url, {
             onSuccess: () => {
                 setIsBookingOpen(false);
@@ -429,8 +433,10 @@ export default function ServiceShow({ service }: Props) {
                                         text: 'Please log in to book this service.',
                                         confirmButtonColor: '#ffc107',
                                     });
+
                                     return;
                                 }
+
                                 document
                                     .querySelector('form')
                                     ?.dispatchEvent(

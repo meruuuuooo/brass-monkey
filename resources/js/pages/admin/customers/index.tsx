@@ -1,18 +1,18 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, Link } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Search, UserCircle2, Mail, Filter, Eye,
 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import AppLayout from '@/layouts/app-layout';
 
 interface Segment { id: number; name: string; color: string; }
 

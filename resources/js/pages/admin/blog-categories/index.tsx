@@ -1,7 +1,5 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus,
     Search,
@@ -10,11 +8,11 @@ import {
     FolderTree,
     Layers,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useEffect, useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -23,8 +21,10 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import AppLayout from '@/layouts/app-layout';
 
 interface BlogCategory {
     id: number;
@@ -81,8 +81,12 @@ export default function BlogCategoriesIndex({ categories }: Props) {
     ];
 
     const filteredData = useMemo(() => {
-        if (!search) return categories.data;
+        if (!search) {
+return categories.data;
+}
+
         const q = search.toLowerCase();
+
         return categories.data.filter((cat) =>
             cat.name.toLowerCase().includes(q) ||
             cat.slug.toLowerCase().includes(q)

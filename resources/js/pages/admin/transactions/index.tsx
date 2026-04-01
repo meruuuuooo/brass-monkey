@@ -1,19 +1,19 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import { Link } from '@inertiajs/react';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Search, Filter, ArrowUpCircle, ArrowDownCircle, RotateCcw, Link as LinkIcon,
 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Link } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
 
 interface Txn {
     id: number; transaction_number: string; type: string; amount: string;
@@ -56,6 +56,7 @@ export default function TransactionsIndex({ transactions, filters }: Props) {
             cell: ({ row }) => {
                 const cfg = typeConfig[row.original.type] || typeConfig.payment;
                 const Icon = cfg.icon;
+
                 return <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold flex items-center gap-1 w-fit`}><Icon className="size-3" />{cfg.label}</Badge>;
             },
         },
@@ -101,6 +102,7 @@ export default function TransactionsIndex({ transactions, filters }: Props) {
         const cfg = typeConfig[txn.type] || typeConfig.payment;
         const Icon = cfg.icon;
         const isRefund = txn.type === 'refund';
+
         return (
             <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
                 <div className="flex items-start justify-between mb-4">

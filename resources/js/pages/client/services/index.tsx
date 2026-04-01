@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { 
     Wrench, 
@@ -10,9 +9,8 @@ import {
     ShieldCheck,
     CalendarCheck2
 } from 'lucide-react';
+import { useState } from 'react';
 
-import serviceRoutes from '@/routes/services';
-import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
@@ -24,7 +22,9 @@ import {
     DialogTitle 
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { BreadcrumbItem } from '@/types';
+import AppLayout from '@/layouts/app-layout';
+import serviceRoutes from '@/routes/services';
+import type { BreadcrumbItem } from '@/types';
 
 interface Service {
     id: number;

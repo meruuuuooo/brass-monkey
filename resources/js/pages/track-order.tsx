@@ -1,5 +1,4 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useState } from 'react';
 import {
     Search,
     Package,
@@ -16,11 +15,12 @@ import {
     ArrowRight,
     Eye,
 } from 'lucide-react';
+import { useState } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { home, login, dashboard } from '@/routes';
 import WorkOrderModal from '@/components/work-order-modal';
+import { home, login, dashboard } from '@/routes';
 
 interface ServiceOrder {
     tracking_number: string;

@@ -1,13 +1,13 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
 import { ShoppingBag, Package, Calendar, DollarSign, Download, ArrowRight, CreditCard } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { useState } from 'react';
+import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import Heading from '@/components/heading';
-import { Pagination } from '@/components/ui/pagination';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useState } from 'react';
+import { Pagination } from '@/components/ui/pagination';
+import AppLayout from '@/layouts/app-layout';
 
 interface OrderItem {
     id: number; quantity: number; unit_price: number; total_price: number; product_name: string;

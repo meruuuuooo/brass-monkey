@@ -1,4 +1,3 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import {
     Megaphone,
@@ -10,6 +9,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/app-layout';
 
 /* ─────────────────────────────────── Types ──────────────────────────────── */
 
@@ -32,15 +32,28 @@ interface Props {
 /* ──────────────────────────────── Helpers ───────────────────────────────── */
 
 function getPriorityMeta(priority: number) {
-    if (priority >= 10) return { label: 'Top', cls: 'bg-bm-gold/20 text-bm-gold border-bm-gold/30' };
-    if (priority >= 5) return { label: 'High', cls: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
-    if (priority < 0) return { label: 'Low', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/30' };
+    if (priority >= 10) {
+return { label: 'Top', cls: 'bg-bm-gold/20 text-bm-gold border-bm-gold/30' };
+}
+
+    if (priority >= 5) {
+return { label: 'High', cls: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
+}
+
+    if (priority < 0) {
+return { label: 'Low', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/30' };
+}
+
     return { label: 'Featured', cls: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
 }
 
 function formatExpiry(start: string | null, hours: number | null): string | null {
-    if (!start || !hours) return null;
+    if (!start || !hours) {
+return null;
+}
+
     const expiry = new Date(new Date(start).getTime() + hours * 3600_000);
+
     return expiry.toLocaleString(undefined, {
         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
     });

@@ -1,22 +1,17 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus, Search, Edit2, Trash2, CheckCircle2, XCircle, Truck, Phone, Mail, MoreVertical,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useEffect, useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -25,6 +20,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from '@/components/ui/input';
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import AppLayout from '@/layouts/app-layout';
 
 interface Supplier {
     id: number;
@@ -78,8 +78,12 @@ export default function SuppliersIndex({ suppliers }: Props) {
     ];
 
     const filteredData = useMemo(() => {
-        if (!search) return suppliers.data;
+        if (!search) {
+return suppliers.data;
+}
+
         const q = search.toLowerCase();
+
         return suppliers.data.filter((s) =>
             s.name.toLowerCase().includes(q) ||
             s.contact_name?.toLowerCase().includes(q) ||
@@ -186,7 +190,9 @@ export default function SuppliersIndex({ suppliers }: Props) {
         setIsModalOpen(true);
     };
 
-    const handleCreate = () => { setEditing(null); reset(); setIsModalOpen(true); };
+    const handleCreate = () => {
+ setEditing(null); reset(); setIsModalOpen(true); 
+};
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -205,9 +211,11 @@ export default function SuppliersIndex({ suppliers }: Props) {
             title: 'Are you sure?', text: `Delete "${s.name}"?`, icon: 'warning',
             showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, delete it!',
         }).then((r) => {
-            if (r.isConfirmed) router.delete(`/admin/suppliers/${s.id}`, {
+            if (r.isConfirmed) {
+router.delete(`/admin/suppliers/${s.id}`, {
                 onSuccess: () => Swal.fire('Deleted!', 'Supplier removed.', 'success'),
             });
+}
         });
     };
 

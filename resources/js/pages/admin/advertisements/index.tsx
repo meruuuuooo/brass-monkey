@@ -1,6 +1,5 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
+import { useForm } from '@inertiajs/react';
 import {
     Plus,
     Search,
@@ -17,11 +16,12 @@ import {
     Link,
     Image as ImageIcon,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
+import { useEffect, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
+import AdvertisementController from '@/actions/App/Http/Controllers/Admin/AdvertisementController';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -30,16 +30,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -47,8 +37,18 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useForm } from '@inertiajs/react';
-import AdvertisementController from '@/actions/App/Http/Controllers/Admin/AdvertisementController';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
 
 /* ─────────────────────────────────── Types ──────────────────────────────── */
 
@@ -83,14 +83,26 @@ interface Props {
 /* ──────────────────────────────── Helpers ───────────────────────────────── */
 
 function getPriorityMeta(priority: number) {
-    if (priority >= 10) return { label: 'Top', cls: 'bg-bm-gold/20 text-bm-gold border-bm-gold/30' };
-    if (priority >= 5) return { label: 'High', cls: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
-    if (priority < 0) return { label: 'Low', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/30' };
+    if (priority >= 10) {
+return { label: 'Top', cls: 'bg-bm-gold/20 text-bm-gold border-bm-gold/30' };
+}
+
+    if (priority >= 5) {
+return { label: 'High', cls: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
+}
+
+    if (priority < 0) {
+return { label: 'Low', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/30' };
+}
+
     return { label: 'Normal', cls: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
 }
 
 function formatDateTime(iso: string | null) {
-    if (!iso) return null;
+    if (!iso) {
+return null;
+}
+
     return new Date(iso).toLocaleString(undefined, {
         month: 'short', day: 'numeric', year: 'numeric',
         hour: '2-digit', minute: '2-digit',
@@ -98,9 +110,13 @@ function formatDateTime(iso: string | null) {
 }
 
 function toLocalDatetimeValue(iso: string | null): string {
-    if (!iso) return '';
+    if (!iso) {
+return '';
+}
+
     const d = new Date(iso);
     const pad = (n: number) => String(n).padStart(2, '0');
+
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
@@ -602,7 +618,10 @@ export default function AdvertisementsIndex({ advertisements }: Props) {
                                                                 className="size-12 rounded-full shadow-xl"
                                                                 onClick={() => {
                                                                     setData('image', null);
-                                                                    if (!data.image) setData('image_path', '');
+
+                                                                    if (!data.image) {
+setData('image_path', '');
+}
                                                                 }}
                                                             >
                                                                 <X className="size-6" />
@@ -614,7 +633,10 @@ export default function AdvertisementsIndex({ advertisements }: Props) {
                                                                 accept="image/*"
                                                                 onChange={(e) => {
                                                                     const file = e.target.files?.[0];
-                                                                    if (file) setData('image', file);
+
+                                                                    if (file) {
+setData('image', file);
+}
                                                                 }}
                                                             />
                                                         </div>
@@ -638,7 +660,10 @@ export default function AdvertisementsIndex({ advertisements }: Props) {
                                                             accept="image/*"
                                                             onChange={(e) => {
                                                                 const file = e.target.files?.[0];
-                                                                if (file) setData('image', file);
+
+                                                                if (file) {
+setData('image', file);
+}
                                                             }}
                                                         />
                                                     </label>

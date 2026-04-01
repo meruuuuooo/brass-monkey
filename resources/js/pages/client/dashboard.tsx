@@ -1,10 +1,10 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ChevronRight, ExternalLink, Package, Search, Sparkles, Truck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import services from '@/routes/services';
 
@@ -45,7 +45,9 @@ export default function ClientDashboard({
     ];
 
     useEffect(() => {
-        if (advertisements.length <= 1) return;
+        if (advertisements.length <= 1) {
+return;
+}
 
         const timer = setInterval(() => {
             setCurrentAdIndex((prev: number) => (prev + 1) % advertisements.length);

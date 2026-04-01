@@ -29,16 +29,20 @@ import {
     ChevronRight,
 } from 'lucide-react';
 
+import { useState, useEffect } from 'react';
+import AdminActions from '@/actions/App/Http/Controllers/Admin';
 import { index as activityLogs } from '@/actions/App/Http/Controllers/Admin/ActivityLogController';
 import { index as ads } from '@/actions/App/Http/Controllers/Admin/AdvertisementController';
-import AdminActions from '@/actions/App/Http/Controllers/Admin';
 import { index as users } from '@/actions/App/Http/Controllers/Admin/UserController';
-import { useState, useEffect } from 'react';
 
 const announcements = AdminActions.AnnouncementController;
-import AppLayout from '@/layouts/app-layout';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { NavMain } from '@/components/nav-main';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
     Sidebar,
     SidebarContent,
@@ -51,17 +55,13 @@ import {
     SidebarGroupLabel,
     SidebarGroupContent,
 } from '@/components/ui/sidebar';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
+import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
-import services from '@/routes/services';
 import { edit as editProfile } from '@/routes/profile';
+import services from '@/routes/services';
 import type { NavItem, NavGroup } from '@/types';
 import AppLogo from './app-logo';
 
@@ -350,9 +350,13 @@ export function AppSidebar() {
 function NavAdmin({ groups }: { groups: NavGroup[] }) {
     const { isCurrentUrl } = useCurrentUrl();
     const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
-        if (typeof window === 'undefined') return {};
+        if (typeof window === 'undefined') {
+return {};
+}
+
         try {
             const saved = localStorage.getItem('sidebar_groups_state');
+
             return saved ? JSON.parse(saved) : {};
         } catch {
             return {};
@@ -366,6 +370,7 @@ function NavAdmin({ groups }: { groups: NavGroup[] }) {
 
         groups.forEach((group) => {
             const hasActiveItem = group.items.some((item) => item.href && isCurrentUrl(item.href));
+
             if (hasActiveItem && !newOpenGroups[group.title]) {
                 newOpenGroups[group.title] = true;
                 changed = true;

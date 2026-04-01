@@ -1,21 +1,17 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus, Edit2, Trash2, Tag, Users, MoreVertical,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useEffect, useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -24,6 +20,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from '@/components/ui/input';
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import AppLayout from '@/layouts/app-layout';
 
 interface Segment {
     id: number;
@@ -181,7 +181,9 @@ export default function CustomerSegmentsIndex({ segments }: Props) {
         setIsModalOpen(true);
     };
 
-    const handleCreate = () => { setEditing(null); reset(); setIsModalOpen(true); };
+    const handleCreate = () => {
+ setEditing(null); reset(); setIsModalOpen(true); 
+};
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -200,9 +202,11 @@ export default function CustomerSegmentsIndex({ segments }: Props) {
             title: 'Delete segment?', text: `"${seg.name}" — ${seg.customers_count} customers will be unlinked.`,
             icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Delete',
         }).then((r) => {
-            if (r.isConfirmed) router.delete(`/admin/customer-segments/${seg.id}`, {
+            if (r.isConfirmed) {
+router.delete(`/admin/customer-segments/${seg.id}`, {
                 onSuccess: () => Swal.fire('Deleted!', 'Segment removed.', 'success'),
             });
+}
         });
     };
 

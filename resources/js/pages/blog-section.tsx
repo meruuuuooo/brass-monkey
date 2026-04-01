@@ -1,9 +1,9 @@
 import { Link, router } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
 import {
     Search, Calendar, User, Eye, Tag, FileText,
     ArrowRight, ArrowUp, Facebook, ChevronRight
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
 interface BlogCategory {
@@ -66,6 +66,7 @@ export default function BlogSection({ posts, categories, tags, filters }: Props)
                 });
             }
         }, 400);
+
         return () => clearTimeout(timer);
     }, [search, filters]);
 
@@ -74,6 +75,7 @@ export default function BlogSection({ posts, categories, tags, filters }: Props)
             setShowBackToTop(window.scrollY > 500);
         };
         window.addEventListener('scroll', handleScroll);
+
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -83,11 +85,13 @@ export default function BlogSection({ posts, categories, tags, filters }: Props)
 
     const handleFilter = (type: 'category' | 'tag', slug: string) => {
         const newFilters = { ...filters };
+
         if (newFilters[type] === slug) {
             delete newFilters[type];
         } else {
             newFilters[type] = slug;
         }
+
         router.get('/', newFilters as any, { preserveScroll: true, preserveState: true });
     };
 
@@ -241,6 +245,7 @@ export default function BlogSection({ posts, categories, tags, filters }: Props)
                                 <div className="flex gap-2">
                                     {posts.links.map((link, i) => {
                                         const isLastOrFirst = i === 0 || i === posts.links.length - 1;
+
                                         return (
                                             <button
                                                 key={i}

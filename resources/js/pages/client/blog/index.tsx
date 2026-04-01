@@ -1,13 +1,13 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
 import { Search, Calendar, User, Eye, Tag, FileText } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
 import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Pagination } from '@/components/ui/pagination';
+import AppLayout from '@/layouts/app-layout';
 
 interface BlogCategory {
     id: number;
@@ -68,16 +68,19 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
                 });
             }
         }, 400);
+
         return () => clearTimeout(timer);
     }, [search, filters]);
 
     const handleFilter = (type: 'category' | 'tag', slug: string) => {
         const newFilters = { ...filters };
+
         if (newFilters[type] === slug) {
             delete newFilters[type];
         } else {
             newFilters[type] = slug;
         }
+
         router.get('/blog', newFilters as any, { preserveScroll: true });
     };
 

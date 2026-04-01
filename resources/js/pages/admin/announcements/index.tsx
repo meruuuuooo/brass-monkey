@@ -1,7 +1,6 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import { useForm } from '@inertiajs/react';
+import type { ColumnDef } from '@tanstack/react-table';
 import { 
     Plus, 
     Search, 
@@ -15,13 +14,13 @@ import {
     CheckCircle,
     Info
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useEffect, useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -30,9 +29,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { 
     Select, 
     SelectContent, 
@@ -40,7 +38,9 @@ import {
     SelectTrigger, 
     SelectValue 
 } from "@/components/ui/select";
-import { useForm } from '@inertiajs/react';
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import AppLayout from '@/layouts/app-layout';
 
 interface Announcement {
     id: number;
@@ -114,6 +114,7 @@ export default function AnnouncementsIndex({ announcements }: Props) {
                     const type = row.original.type;
                     const config = typeConfig[type];
                     const Icon = config.icon;
+
                     return (
                         <Badge variant="outline" className={`flex items-center gap-1.5 w-fit ${config.color}`}>
                             <Icon className="size-3" /> {config.label}

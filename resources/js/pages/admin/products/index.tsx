@@ -1,7 +1,5 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus,
     Search,
@@ -16,12 +14,12 @@ import {
     Filter,
     MoreVertical,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useEffect, useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -30,16 +28,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -48,6 +36,18 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from '@/components/ui/input';
+import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import AppLayout from '@/layouts/app-layout';
 
 interface Category {
     id: number;
@@ -145,6 +145,7 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
                 });
             }
         }, 400);
+
         return () => clearTimeout(timeout);
     }, [search]);
 
@@ -393,10 +394,14 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
                         <DropdownMenuContent align="start" className="rounded-xl">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEdit(product); }} className="cursor-pointer">
+                            <DropdownMenuItem onClick={(e) => {
+ e.stopPropagation(); handleEdit(product); 
+}} className="cursor-pointer">
                                 <Edit2 className="mr-2 size-4" /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(product); }} className="cursor-pointer text-red-500 focus:text-red-500">
+                            <DropdownMenuItem onClick={(e) => {
+ e.stopPropagation(); handleDelete(product); 
+}} className="cursor-pointer text-red-500 focus:text-red-500">
                                 <Trash2 className="mr-2 size-4" /> Delete
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -668,7 +673,10 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
                                                                 className="size-12 rounded-full shadow-xl"
                                                                 onClick={() => {
                                                                     setData('image', null);
-                                                                    if (!data.image) setData('image_path', '');
+
+                                                                    if (!data.image) {
+setData('image_path', '');
+}
                                                                 }}
                                                             >
                                                                 <X className="size-6" />
@@ -680,7 +688,10 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
                                                                 accept="image/*"
                                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                     const file = e.target.files?.[0];
-                                                                    if (file) setData('image', file);
+
+                                                                    if (file) {
+setData('image', file);
+}
                                                                 }}
                                                             />
                                                         </div>
@@ -704,7 +715,10 @@ export default function ProductsIndex({ products, categories, filters }: Props) 
                                                             accept="image/*"
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                 const file = e.target.files?.[0];
-                                                                if (file) setData('image', file);
+
+                                                                if (file) {
+setData('image', file);
+}
                                                             }}
                                                         />
                                                     </label>

@@ -1,10 +1,10 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
 import { Calendar, User, Eye, Tag, ArrowLeft, MessageCircle, FileText, ArrowUp, Instagram, Twitter, Linkedin, Facebook, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import Swal from 'sweetalert2';
 import { login } from '@/routes';
 
 interface BlogComment {
@@ -67,6 +67,7 @@ export default function BlogShow({ post, related }: Props) {
             setShowBackToTop(window.scrollY > 500);
         };
         window.addEventListener('scroll', handleScroll);
+
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 

@@ -31,6 +31,7 @@ export function DashboardCalendar({ selectedDate, onDateSelect, items = [] }: Da
 
     const handleDateClick = (day: number) => {
         const clickedDate = new Date(year, month, day);
+
         if (onDateSelect) {
             // Toggle selection if clicking the same date
             if (selectedDate &&
@@ -50,6 +51,7 @@ export function DashboardCalendar({ selectedDate, onDateSelect, items = [] }: Da
 
         const dayItems = items.filter(item => {
             const itemDate = new Date(item.date);
+
             // Adjust for local timezone if item.date is just a date string
             return itemDate.getDate() === day && itemDate.getMonth() === month && itemDate.getFullYear() === year;
         });

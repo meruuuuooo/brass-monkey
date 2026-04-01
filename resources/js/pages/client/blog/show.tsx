@@ -1,10 +1,10 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Calendar, User, Eye, Tag, ArrowLeft, MessageCircle, FileText } from 'lucide-react';
+import Swal from 'sweetalert2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import Swal from 'sweetalert2';
+import AppLayout from '@/layouts/app-layout';
 
 interface BlogComment {
     id: number;

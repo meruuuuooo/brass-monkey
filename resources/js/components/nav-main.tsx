@@ -2,6 +2,11 @@ import { Link } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
     SidebarGroup,
     SidebarGroupLabel,
     SidebarGroupContent,
@@ -9,20 +14,19 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import type { NavItem } from '@/types';
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const { isCurrentUrl } = useCurrentUrl();
     const [isOpen, setIsOpen] = useState(() => {
-        if (typeof window === 'undefined') return true;
+        if (typeof window === 'undefined') {
+return true;
+}
+
         try {
             const saved = localStorage.getItem('sidebar_main_open');
+
             return saved !== null ? saved === 'true' : true;
         } catch {
             return true;
@@ -32,6 +36,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     // Auto-open if an item inside is active
     useEffect(() => {
         const hasActiveItem = items.some((item) => item.href && isCurrentUrl(item.href));
+
         if (hasActiveItem && !isOpen) {
             setIsOpen(true);
             localStorage.setItem('sidebar_main_open', 'true');

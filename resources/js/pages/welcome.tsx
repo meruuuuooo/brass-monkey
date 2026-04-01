@@ -31,9 +31,9 @@ import { useEffect, useState } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
+import WorkOrderModal from '@/components/work-order-modal';
 import { login, dashboard } from '@/routes';
 import BlogSection from './blog-section';
-import WorkOrderModal from '@/components/work-order-modal';
 
 interface ServiceOrder {
     tracking_number: string;

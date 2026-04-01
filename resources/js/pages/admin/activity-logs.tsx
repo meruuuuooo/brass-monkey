@@ -121,11 +121,24 @@ const subjectTypeLabels: Record<string, string> = {
 };
 
 function getSubjectRef(log: Log): string | null {
-    if (!log.properties || !log.subject_type) return null;
+    if (!log.properties || !log.subject_type) {
+return null;
+}
+
     const props = log.properties as Record<string, string>;
-    if (props.order_number) return props.order_number;
-    if (props.tracking_number) return props.tracking_number;
-    if (props.sku) return `${props.product ?? ''} (${props.sku})`;
+
+    if (props.order_number) {
+return props.order_number;
+}
+
+    if (props.tracking_number) {
+return props.tracking_number;
+}
+
+    if (props.sku) {
+return `${props.product ?? ''} (${props.sku})`;
+}
+
     return null;
 }
 
@@ -154,7 +167,9 @@ export default function ActivityLogs({
     }
 
     function exportSelectedAsCsv(selectedLogs: Log[]): void {
-        if (selectedLogs.length === 0) return;
+        if (selectedLogs.length === 0) {
+return;
+}
 
         const header = [
             'Event',
@@ -267,8 +282,10 @@ export default function ActivityLogs({
                     const ref = getSubjectRef(row.original);
                     const type = row.original.subject_type;
 
-                    if (!type)
-                        return <span className="text-muted-foreground">—</span>;
+                    if (!type) {
+return <span className="text-muted-foreground">—</span>;
+}
+
                     return (
                         <div className="flex flex-col gap-0.5">
                             <Badge

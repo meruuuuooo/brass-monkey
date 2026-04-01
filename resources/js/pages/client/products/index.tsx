@@ -1,16 +1,16 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
 import { Search, Filter, ShoppingBag, Package, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { Pagination } from '@/components/ui/pagination';
-import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
+import { useState } from 'react';
 import Swal from 'sweetalert2';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Pagination } from '@/components/ui/pagination';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import AppLayout from '@/layouts/app-layout';
 
 interface Product {
     id: number; name: string; sku: string; description: string; price: number;

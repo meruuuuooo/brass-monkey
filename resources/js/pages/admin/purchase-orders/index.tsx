@@ -1,24 +1,24 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus, ClipboardList, CheckCircle2, Clock, Send, Package, XCircle, Trash2, Eye, Filter, ArrowUpDown,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import AppLayout from '@/layouts/app-layout';
 
 interface Supplier { id: number; name: string; }
 interface ProductOption { id: number; name: string; sku: string | null; cost_price: string; }
@@ -115,6 +115,7 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
             cell: ({ row }) => {
                 const cfg = statusConfig[row.original.status] || statusConfig.draft;
                 const Icon = cfg.icon;
+
                 return (
                     <Badge variant="outline" className={`${cfg.color} flex items-center gap-1 w-fit rounded-lg text-xs font-bold`}>
                         <Icon className="size-3" /> {cfg.label}
@@ -143,6 +144,7 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
                 const po = row.original;
                 const nextStatus: Record<string, string> = { draft: 'submitted', submitted: 'approved', approved: 'received' };
                 const next = nextStatus[po.status];
+
                 return (
                     <div className="flex justify-end gap-1">
                         {next && (
@@ -188,9 +190,11 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
             title: 'Delete draft PO?', text: po.order_number, icon: 'warning',
             showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Delete',
         }).then((r) => {
-            if (r.isConfirmed) router.delete(`/admin/purchase-orders/${po.id}`, {
+            if (r.isConfirmed) {
+router.delete(`/admin/purchase-orders/${po.id}`, {
                 onSuccess: () => Swal.fire('Deleted!', 'Purchase order removed.', 'success'),
             });
+}
         });
     };
 

@@ -1,19 +1,19 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
-import { Search, Filter, Plus, Wrench, Clock, CheckCircle2, User, UserCircle2, AlertTriangle, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Swal from 'sweetalert2';
 import { Link } from '@inertiajs/react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Search, Filter, Plus, Wrench, Clock, CheckCircle2, User, UserCircle2, AlertTriangle, AlertCircle } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
 
 interface PaginatedJobs {
     data: any[]; current_page: number; last_page: number; per_page: number; total: number;
@@ -96,6 +96,7 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
             cell: ({ row }) => {
                 const cfg = statusConfig[row.original.status] || statusConfig.pending;
                 const Icon = cfg.icon;
+
                 return <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold flex items-center gap-1 w-fit`}><Icon className="size-3" />{cfg.label}</Badge>;
             },
         },
@@ -103,6 +104,7 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
             accessorKey: 'priority', header: 'Priority',
             cell: ({ row }) => {
                 const cfg = priorityConfig[row.original.priority] || priorityConfig.normal;
+
                 return <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold w-fit`}>{cfg.label}</Badge>;
             },
         },

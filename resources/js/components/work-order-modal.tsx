@@ -1,9 +1,3 @@
-import { useEffect, useState, useCallback } from 'react';
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-} from '@/components/ui/dialog';
 import {
     X,
     FileText,
@@ -25,6 +19,12 @@ import {
     Loader2,
     AlertCircle,
 } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 /* ────────────────────────────────────────────
    Types – mirrors the Kanban API response
@@ -149,10 +149,19 @@ function timeAgo(raw: string) {
     try {
         const diff = Date.now() - new Date(raw).getTime();
         const mins = Math.floor(diff / 60000);
-        if (mins < 60) return `${mins}m ago`;
+
+        if (mins < 60) {
+return `${mins}m ago`;
+}
+
         const hrs = Math.floor(mins / 60);
-        if (hrs < 24) return `${hrs}h ago`;
+
+        if (hrs < 24) {
+return `${hrs}h ago`;
+}
+
         const days = Math.floor(hrs / 24);
+
         return `${days}d ago`;
     } catch {
         return raw;
@@ -312,12 +321,14 @@ export default function WorkOrderModal({ open, onOpenChange, workOrderNumber }: 
 
             // Find the matching task across all columns by work_order_number
             let matched: KanbanTask | null = null;
+
             for (const col of boardData.columns) {
                 const found = col.tasks.find(
                     (t) =>
                         t.work_order_number === workOrderNumber ||
                         t.title.toLowerCase().includes(workOrderNumber?.toLowerCase() ?? '')
                 );
+
                 if (found) {
                     matched = found;
                     break;

@@ -1,23 +1,23 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus, ArrowUpCircle, ArrowDownCircle, ClipboardCheck, Filter,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import AppLayout from '@/layouts/app-layout';
 
 interface ProductOption { id: number; name: string; sku: string | null; stock_quantity: number; }
 
@@ -90,6 +90,7 @@ export default function StockAdjustmentsIndex({ adjustments, products, filters }
             cell: ({ row }) => {
                 const cfg = typeConfig[row.original.type] || typeConfig.addition;
                 const Icon = cfg.icon;
+
                 return (
                     <Badge variant="outline" className={`${cfg.color} flex items-center gap-1 w-fit rounded-lg text-xs font-bold`}>
                         <Icon className="size-3" /> {cfg.label}
@@ -103,6 +104,7 @@ export default function StockAdjustmentsIndex({ adjustments, products, filters }
             cell: ({ row }) => {
                 const isAdd = row.original.type === 'addition';
                 const isAudit = row.original.type === 'audit';
+
                 return (
                     <span className={`font-mono font-bold ${isAdd ? 'text-emerald-600' : isAudit ? 'text-blue-500' : 'text-red-500'}`}>
                         {isAdd ? '+' : isAudit ? '=' : '-'}{row.original.quantity}
@@ -183,7 +185,9 @@ export default function StockAdjustmentsIndex({ adjustments, products, filters }
             <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="Stock Adjustments" description="Record manual stock changes and audit counts." />
-                    <Button className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl gap-2" onClick={() => { reset(); setIsModalOpen(true); }}>
+                    <Button className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl gap-2" onClick={() => {
+ reset(); setIsModalOpen(true); 
+}}>
                         <Plus className="size-4" /> New Adjustment
                     </Button>
                 </div>

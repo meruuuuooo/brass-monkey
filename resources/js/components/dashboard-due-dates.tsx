@@ -1,7 +1,7 @@
 import { Clock, User, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface CalendarItem {
     date: string;
@@ -26,6 +26,7 @@ export function DashboardDueDates({ selectedDate, onClearSelection, serviceOrder
         ? serviceOrders.filter(order => {
             const displayDate = order.estimated_completion || order.created_at;
             const orderDate = new Date(displayDate);
+
             return orderDate.getDate() === selectedDate.getDate() &&
                    orderDate.getMonth() === selectedDate.getMonth() &&
                    orderDate.getFullYear() === selectedDate.getFullYear();
@@ -33,6 +34,7 @@ export function DashboardDueDates({ selectedDate, onClearSelection, serviceOrder
         : serviceOrders.sort((a, b) => {
             const dateA = new Date(a.estimated_completion || a.created_at);
             const dateB = new Date(b.estimated_completion || b.created_at);
+
             return dateA.getTime() - dateB.getTime();
         }); // Show all, sorted by date
 
@@ -42,8 +44,15 @@ export function DashboardDueDates({ selectedDate, onClearSelection, serviceOrder
 
     const mapStatusToColor = (status: string) => {
         const normalized = status.toLowerCase();
-        if (normalized === 'completed' || normalized === 'done') return 'completed';
-        if (normalized === 'urgent') return 'urgent';
+
+        if (normalized === 'completed' || normalized === 'done') {
+return 'completed';
+}
+
+        if (normalized === 'urgent') {
+return 'urgent';
+}
+
         return 'pending';
     };
 
@@ -75,6 +84,7 @@ export function DashboardDueDates({ selectedDate, onClearSelection, serviceOrder
                     filteredItems.map((order) => {
                         const displayDate = order.estimated_completion || order.created_at;
                         const statusColor = mapStatusToColor(order.status);
+
                         return (
                             <div
                                 key={order.id}

@@ -1,11 +1,11 @@
 import { Head } from '@inertiajs/react';
+import { Paintbrush } from 'lucide-react';
 import AppearanceTabs from '@/components/appearance-tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit as editAppearance } from '@/routes/appearance';
 import type { BreadcrumbItem } from '@/types';
-import { Paintbrush } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

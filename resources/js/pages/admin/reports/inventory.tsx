@@ -1,15 +1,15 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, usePage } from '@inertiajs/react';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Package, AlertTriangle, DollarSign, ArrowLeft, ArrowUpCircle, ArrowDownCircle, ClipboardCheck,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useMemo, useState } from 'react';
+import { DataTableWithPagination } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
-import { DataTableWithPagination } from '@/components/data-table';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import AppLayout from '@/layouts/app-layout';
 
 interface ProductRow {
     id: number; name: string; sku: string | null; stock_quantity: number; low_stock_threshold: number;
@@ -40,8 +40,12 @@ export default function InventoryReport({ products, summary, recentAdjustments }
     ];
 
     const filtered = useMemo(() => {
-        if (!search) return products;
+        if (!search) {
+return products;
+}
+
         const q = search.toLowerCase();
+
         return products.filter((p) => p.name.toLowerCase().includes(q) || p.sku?.toLowerCase().includes(q));
     }, [products, search]);
 
@@ -59,6 +63,7 @@ export default function InventoryReport({ products, summary, recentAdjustments }
         {
             accessorKey: 'stock_quantity', header: 'Stock', cell: ({ row }) => {
                 const low = row.original.is_low_stock;
+
                 return <span className={`font-mono font-bold ${low ? 'text-red-500' : ''}`}>{row.original.stock_quantity}{low && <AlertTriangle className="inline size-3 ml-1" />}</span>;
             }
         },

@@ -1,7 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useMemo, useState, useRef } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus,
     Search,
@@ -17,12 +16,15 @@ import {
     Globe2,
     Archive
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import ReactQuill from 'react-quill-new';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import 'react-quill-new/dist/quill.snow.css';
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     Dialog,
     DialogContent,
@@ -31,11 +33,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
 import {
     Select,
     SelectContent,
@@ -43,7 +42,8 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 interface BlogPost {
     id: number;
@@ -152,6 +152,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
     useEffect(() => {
         if (editingPost) {
             transform((data) => ({ ...data, _method: 'PUT' }));
+
             if (editingPost.featured_image_path) {
                 setImagePreview(`/storage/${editingPost.featured_image_path}`);
             } else {
@@ -167,9 +168,18 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
     useEffect(() => {
         const timer = setTimeout(() => {
             const query: any = {};
-            if (search) query.search = search;
-            if (statusFilter !== 'all') query.status = statusFilter;
-            if (categoryFilter !== 'all') query.category = categoryFilter;
+
+            if (search) {
+query.search = search;
+}
+
+            if (statusFilter !== 'all') {
+query.status = statusFilter;
+}
+
+            if (categoryFilter !== 'all') {
+query.category = categoryFilter;
+}
 
             router.get('/admin/blog-posts', query, {
                 preserveState: true,
@@ -242,6 +252,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
                 header: 'Status',
                 cell: ({ row }) => {
                     const status = row.original.status;
+
                     if (status === 'published') {
                         return (
                             <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 flex items-center justify-center w-24">
@@ -255,6 +266,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
                             </Badge>
                         );
                     }
+
                     return (
                         <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200 flex items-center justify-center w-24">
                             Draft
@@ -352,6 +364,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
         if (file) {
             setData('featured_image', file);
             const imageUrl = URL.createObjectURL(file);
@@ -362,6 +375,7 @@ export default function BlogPostsIndex({ posts, categories, tags, filters }: Pro
     const handleRemoveImage = () => {
         setData('featured_image', null);
         setImagePreview(null);
+
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }

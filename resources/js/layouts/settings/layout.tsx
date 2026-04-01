@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { UserCircle, Shield, Paintbrush } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
@@ -6,7 +7,6 @@ import { edit as editAppearance } from '@/routes/appearance';
 import { edit } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import type { NavItem } from '@/types';
-import { UserCircle, Shield, Paintbrush } from 'lucide-react';
 
 const sidebarNavItems: NavItem[] = [
     { title: 'Profile', href: edit(), icon: UserCircle },
@@ -31,6 +31,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                     <nav className="flex flex-row lg:flex-col gap-2" aria-label="Settings">
                         {sidebarNavItems.map((item, index) => {
                             const isActive = isCurrentOrParentUrl(item.href as string);
+
                             return (
                                 <Link
                                     key={`${toUrl(item.href as string)}-${index}`}

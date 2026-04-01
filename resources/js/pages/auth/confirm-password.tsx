@@ -1,11 +1,11 @@
 import { Form, Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import { Lock, Loader2, ShieldCheck, ChevronLeft } from 'lucide-react';
+import AppLogoIcon from '@/components/app-logo-icon';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import AppLogoIcon from '@/components/app-logo-icon';
 import { home } from '@/routes';
 import { store } from '@/routes/password/confirm';
 

@@ -1,11 +1,11 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
 import {
     Activity, ArrowUpRight, DollarSign, Package, ShoppingCart, AlertTriangle, Wrench, Clock, CheckCircle2, UserCircle2,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
 
 interface Props {
     todaysOrders: number;
@@ -95,6 +95,7 @@ export default function ManagerDashboard({
                                 <div className="space-y-4">
                                     {recentJobs.map(job => {
                                         const cfg = statusConfig[job.status] || statusConfig.pending;
+
                                         return (
                                             <div key={job.id} className="flex items-center justify-between p-3 rounded-xl border border-border/40 bg-background/30 hover:bg-muted/30 transition-colors">
                                                 <div>

@@ -1,7 +1,5 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus,
     Search,
@@ -14,12 +12,12 @@ import {
     MoreVertical,
     Package,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useEffect, useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -28,16 +26,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -46,6 +34,18 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from '@/components/ui/input';
+import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import AppLayout from '@/layouts/app-layout';
 
 interface ParentCategory {
     id: number;
@@ -112,8 +112,12 @@ export default function CategoriesIndex({ categories, parentCategories }: Props)
     ];
 
     const filteredData = useMemo(() => {
-        if (!search) return categories.data;
+        if (!search) {
+return categories.data;
+}
+
         const q = search.toLowerCase();
+
         return categories.data.filter((cat) =>
             cat.name.toLowerCase().includes(q) ||
             cat.slug.toLowerCase().includes(q)
@@ -290,10 +294,14 @@ export default function CategoriesIndex({ categories, parentCategories }: Props)
                         <DropdownMenuContent align="end" className="rounded-xl">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEdit(category); }} className="cursor-pointer">
+                            <DropdownMenuItem onClick={(e) => {
+ e.stopPropagation(); handleEdit(category); 
+}} className="cursor-pointer">
                                 <Edit2 className="mr-2 size-4" /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(category); }} className="cursor-pointer text-red-500 focus:text-red-500">
+                            <DropdownMenuItem onClick={(e) => {
+ e.stopPropagation(); handleDelete(category); 
+}} className="cursor-pointer text-red-500 focus:text-red-500">
                                 <Trash2 className="mr-2 size-4" /> Delete
                             </DropdownMenuItem>
                         </DropdownMenuContent>

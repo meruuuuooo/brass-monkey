@@ -1,8 +1,8 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
 import { BarChart3, ShoppingCart, Package, DollarSign, ArrowRight } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
 import Heading from '@/components/heading';
+import { Card, CardContent } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
 
 const reports = [
     { title: 'Sales Report', description: 'Revenue, top products, payment methods, daily trends.', href: '/admin/reports/sales', icon: ShoppingCart, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },

@@ -1,12 +1,12 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
 import {
     ArrowLeft, Bell, Send, XCircle, CheckCircle2, Clock, Info, AlertTriangle, Megaphone, Users, Eye, EyeOff,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Swal from 'sweetalert2';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
 
 interface Recipient { id: number; name: string; email: string; pivot: { is_read: boolean; read_at: string | null }; }
 
@@ -54,18 +54,22 @@ export default function NotificationShow({ notification, readCount, deliverySumm
         const label = action === 'send' ? 'Send this notification?' : 'Cancel this notification?';
         Swal.fire({ title: label, icon: action === 'send' ? 'question' : 'warning', showCancelButton: true, confirmButtonText: 'Yes' })
             .then((r) => {
-                if (r.isConfirmed) router.put(`/admin/notifications/${notification.id}`, { action }, {
+                if (r.isConfirmed) {
+router.put(`/admin/notifications/${notification.id}`, { action }, {
                     onSuccess: () => Swal.fire('Done!', action === 'send' ? 'Notification sent!' : 'Notification cancelled.', 'success'),
                 });
+}
             });
     };
 
     const handleDelete = () => {
         Swal.fire({ title: 'Delete notification?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete' })
             .then((r) => {
-                if (r.isConfirmed) router.delete(`/admin/notifications/${notification.id}`, {
+                if (r.isConfirmed) {
+router.delete(`/admin/notifications/${notification.id}`, {
                     onSuccess: () => Swal.fire('Deleted!', '', 'success'),
                 });
+}
             });
     };
 

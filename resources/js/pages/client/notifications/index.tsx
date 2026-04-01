@@ -1,11 +1,11 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
 import { Bell, BellOff, Calendar, CheckCircle2, Info, Megaphone, AlertTriangle, Check } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Pagination } from '@/components/ui/pagination';
+import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 
 interface Notification {
@@ -54,6 +54,7 @@ export default function NotificationsIndex({ notifications }: Props) {
                         {notifications.data.map(notif => {
                             const cfg = typeConfig[notif.type] || typeConfig.info;
                             const Icon = cfg.icon;
+
                             return (
                                 <Card key={notif.id} className={cn(
                                     "rounded-2xl border-border/40 transition-all shadow-none overflow-hidden",

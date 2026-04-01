@@ -1,15 +1,15 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
 import {
     UserCircle2, Mail, CalendarDays, Tag, StickyNote, Trash2, Send,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import Heading from '@/components/heading';
+import { useState } from 'react';
 import Swal from 'sweetalert2';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
 
 interface Segment { id: number; name: string; color: string; }
 interface Note { id: number; content: string; author: { id: number; name: string } | null; created_at: string; }
@@ -71,10 +71,12 @@ export default function CustomerShow({ customer, segments }: Props) {
             title: 'Delete note?', icon: 'warning', showCancelButton: true,
             confirmButtonColor: '#d33', confirmButtonText: 'Delete',
         }).then((r) => {
-            if (r.isConfirmed) router.delete(`/admin/customer-notes/${note.id}`, {
+            if (r.isConfirmed) {
+router.delete(`/admin/customer-notes/${note.id}`, {
                 preserveScroll: true,
                 onSuccess: () => Swal.fire('Deleted!', 'Note removed.', 'success'),
             });
+}
         });
     };
 

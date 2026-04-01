@@ -1,7 +1,5 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Search,
     Trash2,
@@ -9,12 +7,14 @@ import {
     CheckCircle2,
     XCircle,
 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
-import Swal from 'sweetalert2';
+import AppLayout from '@/layouts/app-layout';
 
 interface BlogComment {
     id: number;
@@ -57,8 +57,12 @@ export default function BlogCommentsIndex({ comments }: Props) {
     ];
 
     const filteredData = useMemo(() => {
-        if (!search) return comments.data;
+        if (!search) {
+return comments.data;
+}
+
         const q = search.toLowerCase();
+
         return comments.data.filter((c) =>
             c.body.toLowerCase().includes(q) ||
             c.post.title.toLowerCase().includes(q) ||

@@ -1,7 +1,5 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus,
     Search,
@@ -9,11 +7,11 @@ import {
     Trash2,
     Tag,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useEffect, useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -22,7 +20,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
+import AppLayout from '@/layouts/app-layout';
 
 interface BlogTag {
     id: number;
@@ -76,8 +76,12 @@ export default function BlogTagsIndex({ tags }: Props) {
     ];
 
     const filteredData = useMemo(() => {
-        if (!search) return tags.data;
+        if (!search) {
+return tags.data;
+}
+
         const q = search.toLowerCase();
+
         return tags.data.filter((t) =>
             t.name.toLowerCase().includes(q) ||
             t.slug.toLowerCase().includes(q)

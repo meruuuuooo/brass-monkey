@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import {
     Plus,
@@ -14,9 +13,9 @@ import {
     ImagePlus,
     X
 } from 'lucide-react';
+import { useState } from 'react';
 
-import admin from '@/routes/admin';
-import AppLayout from '@/layouts/app-layout';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -27,8 +26,15 @@ import {
     DialogHeader,
     DialogTitle
 } from '@/components/ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
     Table,
     TableBody,
@@ -38,15 +44,9 @@ import {
     TableRow
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { BreadcrumbItem } from '@/types';
+import AppLayout from '@/layouts/app-layout';
+import admin from '@/routes/admin';
+import type { BreadcrumbItem } from '@/types';
 
 interface Service {
     id: number;
@@ -154,7 +154,9 @@ export default function ServicesIndex({ services }: Props) {
                         <h1 className="text-2xl font-bold tracking-tight">Services Management</h1>
                         <p className="text-muted-foreground">Manage the service offerings available to your clients.</p>
                     </div>
-                    <Button onClick={() => { setEditingService(null); reset(); setIsModalOpen(true); }} className="bg-bm-gold hover:bg-bm-gold/90 text-white">
+                    <Button onClick={() => {
+ setEditingService(null); reset(); setIsModalOpen(true); 
+}} className="bg-bm-gold hover:bg-bm-gold/90 text-white">
                         <Plus className="mr-2 h-4 w-4" /> Add Service
                     </Button>
                 </div>
@@ -368,7 +370,10 @@ export default function ServicesIndex({ services }: Props) {
                                                             className="size-12 rounded-full shadow-xl"
                                                             onClick={() => {
                                                                 setData('image', null);
-                                                                if (!data.image) setData('image_path', '');
+
+                                                                if (!data.image) {
+setData('image_path', '');
+}
                                                             }}
                                                         >
                                                             <X className="size-6" />
@@ -380,7 +385,10 @@ export default function ServicesIndex({ services }: Props) {
                                                             accept="image/*"
                                                             onChange={(e) => {
                                                                 const file = e.target.files?.[0];
-                                                                if (file) setData('image', file);
+
+                                                                if (file) {
+setData('image', file);
+}
                                                             }}
                                                         />
                                                     </div>
@@ -404,7 +412,10 @@ export default function ServicesIndex({ services }: Props) {
                                                         accept="image/*"
                                                         onChange={(e) => {
                                                             const file = e.target.files?.[0];
-                                                            if (file) setData('image', file);
+
+                                                            if (file) {
+setData('image', file);
+}
                                                         }}
                                                     />
                                                 </label>

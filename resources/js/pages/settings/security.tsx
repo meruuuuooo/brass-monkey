@@ -6,8 +6,8 @@ import SecurityController from '@/actions/App/Http/Controllers/Settings/Security
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/security';
@@ -58,8 +58,13 @@ export default function Security({
                             resetOnError={['password', 'password_confirmation', 'current_password']}
                             resetOnSuccess
                             onError={(errors) => {
-                                if (errors.password) passwordInput.current?.focus();
-                                if (errors.current_password) currentPasswordInput.current?.focus();
+                                if (errors.password) {
+passwordInput.current?.focus();
+}
+
+                                if (errors.current_password) {
+currentPasswordInput.current?.focus();
+}
                             }}
                             className="space-y-8 max-w-2xl"
                         >
