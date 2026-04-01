@@ -1,9 +1,19 @@
 <?php
 
-use App\Models\Advertisement;
+use App\Http\Controllers\Client\BlogController;
+use App\Http\Controllers\Client\NotificationController;
+use App\Http\Controllers\Client\OrderController;
+use App\Http\Controllers\Client\ProductController;
+use App\Http\Controllers\Client\PromotionController;
 use App\Http\Controllers\Client\ServiceController;
+use App\Http\Controllers\Client\ServiceJobController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TrackOrderController;
+use App\Models\Advertisement;
+use App\Models\BlogCategory;
+use App\Models\BlogPost;
+use App\Models\BlogTag;
+use App\Models\Service;
 use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,18 +46,20 @@ Route::get('/', function (Request $request) {
         ->latest()
         ->get();
 
-    $posts = \App\Models\BlogPost::with(['author:id,name', 'categories:id,name,slug', 'tags:id,name,slug'])
+    $posts = BlogPost::with(['author:id,name', 'categories:id,name,slug', 'tags:id,name,slug'])
         ->where('status', 'published')
-        ->when($request->filled('category'), fn($q) => $q->whereHas('categories', fn($c) => $c->where('blog_categories.slug', $request->category)))
-        ->when($request->filled('tag'), fn($q) => $q->whereHas('tags', fn($t) => $t->where('blog_tags.slug', $request->tag)))
-        ->when($request->filled('search'), fn($q) => $q->where(fn($w) => $w->where('title', 'like', '%' . $request->search . '%')->orWhere('excerpt', 'like', '%' . $request->search . '%')))
+        ->when($request->filled('category'), fn ($q) => $q->whereHas('categories', fn ($c) => $c->where('blog_categories.slug', $request->category)))
+        ->when($request->filled('tag'), fn ($q) => $q->whereHas('tags', fn ($t) => $t->where('blog_tags.slug', $request->tag)))
+        ->when($request->filled('search'), fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', '%'.$request->search.'%')->orWhere('excerpt', 'like', '%'.$request->search.'%')))
         ->orderByDesc('is_featured')
         ->latest('published_at')
         ->paginate(12)
         ->withQueryString();
 
-    $categories = \App\Models\BlogCategory::withCount(['posts' => fn($q) => $q->where('status', 'published')])->orderBy('name')->get();
-    $tags = \App\Models\BlogTag::withCount(['posts' => fn($q) => $q->where('status', 'published')])->orderBy('name')->get();
+    $categories = BlogCategory::withCount(['posts' => fn ($q) => $q->where('status', 'published')])->orderBy('name')->get();
+    $tags = BlogTag::withCount(['posts' => fn ($q) => $q->where('status', 'published')])->orderBy('name')->get();
+
+    $services = Service::where('is_active', true)->get();
 
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
@@ -57,10 +69,10 @@ Route::get('/', function (Request $request) {
         'posts' => $posts,
         'categories' => $categories,
         'tags' => $tags,
+        'services' => $services,
         'filters' => $request->only(['category', 'tag', 'search']),
     ]);
 })->name('home');
-
 
 Route::get('/track-order', [TrackOrderController::class, 'index'])->name('track-order');
 
@@ -69,86 +81,86 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Services
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/{service}', [ServiceController::class, 'show'])->name('services.show');
     Route::post('/services/book', [ServiceController::class, 'book'])->name('services.book');
 
     // Promotions
-    Route::get('/promotions', [\App\Http\Controllers\Client\PromotionController::class, 'index'])->name('client.promotions.index');
-
+    Route::get('/promotions', [PromotionController::class, 'index'])->name('client.promotions.index');
 
     // Shop / Catalog
     Route::get('/products', [
-        \App\Http\Controllers\Client\ProductController::class,
-        'index'
+        ProductController::class,
+        'index',
     ])->name('client.products.index');
     Route::post('/products/{product}/purchase', [
-        \App\Http\Controllers\Client\ProductController::class,
-        'purchase'
+        ProductController::class,
+        'purchase',
     ])->name('client.products.purchase');
 
     // My Orders
     Route::get('/my-orders', [
-        \App\Http\Controllers\Client\OrderController::class,
-        'index'
+        OrderController::class,
+        'index',
     ])->name('client.orders.index');
 
     // My Service Jobs
     Route::get('/my-jobs', [
-        \App\Http\Controllers\Client\ServiceJobController::class,
-        'index'
+        ServiceJobController::class,
+        'index',
     ])->name('client.jobs.index');
     Route::get('/my-jobs/{job}', [
-        \App\Http\Controllers\Client\ServiceJobController::class,
-        'show'
+        ServiceJobController::class,
+        'show',
     ])->name('client.jobs.show');
     Route::post('/my-jobs/{job}/approve', [
-        \App\Http\Controllers\Client\ServiceJobController::class,
-        'approveEstimate'
+        ServiceJobController::class,
+        'approveEstimate',
     ])->name('client.jobs.approve');
     Route::post('/my-jobs/{job}/review', [
-        \App\Http\Controllers\Client\ServiceJobController::class,
-        'submitReview'
+        ServiceJobController::class,
+        'submitReview',
     ])->name('client.jobs.review');
 
     // Notifications
     Route::get('/notifications', [
-        \App\Http\Controllers\Client\NotificationController::class,
-        'index'
+        NotificationController::class,
+        'index',
     ])->name('client.notifications.index');
     Route::post('/notifications/{id}/read', [
-        \App\Http\Controllers\Client\NotificationController::class,
-        'markAsRead'
+        NotificationController::class,
+        'markAsRead',
     ])->name('client.notifications.read');
     Route::post('/notifications/mark-all-read', [
-        \App\Http\Controllers\Client\NotificationController::class,
-        'markAllAsRead'
+        NotificationController::class,
+        'markAllAsRead',
     ])->name('client.notifications.read-all');
 
     // Blog Client Comments
     Route::post('/blog/{slug}/comment', [
-        \App\Http\Controllers\Client\BlogController::class,
-        'comment'
+        BlogController::class,
+        'comment',
     ])->name('client.blog.comment');
 });
 
 // Public Blog Routes
 Route::get('/blog-articles', [
-    \App\Http\Controllers\Client\BlogController::class,
-    'guestIndex'
+    BlogController::class,
+    'guestIndex',
 ])->name('guest.blog.index');
 
 Route::get('/blog-article/{slug}', [
-    \App\Http\Controllers\Client\BlogController::class,
-    'guestShow'
+    BlogController::class,
+    'guestShow',
 ])->name('guest.blog.show');
 
 Route::get('/blog', [
-    \App\Http\Controllers\Client\BlogController::class,
-    'index'
+    BlogController::class,
+    'index',
 ])->name('client.blog.index');
 Route::get('/blog/{slug}', [
-    \App\Http\Controllers\Client\BlogController::class,
-    'show'
+    BlogController::class,
+    'show',
 ])->name('guest.blog.show');
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/admin.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/admin.php';

@@ -30,6 +30,7 @@ import {
 import { useEffect, useState } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
 import { login, dashboard } from '@/routes';
 import BlogSection from './blog-section';
 import WorkOrderModal from '@/components/work-order-modal';
@@ -43,6 +44,16 @@ interface ServiceOrder {
     estimated_completion: string;
 }
 
+interface Service {
+    id: number;
+    name: string;
+    description: string | null;
+    duration: string | null;
+    price: string;
+    image_path: string | null;
+    is_active: boolean;
+}
+
 interface Props {
     canRegister?: boolean;
     auth?: { user: any };
@@ -53,6 +64,7 @@ interface Props {
     tags?: any[];
     filters?: any;
     advertisements?: any[];
+    services?: Service[];
 }
 
 const STATUS_CONFIG = {
@@ -70,7 +82,7 @@ const statusSteps = [
     { key: 'ready', label: 'Ready for Pickup', sub: 'Your service is complete', icon: Truck },
 ];
 
-export default function Welcome({ canRegister = true, auth, order, query, posts, categories, tags, filters, advertisements }: Props) {
+export default function Welcome({ canRegister = true, auth, order, query, posts, categories, tags, filters, advertisements, services }: Props) {
     const [modalOpen, setModalOpen] = useState(false);
     const currentStatusIndex = Math.max(statusSteps.findIndex((s) => s.key === order?.status), 0);
     const progressPercent = order ? (currentStatusIndex / (statusSteps.length - 1)) * 100 : 0;
@@ -206,7 +218,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                             <span className="text-xs font-bold uppercase tracking-[0.2em] text-bm-gold">Premium Service Excellence</span>
                         </div>
 
-                        <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight sm:text-7xl lg:text-8xl">
+                        <h1 className="animate-spin font-serif text-5xl font-bold leading-[1.1] tracking-tight sm:text-7xl lg:text-8xl">
                             Precision. <br />
                             <span className="text-bm-gold underline decoration-bm-gold/20 underline-offset-8">Craftsmanship.</span>
                         </h1>
@@ -216,12 +228,18 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                         </p>
 
                         <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
-                            <Button size="lg" className="bg-bm-gold px-12 h-16 text-bm-dark text-lg font-bold hover:bg-bm-gold-hover transition-all hover:scale-105 active:scale-95 shadow-xl shadow-bm-gold/20 rounded-lg group">
+                            <Button size="lg" className="animate-spin bg-bm-gold px-12 h-16 text-bm-dark text-lg font-bold hover:bg-bm-gold-hover transition-all hover:scale-105 active:scale-95 shadow-xl shadow-bm-gold/20 rounded-lg group">
                                 Book a Service <ArrowRight className="ml-2 h-6 w-6 transition-transform group-hover:translate-x-1" />
                             </Button>
-                            <Button variant="outline" size="lg" className="border-bm-white/30 bg-transparent px-12 h-16 text-bm-white text-lg font-bold hover:bg-bm-white/10 transition-all rounded-lg backdrop-blur-sm">
-                                Explore Services
-                            </Button>
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleScrollToSection(e as any, '#services');
+                                }}
+                                className="animate-spin inline-flex items-center gap-2 px-12 h-16 border border-bm-white/30 bg-transparent text-bm-white text-lg font-bold hover:bg-bm-white/10 transition-all rounded-lg backdrop-blur-sm hover:scale-105 active:scale-95"
+                            >
+                                Explore Services <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
+                            </button>
                         </div>
 
                         {/* Scroll-down cue */}
@@ -532,24 +550,92 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                             </p>
                         </div>
 
-                        <div className="mt-20 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                            {[
-                                { title: 'Diagnostic & Inspection', desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.', icon: Search },
-                                { title: 'Mechanical Restoration', desc: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.', icon: Repair },
-                                { title: 'Preventive Maintenance', desc: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', icon: ShieldCheck },
-                                { title: 'Performance Optimization', desc: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est.', icon: Gauge }
-                            ].map((service, i) => (
-                                <div key={i} className="bm-glass-premium bm-shadow-premium rounded-2xl p-8 hover:bg-bm-gold/[0.05] transition-all duration-300 group">
-                                    <div className="mb-6 inline-flex rounded-xl bg-bm-gold/10 p-3 text-bm-gold transition-colors group-hover:bg-bm-gold group-hover:text-bm-dark">
-                                        <service.icon className="h-6 w-6" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-bm-white group-hover:text-bm-gold transition-colors">{service.title}</h3>
-                                    <p className="mt-4 text-sm leading-relaxed text-bm-muted group-hover:text-bm-white/90 transition-colors">
-                                        {service.desc}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
+                        {services && services.length > 0 ? (
+                            <Carousel className="mt-20 w-full" opts={{ align: 'start', loop: true }}>
+                                <CarouselContent className="-ml-4">
+                                    {services.map((service) => (
+                                        <CarouselItem key={service.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                                            <Link
+                                                href={`/services/${service.id}`}
+                                                className="group bm-glass-premium bm-shadow-premium rounded-2xl p-8 hover:bg-bm-gold/[0.05] transition-all duration-300 overflow-hidden relative h-full flex flex-col"
+                                            >
+                                                {/* Image preview if available */}
+                                                {service.image_path && (
+                                                    <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300">
+                                                        <img
+                                                            src={service.image_path.startsWith('http') ? service.image_path : `/storage/${service.image_path}`}
+                                                            alt={service.name}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </div>
+                                                )}
+
+                                                <div className="relative z-10 flex flex-col flex-1">
+                                                    <div className="mb-6 inline-flex rounded-xl bg-bm-gold/10 p-3 text-bm-gold transition-colors group-hover:bg-bm-gold group-hover:text-bm-dark w-fit">
+                                                        <Wrench className="h-6 w-6" />
+                                                    </div>
+
+                                                    <h3 className="text-xl font-bold text-bm-white group-hover:text-bm-gold transition-colors">
+                                                        {service.name}
+                                                    </h3>
+
+                                                    {service.description && (
+                                                        <p className="mt-4 text-sm leading-relaxed text-bm-muted group-hover:text-bm-white/90 transition-colors line-clamp-3 flex-1">
+                                                            {service.description}
+                                                        </p>
+                                                    )}
+
+                                                    {(service.duration || service.price) && (
+                                                        <div className="mt-6 pt-6 border-t border-bm-white/10 flex items-center justify-between">
+                                                            {service.duration && (
+                                                                <div className="flex items-center gap-2 text-xs font-bold text-bm-gold/70 group-hover:text-bm-gold transition-colors">
+                                                                    <Clock className="h-3 w-3" />
+                                                                    {service.duration}
+                                                                </div>
+                                                            )}
+                                                            <div className="text-lg font-bold text-bm-gold">
+                                                                ${service.price}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="mt-4 flex items-center gap-2 text-xs font-bold text-bm-gold opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        View Details <ArrowRight className="h-3 w-3" />
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                <CarouselPrevious className="hidden sm:flex -left-16" />
+                                <CarouselNext className="hidden sm:flex -right-16" />
+                            </Carousel>
+                        ) : (
+                            <Carousel className="mt-20 w-full" opts={{ align: 'start', loop: true }}>
+                                <CarouselContent className="-ml-4">
+                                    {[
+                                        { title: 'Diagnostic & Inspection', desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.', icon: Search },
+                                        { title: 'Mechanical Restoration', desc: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.', icon: Repair },
+                                        { title: 'Preventive Maintenance', desc: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', icon: ShieldCheck },
+                                        { title: 'Performance Optimization', desc: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est.', icon: Gauge }
+                                    ].map((service, i) => (
+                                        <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                                            <div className="bm-glass-premium bm-shadow-premium rounded-2xl p-8 hover:bg-bm-gold/[0.05] transition-all duration-300 group h-full flex flex-col">
+                                                <div className="mb-6 inline-flex rounded-xl bg-bm-gold/10 p-3 text-bm-gold transition-colors group-hover:bg-bm-gold group-hover:text-bm-dark w-fit">
+                                                    <service.icon className="h-6 w-6" />
+                                                </div>
+                                                <h3 className="text-xl font-bold text-bm-white group-hover:text-bm-gold transition-colors">{service.title}</h3>
+                                                <p className="mt-4 text-sm leading-relaxed text-bm-muted group-hover:text-bm-white/90 transition-colors flex-1">
+                                                    {service.desc}
+                                                </p>
+                                            </div>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                <CarouselPrevious className="hidden sm:flex -left-16" />
+                                <CarouselNext className="hidden sm:flex -right-16" />
+                            </Carousel>
+                        )}
                     </div>
                 </section>
 
