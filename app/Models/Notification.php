@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Jobs\SendNotificationDeliveryJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Notification extends Model
 {
@@ -37,6 +39,11 @@ class Notification extends Model
             ->withTimestamps();
     }
 
+    public function deliveries(): HasMany
+    {
+        return $this->hasMany(NotificationDelivery::class);
+    }
+
     /**
      * Send the notification to target users.
      */
@@ -51,8 +58,25 @@ class Notification extends Model
 
         if ($users->isNotEmpty()) {
             $this->recipients()->syncWithoutDetaching(
-                $users->mapWithKeys(fn($id) => [$id => ['is_read' => false]])->toArray()
+                $users->mapWithKeys(fn ($id) => [$id => ['is_read' => false]])->toArray()
             );
+
+            foreach ($users as $userId) {
+                $channels = $this->channel === 'both' ? ['in_app', 'email'] : [$this->channel];
+
+                foreach ($channels as $channel) {
+                    $isEnabled = UserNotificationPreference::query()
+                        ->where('user_id', $userId)
+                        ->where('channel', $channel)
+                        ->value('is_enabled');
+
+                    if ($isEnabled === false) {
+                        continue;
+                    }
+
+                    SendNotificationDeliveryJob::dispatch((int) $this->id, (int) $userId, $channel);
+                }
+            }
         }
 
         $this->update(['status' => 'sent', 'sent_at' => now()]);

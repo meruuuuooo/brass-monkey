@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\ServiceOrder;
 use App\Models\User;
 use App\Services\ActivityLogger;
+use App\Services\ServiceOrderWorkflow;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,7 +15,10 @@ use Inertia\Response;
 
 class ServiceRequestController extends Controller
 {
-    public function __construct(private readonly ActivityLogger $logger) {}
+    public function __construct(
+        private readonly ActivityLogger $logger,
+        private readonly ServiceOrderWorkflow $workflow
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -119,8 +123,12 @@ class ServiceRequestController extends Controller
 
         $oldStatus = $service_request->status;
 
-        if (isset($validated['status']) && $validated['status'] === 'completed' && $service_request->status !== 'completed') {
-            $validated['completed_at'] = now();
+        if (isset($validated['status']) && ! $request->user()->can('transition', [$service_request, $validated['status']])) {
+            return back()->with('error', 'Invalid service status transition.');
+        }
+
+        if (isset($validated['status'])) {
+            $validated = array_merge($validated, $this->workflow->transitionPayload($service_request, $validated['status']));
         }
 
         $service_request->update($validated);
@@ -152,7 +160,7 @@ class ServiceRequestController extends Controller
 
         $service_request->notes()->create([
             ...$validated,
-            'user_id' => auth()->id(),
+            'user_id' => $request->user()->id,
         ]);
 
         $this->logger->log(

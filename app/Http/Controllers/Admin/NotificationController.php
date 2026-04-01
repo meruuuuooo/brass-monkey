@@ -50,7 +50,7 @@ class NotificationController extends Controller
         $notification = Notification::create([
             ...$validated,
             'status' => 'draft',
-            'created_by' => auth()->id(),
+            'created_by' => $request->user()->id,
         ]);
 
         if ($request->boolean('send_now')) {
@@ -66,14 +66,23 @@ class NotificationController extends Controller
     {
         $notification->load([
             'creator:id,name',
-            'recipients' => fn($q) => $q->select('users.id', 'name', 'email')->latest('notification_user.created_at')->limit(50),
+            'recipients' => fn ($q) => $q->select('users.id', 'name', 'email')->latest('notification_user.created_at')->limit(50),
         ]);
         $notification->loadCount('recipients');
         $readCount = $notification->recipients()->wherePivot('is_read', true)->count();
+        $deliverySummary = [
+            'total' => $notification->deliveries()->count(),
+            'sent' => $notification->deliveries()->where('status', 'sent')->count(),
+            'failed' => $notification->deliveries()->where('status', 'failed')->count(),
+            'opened' => $notification->deliveries()->whereNotNull('opened_at')->count(),
+            'inApp' => $notification->deliveries()->where('channel', 'in_app')->count(),
+            'email' => $notification->deliveries()->where('channel', 'email')->count(),
+        ];
 
         return Inertia::render('admin/notifications/show', [
             'notification' => $notification,
             'readCount' => $readCount,
+            'deliverySummary' => $deliverySummary,
         ]);
     }
 
@@ -83,11 +92,13 @@ class NotificationController extends Controller
 
         if ($action === 'send' && $notification->status === 'draft') {
             $notification->sendToTargetUsers();
+
             return back()->with('success', 'Notification sent!');
         }
 
         if ($action === 'cancel' && in_array($notification->status, ['draft', 'scheduled'])) {
             $notification->update(['status' => 'cancelled']);
+
             return back()->with('success', 'Notification cancelled.');
         }
 
@@ -101,6 +112,7 @@ class NotificationController extends Controller
                 'channel' => 'required|in:in_app,email,both',
             ]);
             $notification->update($validated);
+
             return back()->with('success', 'Notification updated.');
         }
 
@@ -110,6 +122,7 @@ class NotificationController extends Controller
     public function destroy(Notification $notification): RedirectResponse
     {
         $notification->delete();
+
         return back()->with('success', 'Notification deleted.');
     }
 }

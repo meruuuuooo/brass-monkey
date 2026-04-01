@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ServiceOrder extends Model
 {
@@ -25,6 +26,11 @@ class ServiceOrder extends Model
         'estimated_cost',
         'actual_cost',
         'completed_at',
+        'accepted_at',
+        'started_at',
+        'ready_at',
+        'sla_due_at',
+        'escalated_at',
     ];
 
     protected function casts(): array
@@ -32,6 +38,11 @@ class ServiceOrder extends Model
         return [
             'estimated_completion' => 'date',
             'completed_at' => 'datetime',
+            'accepted_at' => 'datetime',
+            'started_at' => 'datetime',
+            'ready_at' => 'datetime',
+            'sla_due_at' => 'datetime',
+            'escalated_at' => 'datetime',
         ];
     }
 
@@ -55,7 +66,7 @@ class ServiceOrder extends Model
         return $this->hasMany(ServiceJobNote::class);
     }
 
-    public function review(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function review(): HasOne
     {
         return $this->hasOne(ServiceReview::class);
     }

@@ -18,7 +18,18 @@ interface Notif {
     created_at: string; sent_at: string | null;
 }
 
-interface Props { notification: Notif; readCount: number; }
+interface Props {
+    notification: Notif;
+    readCount: number;
+    deliverySummary: {
+        total: number;
+        sent: number;
+        failed: number;
+        opened: number;
+        inApp: number;
+        email: number;
+    };
+}
 
 const typeConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
     system: { label: 'System', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: Info },
@@ -33,7 +44,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
     cancelled: { label: 'Cancelled', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: XCircle },
 };
 
-export default function NotificationShow({ notification, readCount }: Props) {
+export default function NotificationShow({ notification, readCount, deliverySummary }: Props) {
     const tCfg = typeConfig[notification.type] || typeConfig.info;
     const sCfg = statusConfig[notification.status] || statusConfig.draft;
     const TypeIcon = tCfg.icon;
@@ -106,6 +117,12 @@ export default function NotificationShow({ notification, readCount }: Props) {
                             <div className="text-sm"><span className="text-muted-foreground">Recipients:</span> <span className="font-bold font-mono">{notification.recipients_count}</span></div>
                             <div className="text-sm"><span className="text-muted-foreground">Read:</span> <span className="font-bold font-mono text-emerald-600">{readCount}</span></div>
                             <div className="text-sm"><span className="text-muted-foreground">Unread:</span> <span className="font-bold font-mono text-amber-500">{notification.recipients_count - readCount}</span></div>
+                            <div className="text-sm"><span className="text-muted-foreground">Deliveries:</span> <span className="font-bold font-mono">{deliverySummary.total}</span></div>
+                            <div className="text-sm"><span className="text-muted-foreground">Sent:</span> <span className="font-bold font-mono text-emerald-600">{deliverySummary.sent}</span></div>
+                            <div className="text-sm"><span className="text-muted-foreground">Failed:</span> <span className="font-bold font-mono text-red-500">{deliverySummary.failed}</span></div>
+                            <div className="text-sm"><span className="text-muted-foreground">Opened:</span> <span className="font-bold font-mono text-blue-500">{deliverySummary.opened}</span></div>
+                            <div className="text-sm"><span className="text-muted-foreground">In-App:</span> <span className="font-bold font-mono">{deliverySummary.inApp}</span></div>
+                            <div className="text-sm"><span className="text-muted-foreground">Email:</span> <span className="font-bold font-mono">{deliverySummary.email}</span></div>
                         </CardContent>
                     </Card>
 
@@ -122,7 +139,7 @@ export default function NotificationShow({ notification, readCount }: Props) {
                     <Card className="border-border/40 bg-background/50 rounded-2xl">
                         <CardHeader className="pb-3"><CardTitle className="text-sm font-bold">Recipients ({notification.recipients_count})</CardTitle></CardHeader>
                         <CardContent>
-                            <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                            <div className="space-y-2 max-h-75 overflow-y-auto">
                                 {notification.recipients.map((r) => (
                                     <div key={r.id} className="flex items-center justify-between p-2.5 rounded-xl bg-muted/30 border border-border/40">
                                         <div>

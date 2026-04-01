@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\NotificationDelivery;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -40,5 +42,21 @@ class NotificationController extends Controller
         ]);
 
         return back()->with('success', 'All notifications marked as read.');
+    }
+
+    public function trackOpen(Request $request, Notification $notification): RedirectResponse
+    {
+        $request->user()->notifications()->updateExistingPivot($notification->id, [
+            'is_read' => true,
+            'read_at' => now(),
+        ]);
+
+        NotificationDelivery::query()
+            ->where('notification_id', $notification->id)
+            ->where('user_id', $request->user()->id)
+            ->whereNull('opened_at')
+            ->update(['opened_at' => now()]);
+
+        return back();
     }
 }

@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import {
     Package, AlertTriangle, DollarSign, ArrowLeft, ArrowUpCircle, ArrowDownCircle, ClipboardCheck,
 } from 'lucide-react';
@@ -33,6 +33,8 @@ const fmt = (n: number) => '₱' + n.toLocaleString('en-PH', { minimumFractionDi
 
 export default function InventoryReport({ products, summary, recentAdjustments }: Props) {
     const [search, setSearch] = useState('');
+    const page = usePage<{ flash?: { exportDownloadUrl?: string | null } }>();
+    const exportDownloadUrl = page.props.flash?.exportDownloadUrl;
     const breadcrumbs = [
         { title: 'Dashboard', href: '/dashboard' }, { title: 'Reports', href: '/admin/reports' }, { title: 'Inventory', href: '#' },
     ];
@@ -69,6 +71,21 @@ export default function InventoryReport({ products, summary, recentAdjustments }
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Inventory Report" />
             <div className="flex flex-col gap-6 p-4 md:p-6">
+                <div className="flex justify-end">
+                    <Button
+                        variant="outline"
+                        className="rounded-xl"
+                        onClick={() => router.get('/admin/reports/inventory/export')}
+                    >
+                        Export CSV
+                    </Button>
+                </div>
+
+                {exportDownloadUrl && (
+                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm">
+                        Export ready: <a className="font-bold underline" href={exportDownloadUrl}>Download CSV</a>
+                    </div>
+                )}
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                     {kpis.map((k) => (

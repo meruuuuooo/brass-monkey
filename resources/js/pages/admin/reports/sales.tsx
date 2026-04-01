@@ -1,14 +1,13 @@
-import AppLayout from '@/layouts/app-layout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import {
-    ShoppingCart, TrendingUp, DollarSign, CreditCard, ArrowLeft,
+    ShoppingCart, TrendingUp, DollarSign, CreditCard,
 } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
+import AppLayout from '@/layouts/app-layout';
 
 interface DailyRevenue { date: string; orders: number; revenue: string; }
 interface TopProduct { product_name: string; total_qty: number; total_revenue: string; }
@@ -27,6 +26,8 @@ const fmt = (n: number) => '₱' + n.toLocaleString('en-PH', { minimumFractionDi
 export default function SalesReport({ filters, summary, dailyRevenue, topProducts, paymentMethods }: Props) {
     const [from, setFrom] = useState(filters.from);
     const [to, setTo] = useState(filters.to);
+    const page = usePage<{ flash?: { exportDownloadUrl?: string | null } }>();
+    const exportDownloadUrl = page.props.flash?.exportDownloadUrl;
 
     const applyFilter = () => router.get('/admin/reports/sales', { from, to }, { preserveState: true });
 
@@ -58,7 +59,20 @@ export default function SalesReport({ filters, summary, dailyRevenue, topProduct
                         <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="rounded-xl" />
                     </div>
                     <Button onClick={applyFilter} className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl">Apply</Button>
+                    <Button
+                        variant="outline"
+                        className="rounded-xl"
+                        onClick={() => router.get('/admin/reports/sales/export', { from, to })}
+                    >
+                        Export CSV
+                    </Button>
                 </div>
+
+                {exportDownloadUrl && (
+                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm">
+                        Export ready: <a className="font-bold underline" href={exportDownloadUrl}>Download CSV</a>
+                    </div>
+                )}
 
                 {/* KPI Cards */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -81,7 +95,7 @@ export default function SalesReport({ filters, summary, dailyRevenue, topProduct
                         <CardHeader className="pb-3"><CardTitle className="text-sm font-bold">Daily Revenue</CardTitle></CardHeader>
                         <CardContent>
                             {dailyRevenue.length > 0 ? (
-                                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                                <div className="space-y-2 max-h-75 overflow-y-auto">
                                     {dailyRevenue.map((d) => (
                                         <div key={d.date} className="flex items-center gap-3">
                                             <span className="text-xs font-mono text-muted-foreground w-20 shrink-0">{d.date}</span>
@@ -128,7 +142,7 @@ export default function SalesReport({ filters, summary, dailyRevenue, topProduct
                     <CardContent>
                         <div className="flex flex-wrap gap-4">
                             {paymentMethods.map((pm) => (
-                                <div key={pm.payment_method} className="p-4 rounded-xl bg-muted/30 border border-border/40 min-w-[140px]">
+                                <div key={pm.payment_method} className="p-4 rounded-xl bg-muted/30 border border-border/40 min-w-35">
                                     <div className="text-sm font-bold capitalize">{pm.payment_method}</div>
                                     <div className="text-lg font-mono font-bold text-bm-gold">{fmt(parseFloat(pm.total))}</div>
                                     <div className="text-xs text-muted-foreground">{pm.count} transactions</div>

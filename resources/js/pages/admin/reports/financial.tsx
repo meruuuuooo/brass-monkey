@@ -1,13 +1,13 @@
-import AppLayout from '@/layouts/app-layout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import {
-    DollarSign, ArrowLeft, TrendingUp, TrendingDown, UserPlus, ShoppingCart,
+    DollarSign, TrendingUp, TrendingDown, UserPlus, ShoppingCart,
 } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import AppLayout from '@/layouts/app-layout';
 
 interface DailyTxn { date: string; type: string; total: string; }
 
@@ -22,6 +22,8 @@ const fmt = (n: number) => '₱' + n.toLocaleString('en-PH', { minimumFractionDi
 export default function FinancialReport({ filters, summary, dailyTransactions }: Props) {
     const [from, setFrom] = useState(filters.from);
     const [to, setTo] = useState(filters.to);
+    const page = usePage<{ flash?: { exportDownloadUrl?: string | null } }>();
+    const exportDownloadUrl = page.props.flash?.exportDownloadUrl;
     const applyFilter = () => router.get('/admin/reports/financial', { from, to }, { preserveState: true });
 
     const breadcrumbs = [
@@ -41,8 +43,13 @@ export default function FinancialReport({ filters, summary, dailyTransactions }:
     const dailyMap = new Map<string, { payments: number; refunds: number }>();
     dailyTransactions.forEach((t) => {
         const entry = dailyMap.get(t.date) || { payments: 0, refunds: 0 };
-        if (t.type === 'payment') entry.payments += parseFloat(t.total);
-        else if (t.type === 'refund') entry.refunds += parseFloat(t.total);
+
+        if (t.type === 'payment') {
+            entry.payments += parseFloat(t.total);
+        } else if (t.type === 'refund') {
+            entry.refunds += parseFloat(t.total);
+        }
+
         dailyMap.set(t.date, entry);
     });
     const dailyData = Array.from(dailyMap.entries()).map(([date, d]) => ({ date, ...d, net: d.payments - d.refunds }));
@@ -56,7 +63,20 @@ export default function FinancialReport({ filters, summary, dailyTransactions }:
                     <div className="grid gap-1.5"><Label className="text-xs font-bold uppercase text-muted-foreground/80">From</Label><Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-xl" /></div>
                     <div className="grid gap-1.5"><Label className="text-xs font-bold uppercase text-muted-foreground/80">To</Label><Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="rounded-xl" /></div>
                     <Button onClick={applyFilter} className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl">Apply</Button>
+                    <Button
+                        variant="outline"
+                        className="rounded-xl"
+                        onClick={() => router.get('/admin/reports/financial/export', { from, to })}
+                    >
+                        Export CSV
+                    </Button>
                 </div>
+
+                {exportDownloadUrl && (
+                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm">
+                        Export ready: <a className="font-bold underline" href={exportDownloadUrl}>Download CSV</a>
+                    </div>
+                )}
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                     {kpis.map((k) => (
@@ -77,7 +97,7 @@ export default function FinancialReport({ filters, summary, dailyTransactions }:
                     <CardHeader className="pb-3"><CardTitle className="text-sm font-bold">Daily Breakdown</CardTitle></CardHeader>
                     <CardContent>
                         {dailyData.length > 0 ? (
-                            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                            <div className="space-y-3 max-h-100 overflow-y-auto">
                                 {dailyData.map((d) => (
                                     <div key={d.date} className="p-3 rounded-xl bg-muted/30 border border-border/40">
                                         <div className="flex items-center justify-between mb-2">

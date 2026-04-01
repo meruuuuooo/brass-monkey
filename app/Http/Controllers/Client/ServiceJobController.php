@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\ServiceOrder;
+use App\Services\ServiceOrderWorkflow;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,6 +12,8 @@ use Inertia\Response;
 
 class ServiceJobController extends Controller
 {
+    public function __construct(private readonly ServiceOrderWorkflow $workflow) {}
+
     public function index(Request $request): Response
     {
         $jobs = ServiceOrder::with(['service:id,name', 'assignee:id,name'])
@@ -35,7 +38,7 @@ class ServiceJobController extends Controller
             'notes' => function ($query) {
                 $query->with('author:id,name')->latest();
             },
-            'review'
+            'review',
         ]);
 
         return Inertia::render('client/service-jobs/show', [
@@ -49,12 +52,12 @@ class ServiceJobController extends Controller
             abort(403);
         }
 
-        if ($job->status === 'pending' && $job->estimated_cost > 0) {
-            $job->update(['status' => 'accepted']);
+        if ($job->status === 'pending' && $job->estimated_cost > 0 && $request->user()->can('transition', [$job, 'accepted'])) {
+            $job->update($this->workflow->transitionPayload($job, 'accepted'));
 
             $job->notes()->create([
                 'type' => 'note',
-                'content' => 'Customer approved the cost estimate of $' . number_format($job->estimated_cost, 2) . '.',
+                'content' => 'Customer approved the cost estimate of $'.number_format($job->estimated_cost, 2).'.',
                 'created_by' => $request->user()->id,
             ]);
 

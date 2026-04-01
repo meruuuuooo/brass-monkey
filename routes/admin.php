@@ -48,6 +48,8 @@ Route::middleware(['auth', 'verified', 'role:Admin|Manager'])->prefix('admin')->
     Route::get('reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('reports/inventory', [ReportController::class, 'inventory'])->name('reports.inventory');
     Route::get('reports/financial', [ReportController::class, 'financial'])->name('reports.financial');
+    Route::get('reports/{type}/export', [ReportController::class, 'export'])->name('reports.export');
+    Route::get('reports/exports/{token}', [ReportController::class, 'downloadExport'])->name('reports.export.download');
 
     Route::resource('advertisements', AdvertisementController::class)->except(['show', 'create', 'edit']);
     Route::resource('announcements', AnnouncementController::class)->except(['show', 'create', 'edit']);
@@ -70,4 +72,3 @@ Route::middleware(['auth', 'verified', 'role:Admin|Manager'])->prefix('admin')->
     Route::post('service-requests/{service_request}/notes', [ServiceRequestController::class, 'addNote'])->name('service-requests.notes.store');
     Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 });
-

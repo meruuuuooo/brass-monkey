@@ -33,12 +33,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's avatar URL.
-     *
-     * @return string
      */
     public function getAvatarAttribute(?string $value): ?string
     {
-        return $value ? asset('storage/' . $value) : null;
+        return $value ? asset('storage/'.$value) : null;
     }
 
     /**
@@ -104,6 +102,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Notification delivery channel preferences for this user.
+     */
+    public function notificationPreferences(): HasMany
+    {
+        return $this->hasMany(UserNotificationPreference::class);
+    }
+
+    /**
      * Service orders for this user.
      */
     public function serviceOrders(): HasMany
@@ -119,4 +125,3 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Order::class, 'customer_id');
     }
 }
-

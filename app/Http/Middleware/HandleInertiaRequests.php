@@ -48,6 +48,11 @@ class HandleInertiaRequests extends Middleware
                     ->take(5)
                     ->get() : [],
             ],
+            'flash' => [
+                'success' => fn (): ?string => $request->session()->get('success'),
+                'error' => fn (): ?string => $request->session()->get('error'),
+                'exportDownloadUrl' => fn (): ?string => $request->session()->get('exportDownloadUrl'),
+            ],
             'sidebarOpen' => $request->cookie('sidebar_state', 'true') === 'true',
         ];
     }

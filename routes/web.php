@@ -134,6 +134,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         NotificationController::class,
         'markAllAsRead',
     ])->name('client.notifications.read-all');
+    Route::post('/notifications/{notification}/track-open', [
+        NotificationController::class,
+        'trackOpen',
+    ])->name('client.notifications.track-open');
 
     // Blog Client Comments
     Route::post('/blog/{slug}/comment', [
