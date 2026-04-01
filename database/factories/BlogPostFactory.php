@@ -33,7 +33,7 @@ class BlogPostFactory extends Factory
             'slug' => Str::slug($title),
             'excerpt' => $this->faker->paragraph(),
             'content' => $this->faker->paragraphs(5, true),
-            'featured_image_path' => $this->faker->randomElement($images),
+            'featured_image_path' => 'services/brass-monkey-logo.png',
             'status' => $this->faker->randomElement(['draft', 'published', 'archived']),
             'is_featured' => $this->faker->boolean(20),
             'meta_title' => $title,

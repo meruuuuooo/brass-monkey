@@ -20,7 +20,7 @@ class AdvertisementFactory extends Factory
         return [
             'title' => fake()->sentence(),
             'content' => fake()->paragraph(),
-            'image_path' => 'https://via.placeholder.com/500x300?text=' . urlencode(fake()->word()),
+            'image_path' => 'services/brass-monkey-logo.png',
             'link_url' => fake()->url(),
             'is_active' => true,
         ];

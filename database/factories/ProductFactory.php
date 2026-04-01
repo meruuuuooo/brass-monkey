@@ -31,7 +31,7 @@ class ProductFactory extends Factory
             'cost_price' => $costPrice,
             'stock_quantity' => fake()->numberBetween(0, 500),
             'low_stock_threshold' => fake()->numberBetween(10, 50),
-            'image_path' => 'https://via.placeholder.com/300x300?text=' . urlencode(fake()->word()),
+            'image_path' => 'services/brass-monkey-logo.png',
             'is_available' => true,
         ];
     }

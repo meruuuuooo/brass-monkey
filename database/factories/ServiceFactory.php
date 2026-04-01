@@ -22,7 +22,7 @@ class ServiceFactory extends Factory
             'description' => $this->faker->paragraph(),
             'duration' => $this->faker->randomElement(['1 hr', '2 hr', '1 hr 30 min', '30 min']),
             'price' => $this->faker->randomFloat(2, 5, 200),
-            'image_path' => null,
+            'image_path' => 'services/brass-monkey-logo.png',
             'is_active' => true,
         ];
     }
