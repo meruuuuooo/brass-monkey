@@ -21,8 +21,8 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     const { isCurrentUrl } = useCurrentUrl();
     const [isOpen, setIsOpen] = useState(() => {
         if (typeof window === 'undefined') {
-return true;
-}
+            return true;
+        }
 
         try {
             const saved = localStorage.getItem('sidebar_main_open');
@@ -71,9 +71,9 @@ return true;
                                             asChild
                                             isActive={isCurrentUrl(item.href)}
                                             tooltip={{ children: item.title }}
-                                            className="h-9 rounded-lg px-2.5 text-sm font-medium transition-all duration-150 hover:bg-sidebar-accent/70 hover:pl-3 data-active:bg-sidebar-primary/85 data-active:text-sidebar-primary-foreground data-active:shadow-[inset_3px_0_0_0_hsl(var(--sidebar-primary-foreground)/0.35)]"
+                                            className="h-9 rounded-lg px-2.5 text-sm font-medium transition-all duration-150 hover:bg-sidebar-accent/70 hover:pl-3 data-active:bg-sidebar-primary/85 data-active:text-sidebar-primary-foreground data-active:shadow-[inset_3px_0_0_0_hsl(var(--sidebar-primary-foreground)/0.35)] cursor-pointer"
                                         >
-                                            <Link href={item.href} prefetch>
+                                            <Link href={item.href} prefetch className="cursor-pointer">
                                                 {item.icon && <item.icon />}
                                                 <span>{item.title}</span>
                                             </Link>

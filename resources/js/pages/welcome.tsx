@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
+import LandingProductGrid from '@/components/landing-product-grid';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
 import WorkOrderModal from '@/components/work-order-modal';
@@ -65,6 +66,11 @@ interface Props {
     filters?: any;
     advertisements?: any[];
     services?: Service[];
+    featuredProducts?: {
+        id: number; name: string; price: string | number;
+        image_path: string | null; stock_quantity: number;
+        category: { id: number; name: string } | null;
+    }[];
 }
 
 const STATUS_CONFIG = {
@@ -82,7 +88,7 @@ const statusSteps = [
     { key: 'ready', label: 'Ready for Pickup', sub: 'Your service is complete', icon: Truck },
 ];
 
-export default function Welcome({ canRegister = true, auth, order, query, posts, categories, tags, filters, advertisements, services }: Props) {
+export default function Welcome({ canRegister = true, auth, order, query, posts, categories, tags, filters, advertisements, services, featuredProducts }: Props) {
     const [modalOpen, setModalOpen] = useState(false);
     const currentStatusIndex = Math.max(statusSteps.findIndex((s) => s.key === order?.status), 0);
     const progressPercent = order ? (currentStatusIndex / (statusSteps.length - 1)) * 100 : 0;
@@ -150,7 +156,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
             <header className="fixed top-0 z-50 w-full border-b border-bm-border/10 bg-bm-dark/80 backdrop-blur-md">
                 <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
                     <div className="flex items-center gap-8">
-                        <Link href="/" className="flex items-center gap-3 group">
+                        <Link href="/" className="flex items-center gap-3 group cursor-pointer">
                             <AppLogoIcon className="h-10 w-auto transition-transform duration-300 group-hover:scale-110" />
                             <span className="font-serif text-xl font-bold tracking-tight text-bm-white">Brass Monkey</span>
                         </Link>
@@ -184,14 +190,14 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                             {auth?.user ? (
                                 <Link
                                     href={dashboard()}
-                                    className="text-[13px] font-bold text-bm-white transition-colors hover:text-bm-gold uppercase tracking-wider"
+                                    className="text-[13px] font-bold text-bm-white transition-colors hover:text-bm-gold uppercase tracking-wider cursor-pointer"
                                 >
                                     Dashboard
                                 </Link>
                             ) : (
                                 <Link
                                     href={login()}
-                                    className="text-[13px] font-bold text-bm-white transition-colors hover:text-bm-gold uppercase tracking-wider"
+                                    className="text-[13px] font-bold text-bm-white transition-colors hover:text-bm-gold uppercase tracking-wider cursor-pointer"
                                 >
                                     Login
                                 </Link>
@@ -228,7 +234,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                         </p>
 
                         <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
-                            <Button size="lg" className="animate-spin bg-bm-gold px-12 h-16 text-bm-dark text-lg font-bold hover:bg-bm-gold-hover transition-all hover:scale-105 active:scale-95 shadow-xl shadow-bm-gold/20 rounded-lg group">
+                            <Button size="lg" className="animate-spin bg-bm-gold px-12 h-16 text-bm-dark text-lg font-bold hover:bg-bm-gold-hover transition-all hover:scale-105 active:scale-95 shadow-xl shadow-bm-gold/20 rounded-lg group cursor-pointer">
                                 Book a Service <ArrowRight className="ml-2 h-6 w-6 transition-transform group-hover:translate-x-1" />
                             </Button>
                             <button
@@ -236,15 +242,15 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                     e.preventDefault();
                                     handleScrollToSection(e as any, '#services');
                                 }}
-                                className="animate-spin inline-flex items-center gap-2 px-12 h-16 border border-bm-white/30 bg-transparent text-bm-white text-lg font-bold hover:bg-bm-white/10 transition-all rounded-lg backdrop-blur-sm hover:scale-105 active:scale-95"
+                                className="animate-spin inline-flex items-center gap-2 px-12 h-16 border border-bm-white/30 bg-transparent text-bm-white text-lg font-bold hover:bg-bm-white/10 transition-all rounded-lg backdrop-blur-sm hover:scale-105 active:scale-95 cursor-pointer"
                             >
                                 Explore Services <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
                             </button>
                         </div>
 
                         {/* Scroll-down cue */}
-                        <div className="mt-10 animate-bounce">
-                            <a href="#track-order" className="inline-flex flex-col items-center gap-3 text-bm-muted/60 transition-colors hover:text-bm-gold">
+                        <div className="mt-10 animate-bounce text-center">
+                            <a href="#track-order" className="inline-flex flex-col items-center gap-3 text-bm-muted/60 transition-colors hover:text-bm-gold cursor-pointer">
                                 <span className="text-xs font-bold uppercase tracking-[0.3em]">Track Your Order</span>
                                 <ChevronRight className="h-5 w-5 rotate-90" />
                             </a>
@@ -291,7 +297,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="h-16 rounded-xl bg-bm-gold px-8 text-sm font-bold uppercase tracking-widest text-bm-dark shadow-lg shadow-bm-gold/20 transition-all hover:scale-105 hover:bg-bm-gold-hover active:scale-95 disabled:opacity-60"
+                                        className="h-16 rounded-xl bg-bm-gold px-8 text-sm font-bold uppercase tracking-widest text-bm-dark shadow-lg shadow-bm-gold/20 transition-all hover:scale-105 hover:bg-bm-gold-hover active:scale-95 disabled:opacity-60 cursor-pointer"
                                     >
                                         Track Now <ArrowRight className="ml-2 inline h-4 w-4" />
                                     </button>
@@ -333,7 +339,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                             </p>
                                             <button
                                                 onClick={() => setModalOpen(true)}
-                                                className="mt-2 flex items-center gap-2 rounded-lg border border-bm-gold/20 bg-bm-gold/5 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-bm-gold transition-all hover:bg-bm-gold/10 hover:scale-105 active:scale-95"
+                                                className="mt-2 flex items-center gap-2 rounded-lg border border-bm-gold/20 bg-bm-gold/5 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-bm-gold transition-all hover:bg-bm-gold/10 hover:scale-105 active:scale-95 cursor-pointer"
                                             >
                                                 <Eye className="h-3.5 w-3.5" /> View Full Work Order
                                             </button>
@@ -429,7 +435,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                                 <ShieldCheck className="h-5 w-5 shrink-0 text-bm-gold" />
                                                 <p className="text-sm text-bm-muted">
                                                     Questions?{' '}
-                                                    <a href="#" className="font-bold text-bm-white transition-colors hover:text-bm-gold">
+                                                    <a href="#" className="font-bold text-bm-white transition-colors hover:text-bm-gold cursor-pointer">
                                                         Contact support →
                                                     </a>
                                                 </p>
@@ -460,7 +466,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                     <p className="mb-6 text-sm leading-relaxed text-bm-muted">
                                         Contact our support desk with your registered email and we'll locate your order instantly.
                                     </p>
-                                    <a href="#" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-bm-gold">
+                                    <a href="#" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-bm-gold cursor-pointer">
                                         Contact Support <ChevronRight className="ml-1 h-3 w-3" />
                                     </a>
                                 </div>
@@ -470,7 +476,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                     <p className="mb-6 text-sm leading-relaxed text-bm-muted">
                                         Every Brassmonkey service order undergoes three quality checkpoints before being marked ready.
                                     </p>
-                                    <a href="#about" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-bm-gold">
+                                    <a href="#about" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-bm-gold cursor-pointer">
                                         Learn More <ChevronRight className="ml-1 h-3 w-3" />
                                     </a>
                                 </div>
@@ -557,7 +563,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                         <CarouselItem key={service.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
                                             <Link
                                                 href={`/services/${service.id}`}
-                                                className="group bm-glass-premium bm-shadow-premium rounded-2xl p-8 hover:bg-bm-gold/[0.05] transition-all duration-300 overflow-hidden relative h-full flex flex-col"
+                                                className="group bm-glass-premium bm-shadow-premium rounded-2xl p-8 hover:bg-bm-gold/[0.05] transition-all duration-300 overflow-hidden relative h-full flex flex-col cursor-pointer"
                                             >
                                                 {/* Image preview if available */}
                                                 {service.image_path && (
@@ -641,6 +647,12 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
 
                 {/* Blogs Section */}
                 <BlogSection posts={posts!} categories={categories ?? []} tags={tags ?? []} filters={filters ?? {}} />
+
+                {/* ── Shop / Product Section ── */}
+                {featuredProducts && featuredProducts.length > 0 && (
+                    <LandingProductGrid products={featuredProducts} />
+                )}
+
 
                 {/* Why Choose Us */}
                 <section className="bg-bm-dark/50 py-32 border-y border-bm-border/5">
@@ -744,7 +756,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                             Join the elite clientele who trust Brass Monkey for their most critical mechanical needs.
                         </p>
                         <div className="mt-12">
-                            <Button size="lg" className="bg-bm-dark h-14 px-12 text-bm-gold hover:bg-bm-dark/90 font-bold transition-all hover:scale-105 active:scale-95 shadow-2xl rounded-lg group">
+                            <Button size="lg" className="bg-bm-dark h-14 px-12 text-bm-gold hover:bg-bm-dark/90 font-bold transition-all hover:scale-105 active:scale-95 shadow-2xl rounded-lg group cursor-pointer">
                                 Schedule Your Service <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                             </Button>
                         </div>
@@ -771,7 +783,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                             </p>
                             <div className="flex gap-4">
                                 {[Instagram, Twitter, Linkedin, Facebook].map((Icon, i) => (
-                                    <a key={i} href="#" className="h-10 w-10 flex items-center justify-center rounded-lg bg-bm-white/5 border border-bm-white/10 text-bm-muted hover:text-bm-gold hover:border-bm-gold/30 hover:bg-bm-gold/5 transition-all duration-300">
+                                    <a key={i} href="#" className="h-10 w-10 flex items-center justify-center rounded-lg bg-bm-white/5 border border-bm-white/10 text-bm-muted hover:text-bm-gold hover:border-bm-gold/30 hover:bg-bm-gold/5 transition-all duration-300 cursor-pointer">
                                         <Icon className="h-5 w-5" />
                                     </a>
                                 ))}
@@ -784,7 +796,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                             <p className="text-bm-muted text-sm mb-6 font-medium">Have a tracking ID? Monitor your mechanical restoration live.</p>
                             <Link
                                 href="#track-order"
-                                className="inline-flex items-center gap-2 text-bm-gold font-bold text-sm hover:underline underline-offset-4 group"
+                                className="inline-flex items-center gap-2 text-bm-gold font-bold text-sm hover:underline underline-offset-4 group cursor-pointer"
                             >
                                 Track Now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </Link>
@@ -792,7 +804,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                 <span className="text-[10px] text-bm-muted font-bold uppercase tracking-widest block mb-2">Sample IDs</span>
                                 <div className="flex flex-wrap gap-2">
                                     {['BM-1001', 'BM-1002'].map(id => (
-                                        <Link key={id} href={`/?number=${id}#track-order`} className="text-[10px] px-2 py-1 rounded bg-bm-white/5 border border-bm-white/10 text-bm-muted hover:text-bm-gold transition-colors">{id}</Link>
+                                        <Link key={id} href={`/?number=${id}#track-order`} className="text-[10px] px-2 py-1 rounded bg-bm-white/5 border border-bm-white/10 text-bm-muted hover:text-bm-gold transition-colors cursor-pointer">{id}</Link>
                                     ))}
                                 </div>
                             </div>
@@ -810,7 +822,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                     'Preventive Maintenance'
                                 ].map((service) => (
                                     <li key={service}>
-                                        <Link href="#" className="text-bm-muted text-sm transition-colors hover:text-bm-gold font-medium flex items-center gap-2 group">
+                                        <Link href="#" className="text-bm-muted text-sm transition-colors hover:text-bm-gold font-medium flex items-center gap-2 group cursor-pointer">
                                             <div className="h-1 w-0 bg-bm-gold group-hover:w-2 transition-all duration-300" />
                                             {service}
                                         </Link>
@@ -829,7 +841,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                     placeholder="your@email.com"
                                     className="w-full bg-bm-white/5 border border-bm-white/10 rounded-lg h-12 px-4 text-sm text-bm-white focus:outline-none focus:border-bm-gold transition-colors placeholder:text-bm-muted/30"
                                 />
-                                <button className="absolute right-1 top-1 h-10 px-4 bg-bm-gold text-bm-dark rounded-md text-xs font-bold hover:bg-bm-gold-hover transition-colors">
+                                <button className="absolute right-1 top-1 h-10 px-4 bg-bm-gold text-bm-dark rounded-md text-xs font-bold hover:bg-bm-gold-hover transition-colors cursor-pointer">
                                     Join
                                 </button>
                             </div>
@@ -845,7 +857,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                         </p>
                         <div className="flex gap-8">
                             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(item => (
-                                <Link key={item} href="#" className="text-[11px] font-bold tracking-widest text-bm-muted/30 uppercase hover:text-bm-gold transition-colors">{item}</Link>
+                                <Link key={item} href="#" className="text-[11px] font-bold tracking-widest text-bm-muted/30 uppercase hover:text-bm-gold transition-colors cursor-pointer">{item}</Link>
                             ))}
                         </div>
                     </div>
@@ -855,7 +867,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
             {/* Back to Top Button */}
             <button
                 onClick={scrollToTop}
-                className={`fixed bottom-8 right-8 z-50 h-14 w-14 rounded-full bg-bm-gold text-bm-dark shadow-2xl shadow-bm-gold/20 flex items-center justify-center transition-all duration-500 hover:scale-110 active:scale-90 hover:bg-bm-gold-hover group ${showBackToTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+                className={`fixed bottom-8 right-8 z-50 h-14 w-14 rounded-full bg-bm-gold text-bm-dark shadow-2xl shadow-bm-gold/20 flex items-center justify-center transition-all duration-500 hover:scale-110 active:scale-90 hover:bg-bm-gold-hover group cursor-pointer ${showBackToTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
                     }`}
                 aria-label="Back to top"
             >

@@ -26,8 +26,8 @@ export default function ClientJobsIndex({ jobs }: Props) {
             <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="My Service Jobs" description="Track the progress of your repairs and services." />
-                    <Button asChild className="rounded-xl w-full sm:w-auto bg-bm-gold hover:bg-bm-gold/90 text-black font-bold">
-                        <Link href="/services">Book New Service</Link>
+                    <Button asChild className="rounded-xl w-full sm:w-auto bg-bm-gold hover:bg-bm-gold/90 text-black font-bold cursor-pointer">
+                        <Link href="/services" className="cursor-pointer">Book New Service</Link>
                     </Button>
                 </div>
 
@@ -48,7 +48,7 @@ export default function ClientJobsIndex({ jobs }: Props) {
                                     <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <Link href={`/my-jobs/${job.id}`} className="font-mono font-black text-lg tracking-tight hover:text-bm-gold transition-colors">
+                                                <Link href={`/my-jobs/${job.id}`} className="font-mono font-black text-lg tracking-tight hover:text-bm-gold transition-colors cursor-pointer">
                                                     {job.tracking_number}
                                                 </Link>
                                                 <Badge variant="outline" className={`${cfg.color} text-[10px] font-bold px-2 py-0.5 flex items-center gap-1 uppercase tracking-wider`}>
@@ -65,8 +65,8 @@ export default function ClientJobsIndex({ jobs }: Props) {
                                             </div>
                                         </div>
                                         <div className="flex shrink-0">
-                                            <Button variant="secondary" className="w-full sm:w-auto rounded-xl shadow-none" asChild>
-                                                <Link href={`/my-jobs/${job.id}`}>View Details</Link>
+                                            <Button variant="secondary" className="w-full sm:w-auto rounded-xl shadow-none cursor-pointer" asChild>
+                                                <Link href={`/my-jobs/${job.id}`} className="cursor-pointer">View Details</Link>
                                             </Button>
                                         </div>
                                     </CardContent>

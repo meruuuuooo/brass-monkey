@@ -1,8 +1,5 @@
 import { Head, usePage, Link } from '@inertiajs/react';
 import {
-    ShoppingCart,
-    Users,
-    TrendingUp,
     Boxes,
     Truck,
     ClipboardList,
@@ -10,12 +7,12 @@ import {
     ArrowUpCircle,
     ArrowDownCircle,
     ClipboardCheck,
-    UserPlus,
     DollarSign,
     Package,
-    Layers,
+    Users,
 } from 'lucide-react';
 import { useState } from 'react';
+import { CrmNextBestActions, type NextBestAction } from '@/components/crm-next-best-actions';
 import { DashboardCalendar } from '@/components/dashboard-calendar';
 import { DashboardDueDates } from '@/components/dashboard-due-dates';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard() },
@@ -83,6 +81,7 @@ interface Props {
     poStats: Record<string, POStat>;
     recentPOs: RecentPO[];
     recentAdjustments: RecentAdj[];
+    nextBestActions: NextBestAction[];
 }
 
 const fmt = (n: number) =>
@@ -120,6 +119,7 @@ export default function Dashboard(props: Props) {
         poStats,
         recentPOs,
         recentAdjustments,
+        nextBestActions = [],
     } = props;
 
     const pendingPOCount =
@@ -339,7 +339,7 @@ export default function Dashboard(props: Props) {
                                         <div className="flex flex-col items-end gap-1 text-right">
                                             <Badge
                                                 variant="outline"
-                                                className={ `rounded-md px-1.5 text-[10px] ${statusColors[po.status] || ''}`}
+                                                className={`rounded-md px-1.5 text-[10px] ${statusColors[po.status] || ''}`}
                                             >
                                                 {po.status}
                                             </Badge>
@@ -408,8 +408,8 @@ export default function Dashboard(props: Props) {
                                             {adj.type === 'addition'
                                                 ? '+'
                                                 : adj.type === 'audit'
-                                                  ? '='
-                                                  : '-'}
+                                                    ? '='
+                                                    : '-'}
                                             {adj.quantity}
                                         </span>
                                     </div>
@@ -422,6 +422,9 @@ export default function Dashboard(props: Props) {
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* CRM Next Best Actions */}
+                <CrmNextBestActions actions={nextBestActions} />
             </div>
         </AppLayout>
     );

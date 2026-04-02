@@ -18,6 +18,7 @@ class Advertisement extends Model
         'priority',
         'display_start_at',
         'display_duration_hours',
+        'segment_id',
     ];
 
     protected function casts(): array
@@ -27,6 +28,7 @@ class Advertisement extends Model
             'priority' => 'integer',
             'display_start_at' => 'datetime',
             'display_duration_hours' => 'integer',
+            'segment_id' => 'integer',
         ];
     }
 }

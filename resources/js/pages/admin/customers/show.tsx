@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import {
     UserCircle2, Mail, CalendarDays, Tag, StickyNote, Trash2, Send,
+    ShieldCheck, TrendingUp, Wrench,
 } from 'lucide-react';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
@@ -25,12 +26,36 @@ interface Customer {
     created_at: string;
 }
 
+interface Health {
+    score: number;
+    status: 'vip' | 'at_risk' | 'healthy';
+    lifetime_value: number;
+    last_activity: string | null;
+    days_inactive: number | null;
+}
+
+interface UpsellRec {
+    service_id: number;
+    name: string;
+    description: string | null;
+    price: number | null;
+    reason: string;
+}
+
 interface Props {
     customer: Customer;
     segments: Segment[];
+    health: Health;
+    upsell_recommendations: UpsellRec[];
 }
 
-export default function CustomerShow({ customer, segments }: Props) {
+const healthConfig = {
+    vip: { label: 'VIP', color: 'text-bm-gold', bg: 'bg-bm-gold/10', border: 'border-bm-gold/30' },
+    healthy: { label: 'Healthy', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    at_risk: { label: 'At Risk', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+};
+
+export default function CustomerShow({ customer, segments, health, upsell_recommendations }: Props) {
     const customerSegmentIds = customer.segments.map((s) => s.id);
     const [selectedSegments, setSelectedSegments] = useState<number[]>(customerSegmentIds);
 
@@ -72,15 +97,16 @@ export default function CustomerShow({ customer, segments }: Props) {
             confirmButtonColor: '#d33', confirmButtonText: 'Delete',
         }).then((r) => {
             if (r.isConfirmed) {
-router.delete(`/admin/customer-notes/${note.id}`, {
-                preserveScroll: true,
-                onSuccess: () => Swal.fire('Deleted!', 'Note removed.', 'success'),
-            });
-}
+                router.delete(`/admin/customer-notes/${note.id}`, {
+                    preserveScroll: true,
+                    onSuccess: () => Swal.fire('Deleted!', 'Note removed.', 'success'),
+                });
+            }
         });
     };
 
     const segmentsChanged = JSON.stringify([...selectedSegments].sort()) !== JSON.stringify([...customerSegmentIds].sort());
+    const hConf = healthConfig[health.status];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -105,9 +131,43 @@ router.delete(`/admin/customer-notes/${note.id}`, {
                             ))}
                         </div>
                     </div>
-                    <Badge variant={customer.is_active ? 'default' : 'secondary'} className="rounded-lg">
-                        {customer.is_active ? 'Active' : 'Inactive'}
-                    </Badge>
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                        <Badge variant={customer.is_active ? 'default' : 'secondary'} className="rounded-lg">
+                            {customer.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                        {/* Health Badge */}
+                        <div className={`flex items-center gap-1.5 rounded-lg border px-2 py-1 text-xs font-bold ${hConf.color} ${hConf.bg} ${hConf.border}`}>
+                            <ShieldCheck className="size-3.5" />
+                            {hConf.label}
+                            <span className="opacity-60">·</span>
+                            <span className="opacity-80">Score {health.score}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Customer Health Summary */}
+                <div className="rounded-3xl border border-border/40 bg-card p-5 flex flex-wrap gap-6 items-center">
+                    <TrendingUp className="size-5 text-bm-gold shrink-0" />
+                    <div className="flex flex-wrap gap-6 text-sm">
+                        <div>
+                            <p className="text-[10px] tracking-widest uppercase text-muted-foreground/60 font-bold">Lifetime Value</p>
+                            <p className="font-black text-lg">${health.lifetime_value.toFixed(2)}</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] tracking-widest uppercase text-muted-foreground/60 font-bold">Last Activity</p>
+                            <p className="font-black text-lg">{health.last_activity ?? 'Never'}</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] tracking-widest uppercase text-muted-foreground/60 font-bold">Days Inactive</p>
+                            <p className={`font-black text-lg ${(health.days_inactive ?? 0) > 180 ? 'text-red-500' : ''}`}>
+                                {health.days_inactive ?? '—'}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] tracking-widest uppercase text-muted-foreground/60 font-bold">Health Score</p>
+                            <p className={`font-black text-lg ${hConf.color}`}>{health.score}/100</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
@@ -170,6 +230,30 @@ router.delete(`/admin/customer-notes/${note.id}`, {
                         </div>
                     </div>
                 </div>
+
+                {/* Upsell Recommendations */}
+                {upsell_recommendations.length > 0 && (
+                    <div className="rounded-3xl border border-border/40 bg-card p-6 space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Wrench className="size-5 text-bm-gold" />
+                            <h2 className="text-lg font-bold">Recommended Services to Offer</h2>
+                        </div>
+                        <div className="grid gap-3 sm:grid-cols-3">
+                            {upsell_recommendations.map((rec) => (
+                                <div key={rec.service_id} className="rounded-2xl border border-border/40 bg-muted/20 p-4 space-y-1.5">
+                                    <p className="text-sm font-bold">{rec.name}</p>
+                                    {rec.description && (
+                                        <p className="text-xs text-muted-foreground line-clamp-2">{rec.description}</p>
+                                    )}
+                                    {rec.price !== null && (
+                                        <p className="font-mono text-sm font-black text-bm-gold">${Number(rec.price).toFixed(2)}</p>
+                                    )}
+                                    <p className="text-[10px] text-muted-foreground/60 italic">{rec.reason}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </AppLayout>
     );

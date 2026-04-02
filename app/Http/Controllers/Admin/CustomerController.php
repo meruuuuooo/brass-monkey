@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomerNote;
 use App\Models\CustomerSegment;
 use App\Models\User;
+use App\Services\CRMSuggestionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,6 +14,10 @@ use Inertia\Response;
 
 class CustomerController extends Controller
 {
+    public function __construct(private CRMSuggestionService $crmService)
+    {
+    }
+
     public function index(Request $request): Response
     {
         $query = User::role('Client')
@@ -31,13 +36,26 @@ class CustomerController extends Controller
             $query->whereHas('segments', fn($q) => $q->where('customer_segments.id', $request->input('segment')));
         }
 
+        if ($request->filled('health')) {
+            $healthFilter = $request->input('health');
+            $query->get()->filter(fn($c) => $this->crmService->getCustomerHealth($c)['status'] === $healthFilter);
+        }
+
         $customers = $query->latest()->paginate(15)->withQueryString();
         $segments = CustomerSegment::orderBy('name')->get(['id', 'name', 'color']);
+
+        // Add health scores to customers in the current page
+        $customers->getCollection()->transform(function (User $customer) {
+            $health = $this->crmService->getCustomerHealth($customer);
+            $customer->health_status = $health['status'];
+            $customer->health_score = $health['score'];
+            return $customer;
+        });
 
         return Inertia::render('admin/customers/index', [
             'customers' => $customers,
             'segments' => $segments,
-            'filters' => $request->only(['search', 'segment']),
+            'filters' => $request->only(['search', 'segment', 'health']),
         ]);
     }
 
@@ -51,9 +69,14 @@ class CustomerController extends Controller
 
         $segments = CustomerSegment::orderBy('name')->get(['id', 'name', 'color']);
 
+        $health = $this->crmService->getCustomerHealth($customer);
+        $upsellRecs = $this->crmService->getUpsellRecommendations($customer);
+
         return Inertia::render('admin/customers/show', [
             'customer' => $customer,
             'segments' => $segments,
+            'health' => $health,
+            'upsell_recommendations' => $upsellRecs,
         ]);
     }
 

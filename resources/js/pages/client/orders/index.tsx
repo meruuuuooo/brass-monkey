@@ -45,8 +45,8 @@ export default function ClientOrdersIndex({ orders }: Props) {
                         <ShoppingBag className="size-10 text-muted-foreground" />
                         <h4 className="text-lg font-bold">No Orders Found</h4>
                         <p className="text-muted-foreground text-sm">You haven't made any purchases yet.</p>
-                        <Button variant="outline" className="rounded-xl mt-2" asChild>
-                            <a href="/products">Browse Shop</a>
+                        <Button variant="outline" className="rounded-xl mt-2 cursor-pointer" asChild>
+                            <a href="/products" className="cursor-pointer">Browse Shop</a>
                         </Button>
                     </div>
                 ) : (
@@ -87,7 +87,7 @@ export default function ClientOrdersIndex({ orders }: Props) {
                                             asChild
                                             className="w-full mt-4 bg-bm-gold hover:bg-bm-gold/90 text-black font-bold h-10 rounded-xl transition-all"
                                         >
-                                            <Link href={`/track-order?number=${order.order_number}`} onClick={(e) => e.stopPropagation()}>
+                                            <Link href={`/track-order?number=${order.order_number}`} onClick={(e) => e.stopPropagation()} className="cursor-pointer">
                                                 Track Order
                                             </Link>
                                         </Button>
@@ -158,7 +158,7 @@ export default function ClientOrdersIndex({ orders }: Props) {
                                     asChild
                                     className="bg-bm-gold shadow-lg shadow-bm-gold/20 hover:bg-bm-gold-hover text-black font-bold h-12 px-8 rounded-xl w-full sm:w-auto transition-transform active:scale-95"
                                 >
-                                    <Link href={`/track-order?number=${selectedOrder.order_number}`}>Track Order Progress</Link>
+                                    <Link href={`/track-order?number=${selectedOrder.order_number}`} className="cursor-pointer">Track Order Progress</Link>
                                 </Button>
                             </div>
                         </>

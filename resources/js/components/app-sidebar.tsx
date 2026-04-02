@@ -328,7 +328,7 @@ export function AppSidebar() {
                                     </span>
                                 </div>
                             </Link> */}
-                            <Link href={dashboard()} prefetch>
+                            <Link href={dashboard()} prefetch className="cursor-pointer">
                                 <AppLogo subtitle={primaryRole} />
                             </Link>
                         </SidebarMenuButton>
@@ -351,8 +351,8 @@ function NavAdmin({ groups }: { groups: NavGroup[] }) {
     const { isCurrentUrl } = useCurrentUrl();
     const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
         if (typeof window === 'undefined') {
-return {};
-}
+            return {};
+        }
 
         try {
             const saved = localStorage.getItem('sidebar_groups_state');
@@ -418,9 +418,9 @@ return {};
                                                         asChild
                                                         isActive={isCurrentUrl(item.href)}
                                                         tooltip={{ children: item.title }}
-                                                        className="h-9 rounded-lg px-2.5 text-sm font-medium transition-all duration-150 hover:bg-sidebar-accent/70 hover:pl-3 data-active:bg-sidebar-primary/85 data-active:text-sidebar-primary-foreground data-active:shadow-[inset_3px_0_0_0_hsl(var(--sidebar-primary-foreground)/0.35)]"
+                                                        className="h-9 rounded-lg px-2.5 text-sm font-medium transition-all duration-150 hover:bg-sidebar-accent/70 hover:pl-3 data-active:bg-sidebar-primary/85 data-active:text-sidebar-primary-foreground data-active:shadow-[inset_3px_0_0_0_hsl(var(--sidebar-primary-foreground)/0.35)] cursor-pointer"
                                                     >
-                                                        <Link href={item.href} prefetch>
+                                                        <Link href={item.href} prefetch className="cursor-pointer">
                                                             {item.icon && <item.icon />}
                                                             <span>{item.title}</span>
                                                         </Link>

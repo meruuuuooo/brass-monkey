@@ -114,7 +114,7 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
                         {(filters.category || filters.tag || filters.search) && (
                             <div className="flex items-center justify-between">
                                 <span className="text-sm font-bold text-muted-foreground">Active Filters</span>
-                                <Button variant="link" size="sm" onClick={clearFilters} className="text-red-500 cursor-pointer h-auto p-0">Clear All</Button>
+                                <Button variant="link" size="sm" onClick={clearFilters} className="text-red-500 cursor-pointer h-auto p-0 hover:no-underline">Clear All</Button>
                             </div>
                         )}
 
@@ -172,7 +172,7 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {posts.data.map(post => (
-                                    <Link key={post.id} href={`/blog-article/${post.slug}`} className="group h-full">
+                                    <Link key={post.id} href={`/blog-article/${post.slug}`} className="group h-full cursor-pointer">
                                         <Card className="flex flex-col h-full overflow-hidden rounded-3xl border border-border/40 hover:border-bm-gold/50 transition-all duration-300 hover:shadow-xl hover:shadow-bm-gold/10 bg-card hover:-translate-y-1">
                                             <div className="relative aspect-video overflow-hidden bg-muted">
                                                 {post.featured_image_path ? (
@@ -246,7 +246,7 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
                                             key={i}
                                             variant={link.active ? "default" : "outline"}
                                             size="sm"
-                                            className={`rounded-xl ${link.active ? 'bg-bm-gold text-black hover:bg-bm-gold/90 border-transparent shadow-md' : 'shadow-sm'}`}
+                                            className={`rounded-xl cursor-pointer ${link.active ? 'bg-bm-gold text-black hover:bg-bm-gold/90 border-transparent shadow-md' : 'shadow-sm'}`}
                                             disabled={!link.url}
                                             onClick={() => link.url && router.get(link.url, undefined, { preserveScroll: true })}
                                             dangerouslySetInnerHTML={{ __html: link.label }}

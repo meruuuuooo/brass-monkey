@@ -451,7 +451,7 @@ export function AppSidebarHeader() {
                                     {auth.unread_notifications_count > 0 && (
                                         <button
                                             onClick={markAllRead}
-                                            className="text-[10px] font-black uppercase tracking-widest text-bm-gold hover:text-bm-gold/80 transition-colors"
+                                            className="text-[10px] font-black uppercase tracking-widest text-bm-gold hover:text-bm-gold/80 transition-colors cursor-pointer"
                                         >
                                             Clear All
                                         </button>
@@ -506,7 +506,7 @@ export function AppSidebarHeader() {
                                                                 {!isRead && (
                                                                     <button
                                                                         onClick={() => markAsRead(notif.id)}
-                                                                        className="mt-2 flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-bm-gold opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                                                        className="mt-2 flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-bm-gold opacity-0 group-hover/item:opacity-100 transition-opacity cursor-pointer"
                                                                     >
                                                                         <Check className="size-3" /> Mark Read
                                                                     </button>
@@ -524,9 +524,9 @@ export function AppSidebarHeader() {
                                     <Button
                                         variant="outline"
                                         asChild
-                                        className="h-9 w-full gap-2 rounded-xl border-amber-600/20 bg-amber-500/5 text-xs font-bold text-amber-600 transition-all hover:bg-amber-500 hover:text-white dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-400 dark:hover:bg-amber-600 dark:hover:text-white"
+                                        className="h-9 w-full gap-2 rounded-xl border-amber-600/20 bg-amber-500/5 text-xs font-bold text-amber-600 transition-all hover:bg-amber-500 hover:text-white dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-400 dark:hover:bg-amber-600 dark:hover:text-white cursor-pointer"
                                     >
-                                        <Link href="/notifications">
+                                        <Link href="/notifications" className="cursor-pointer">
                                             <ExternalLink className="size-3" />
                                             View All Notifications
                                         </Link>
@@ -572,11 +572,11 @@ export function AppSidebarHeader() {
                     </div>
                 ) : (
                     <div className="hidden items-center gap-3 md:flex">
-                        <Button variant="ghost" asChild className="rounded-xl font-bold">
-                            <Link href="/login">Login</Link>
+                        <Button variant="ghost" asChild className="rounded-xl font-bold cursor-pointer">
+                            <Link href="/login" className="cursor-pointer">Login</Link>
                         </Button>
-                        <Button asChild className="rounded-xl bg-bm-gold text-black font-bold hover:bg-bm-gold/90 transition-all">
-                            <Link href="/register">Register</Link>
+                        <Button asChild className="rounded-xl bg-bm-gold text-black font-bold hover:bg-bm-gold/90 transition-all cursor-pointer">
+                            <Link href="/register" className="cursor-pointer">Register</Link>
                         </Button>
                     </div>
                 )}

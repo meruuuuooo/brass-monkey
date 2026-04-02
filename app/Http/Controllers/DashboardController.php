@@ -11,12 +11,20 @@ use App\Models\ServiceOrder;
 use App\Models\StockAdjustment;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Services\ClientSuggestionService;
+use App\Services\CRMSuggestionService;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private CRMSuggestionService $crmService,
+        private ClientSuggestionService $clientSuggestionService,
+    ) {
+    }
+
     /**
      * Display the dashboard.
      */
@@ -33,42 +41,50 @@ class DashboardController extends Controller
             return $this->managerDashboard();
         }
 
-        // Mock data for client's active work orders
-        $activeWorkOrders = [
-            ['id' => 1, 'number' => 'WO-2026-001', 'status' => 'In Progress', 'type' => 'Full Engine Overhaul'],
-            ['id' => 2, 'number' => 'WO-2026-004', 'status' => 'Pending', 'type' => 'Suspension Tuning'],
-            ['id' => 3, 'number' => 'WO-2026-007', 'status' => 'Awaiting Parts', 'type' => 'Custom Exhaust Build'],
-        ];
+        // Real client service orders (active/in-progress)
+        $activeServiceOrders = ServiceOrder::where('user_id', $user->id)
+            ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+            ->latest()
+            ->limit(10)
+            ->get(['id', 'tracking_number', 'service_type', 'status', 'priority'])
+            ->map(fn($o) => [
+                'id' => $o->id,
+                'number' => $o->tracking_number,
+                'status' => ucwords(str_replace('_', ' ', $o->status)),
+                'type' => $o->service_type,
+            ])
+            ->toArray();
 
         $now = now();
 
-        return Inertia::render('client/dashboard', [
-            'activeWorkOrders' => $activeWorkOrders,
-            'advertisements' => Advertisement::where('is_active', true)
-                ->where(function ($q) use ($now) {
-                    // No scheduled start → always show
-                    $q->whereNull('display_start_at')
-                        // OR: started already
-                        ->orWhere(function ($q2) use ($now) {
+        // Fetch active ads with segment awareness
+        $allActiveAds = Advertisement::where('is_active', true)
+            ->where(function ($q) use ($now) {
+                $q->whereNull('display_start_at')
+                    ->orWhere(function ($q2) use ($now) {
                         $q2->where('display_start_at', '<=', $now)
                             ->where(function ($q3) use ($now) {
-                                // No duration → show indefinitely after start
                                 $q3->whereNull('display_duration_hours')
-                                    // OR: still within duration window
                                     ->orWhereRaw(
                                         'DATE_ADD(display_start_at, INTERVAL display_duration_hours HOUR) >= ?',
                                         [$now]
                                     );
                             });
                     });
-                })
-                ->orderBy('priority', 'desc')
-                ->latest()
-                ->get(),
-            'announcements' => Announcement::active()
-                ->orderBy('priority', 'desc')
-                ->latest()
-                ->get(),
+            })
+            ->orderBy('priority', 'desc')
+            ->latest()
+            ->get();
+
+        $targetedAds = $this->clientSuggestionService->getTargetedAdvertisements($user, $allActiveAds);
+
+        return Inertia::render('client/dashboard', [
+            'activeWorkOrders' => $activeServiceOrders,
+            'advertisements' => $targetedAds->values(),
+            'announcements' => Announcement::active()->orderBy('priority', 'desc')->latest()->get(),
+            'recommended_services' => $this->clientSuggestionService->getRecommendedServices($user),
+            'pending_actions' => $this->clientSuggestionService->getPendingActions($user),
+            'recommended_products' => $this->clientSuggestionService->getRecommendedProducts($user),
         ]);
     }
 
@@ -172,6 +188,9 @@ class DashboardController extends Controller
             })
             ->toArray();
 
+        // --- CRM: Next Best Actions ---
+        $nextBestActions = $this->crmService->getNextBestActions(8)->toArray();
+
         return Inertia::render('admin/dashboard', [
             'totalClients' => $totalClients,
             'newClientsThisMonth' => $newClientsThisMonth,
@@ -191,6 +210,8 @@ class DashboardController extends Controller
             'recentPOs' => $recentPOs,
             // Stock Adjustments
             'recentAdjustments' => $recentAdjustments,
+            // CRM
+            'nextBestActions' => $nextBestActions,
         ]);
     }
 

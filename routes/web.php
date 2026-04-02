@@ -13,6 +13,7 @@ use App\Models\Advertisement;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
 use App\Models\BlogTag;
+use App\Models\Product;
 use App\Models\Service;
 use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
@@ -48,18 +49,24 @@ Route::get('/', function (Request $request) {
 
     $posts = BlogPost::with(['author:id,name', 'categories:id,name,slug', 'tags:id,name,slug'])
         ->where('status', 'published')
-        ->when($request->filled('category'), fn ($q) => $q->whereHas('categories', fn ($c) => $c->where('blog_categories.slug', $request->category)))
-        ->when($request->filled('tag'), fn ($q) => $q->whereHas('tags', fn ($t) => $t->where('blog_tags.slug', $request->tag)))
-        ->when($request->filled('search'), fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', '%'.$request->search.'%')->orWhere('excerpt', 'like', '%'.$request->search.'%')))
+        ->when($request->filled('category'), fn($q) => $q->whereHas('categories', fn($c) => $c->where('blog_categories.slug', $request->category)))
+        ->when($request->filled('tag'), fn($q) => $q->whereHas('tags', fn($t) => $t->where('blog_tags.slug', $request->tag)))
+        ->when($request->filled('search'), fn($q) => $q->where(fn($w) => $w->where('title', 'like', '%' . $request->search . '%')->orWhere('excerpt', 'like', '%' . $request->search . '%')))
         ->orderByDesc('is_featured')
         ->latest('published_at')
         ->paginate(12)
         ->withQueryString();
 
-    $categories = BlogCategory::withCount(['posts' => fn ($q) => $q->where('status', 'published')])->orderBy('name')->get();
-    $tags = BlogTag::withCount(['posts' => fn ($q) => $q->where('status', 'published')])->orderBy('name')->get();
+    $categories = BlogCategory::withCount(['posts' => fn($q) => $q->where('status', 'published')])->orderBy('name')->get();
+    $tags = BlogTag::withCount(['posts' => fn($q) => $q->where('status', 'published')])->orderBy('name')->get();
 
     $services = Service::where('is_active', true)->get();
+
+    $featuredProducts = Product::with('category:id,name')
+        ->where('is_available', true)
+        ->latest()
+        ->limit(8)
+        ->get();
 
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
@@ -70,11 +77,29 @@ Route::get('/', function (Request $request) {
         'categories' => $categories,
         'tags' => $tags,
         'services' => $services,
+        'featuredProducts' => $featuredProducts,
         'filters' => $request->only(['category', 'tag', 'search']),
     ]);
 })->name('home');
 
 Route::get('/track-order', [TrackOrderController::class, 'index'])->name('track-order');
+
+// Public product detail (landing page — no auth required)
+Route::get('/shop/{product}', function (\App\Models\Product $product) {
+    if (!$product->is_available) {
+        abort(404);
+    }
+    $related = \App\Models\Product::with('category:id,name')
+        ->where('is_available', true)
+        ->where('id', '!=', $product->id)
+        ->when($product->category_id, fn($q) => $q->where('category_id', $product->category_id))
+        ->limit(4)
+        ->get();
+    return Inertia::render('product-show', [
+        'product' => $product->load('category:id,name'),
+        'related' => $related,
+    ]);
+})->name('shop.product.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -92,6 +117,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ProductController::class,
         'index',
     ])->name('client.products.index');
+    Route::get('/products/{product}', [
+        ProductController::class,
+        'show',
+    ])->name('client.products.show');
+    Route::post('/products/cart/checkout', [
+        ProductController::class,
+        'cartCheckout',
+    ])->name('client.products.cart.checkout');
     Route::post('/products/{product}/purchase', [
         ProductController::class,
         'purchase',
@@ -166,5 +199,5 @@ Route::get('/blog/{slug}', [
     'show',
 ])->name('guest.blog.show');
 
-require __DIR__.'/settings.php';
-require __DIR__.'/admin.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/admin.php';

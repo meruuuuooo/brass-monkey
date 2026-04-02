@@ -84,7 +84,7 @@ export default function ClientJobShow({ job }: Props) {
                 {/* Header */}
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => router.get('/my-jobs')}><ArrowLeft className="size-5" /></Button>
+                        <Button variant="ghost" size="icon" className="rounded-xl cursor-pointer" onClick={() => router.get('/my-jobs')}><ArrowLeft className="size-5" /></Button>
                         <div>
                             <div className="flex items-center gap-3">
                                 <h1 className="text-2xl font-black tracking-tight font-mono">{job.tracking_number}</h1>
@@ -159,7 +159,7 @@ export default function ClientJobShow({ job }: Props) {
                                     <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-center">
                                         <p className="text-xs font-bold uppercase text-amber-600 mb-1">Awaiting Your Approval</p>
                                         <div className="font-mono font-black text-3xl mb-3 text-amber-600">${Number(job.estimated_cost).toFixed(2)}</div>
-                                        <Button onClick={handleApproveEstimate} className="w-full bg-bm-gold hover:bg-bm-gold/90 text-black font-bold uppercase tracking-wider rounded-xl">Approve Estimate</Button>
+                                        <Button onClick={handleApproveEstimate} className="w-full bg-bm-gold hover:bg-bm-gold/90 text-black font-bold uppercase tracking-wider rounded-xl cursor-pointer">Approve Estimate</Button>
                                         <p className="text-[10px] text-muted-foreground mt-2 opacity-75 leading-tight">By approving, you authorize our technicians to begin work on your vehicle.</p>
                                     </div>
                                 ) : (
@@ -189,7 +189,7 @@ export default function ClientJobShow({ job }: Props) {
                                                     key={star}
                                                     type="button"
                                                     onClick={() => setData('rating', star)}
-                                                    className="focus:outline-none transition-transform active:scale-90"
+                                                    className="focus:outline-none transition-transform active:scale-90 cursor-pointer"
                                                 >
                                                     <Star
                                                         className={cn(
@@ -209,7 +209,7 @@ export default function ClientJobShow({ job }: Props) {
                                         <Button
                                             disabled={processing || data.rating === 0}
                                             type="submit"
-                                            className="w-full rounded-xl bg-foreground text-background font-bold"
+                                            className="w-full rounded-xl bg-foreground text-background font-bold cursor-pointer"
                                         >
                                             {job.review ? 'Update Feedback' : 'Submit Feedback'}
                                         </Button>

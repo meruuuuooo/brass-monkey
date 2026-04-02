@@ -162,7 +162,7 @@ export default function BlogShow({ post, related }: Props) {
                                     required
                                 />
                                 {errors.body && <p className="text-sm text-red-500 mb-4">{errors.body}</p>}
-                                <Button type="submit" disabled={processing || !data.body.trim()} className="rounded-xl px-8 bg-bm-gold hover:bg-bm-gold/90 text-black font-bold">
+                                <Button type="submit" disabled={processing || !data.body.trim()} className="rounded-xl px-8 bg-bm-gold hover:bg-bm-gold/90 text-black font-bold cursor-pointer">
                                     Post Comment
                                 </Button>
                             </form>
@@ -171,7 +171,7 @@ export default function BlogShow({ post, related }: Props) {
                                 <MessageCircle className="size-10 text-muted-foreground/30 mx-auto mb-3" />
                                 <h4 className="font-semibold mb-2">Want to join the conversation?</h4>
                                 <p className="text-muted-foreground text-sm mb-4">Please log in or create an account to leave a comment.</p>
-                                <Button asChild className="rounded-xl bg-foreground text-background font-bold">
+                                <Button asChild className="rounded-xl bg-foreground text-background font-bold cursor-pointer">
                                     <Link href="/login">Log In to Comment</Link>
                                 </Button>
                             </div>
@@ -216,7 +216,7 @@ export default function BlogShow({ post, related }: Props) {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                             {related.map(rel => (
-                                <Link key={rel.id} href={`/blog/${rel.slug}`} className="group">
+                                <Link key={rel.id} href={`/blog/${rel.slug}`} className="group cursor-pointer">
                                     <div className="rounded-3xl overflow-hidden border border-border/40 bg-card hover:border-bm-gold/50 transition-colors h-full flex flex-col shadow-sm hover:shadow-xl hover:shadow-bm-gold/5 hover:-translate-y-1 duration-300">
                                         <div className="aspect-16/10 bg-muted relative overflow-hidden">
                                             {rel.featured_image_path ? (

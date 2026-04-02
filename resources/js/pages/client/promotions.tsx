@@ -33,24 +33,24 @@ interface Props {
 
 function getPriorityMeta(priority: number) {
     if (priority >= 10) {
-return { label: 'Top', cls: 'bg-bm-gold/20 text-bm-gold border-bm-gold/30' };
-}
+        return { label: 'Top', cls: 'bg-bm-gold/20 text-bm-gold border-bm-gold/30' };
+    }
 
     if (priority >= 5) {
-return { label: 'High', cls: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
-}
+        return { label: 'High', cls: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
+    }
 
     if (priority < 0) {
-return { label: 'Low', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/30' };
-}
+        return { label: 'Low', cls: 'bg-blue-500/20 text-blue-400 border-blue-500/30' };
+    }
 
     return { label: 'Featured', cls: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
 }
 
 function formatExpiry(start: string | null, hours: number | null): string | null {
     if (!start || !hours) {
-return null;
-}
+        return null;
+    }
 
     const expiry = new Date(new Date(start).getTime() + hours * 3600_000);
 
@@ -123,7 +123,7 @@ function PromoCard({ ad }: { ad: Advertisement }) {
                         href={ad.link_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-bm-gold hover:underline underline-offset-4 transition-colors"
+                        className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-bm-gold hover:underline underline-offset-4 transition-colors cursor-pointer"
                     >
                         View Offer <ExternalLink className="size-3" />
                     </a>

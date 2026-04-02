@@ -1,7 +1,7 @@
 import { Head, router, Link } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
-    Search, UserCircle2, Mail, Filter, Eye,
+    Search, UserCircle2, Mail, Filter, Eye, ShieldCheck,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { DataTableWithPagination } from '@/components/data-table';
@@ -25,6 +25,8 @@ interface Customer {
     segments: Segment[];
     customer_notes_count: number;
     created_at: string;
+    health_status?: 'vip' | 'at_risk' | 'healthy';
+    health_score?: number;
 }
 
 interface PaginatedCustomers {
@@ -37,8 +39,14 @@ interface PaginatedCustomers {
 interface Props {
     customers: PaginatedCustomers;
     segments: Segment[];
-    filters: { search?: string; segment?: string };
+    filters: { search?: string; segment?: string; health?: string };
 }
+
+const healthConfig = {
+    vip: { label: 'VIP', color: 'text-bm-gold', bg: 'bg-bm-gold/10', border: 'border-bm-gold/30' },
+    healthy: { label: 'Healthy', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    at_risk: { label: 'At Risk', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+} as const;
 
 export default function CustomersIndex({ customers, segments, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
@@ -78,6 +86,20 @@ export default function CustomersIndex({ customers, segments, filters }: Props) 
             accessorKey: 'customer_notes_count',
             header: 'Notes',
             cell: ({ row }) => <span className="font-mono text-sm">{row.original.customer_notes_count}</span>,
+        },
+        {
+            id: 'health',
+            header: 'Health',
+            cell: ({ row }) => {
+                const s = row.original.health_status;
+                if (!s) return null;
+                const cfg = healthConfig[s];
+                return (
+                    <span className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold ${cfg.color} ${cfg.bg} ${cfg.border}`}>
+                        <ShieldCheck className="size-3" />{cfg.label}
+                    </span>
+                );
+            },
         },
         {
             accessorKey: 'created_at',
@@ -143,6 +165,14 @@ export default function CustomersIndex({ customers, segments, filters }: Props) 
                             </Badge>
                         )) : <span className="text-xs text-muted-foreground">—</span>}
                     </div>
+                    {customer.health_status && (() => {
+                        const cfg = healthConfig[customer.health_status!];
+                        return (
+                            <span className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold shrink-0 ${cfg.color} ${cfg.bg} ${cfg.border}`}>
+                                <ShieldCheck className="size-3" />{cfg.label}
+                            </span>
+                        );
+                    })()}
                 </div>
             </div>
         </div>
@@ -178,6 +208,18 @@ export default function CustomersIndex({ customers, segments, filters }: Props) 
                                     {s.name}
                                 </SelectItem>
                             ))}
+                        </SelectContent>
+                    </Select>
+                    <Select value={filters.health || 'all'} onValueChange={(v) => handleFilter('health', v === 'all' ? undefined : v)}>
+                        <SelectTrigger className="w-[160px] rounded-xl border-border/40">
+                            <ShieldCheck className="size-4 mr-2 text-muted-foreground" />
+                            <SelectValue placeholder="All Health" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl">
+                            <SelectItem value="all" className="rounded-xl">All Health</SelectItem>
+                            <SelectItem value="vip" className="rounded-xl">⭐ VIP</SelectItem>
+                            <SelectItem value="healthy" className="rounded-xl">✅ Healthy</SelectItem>
+                            <SelectItem value="at_risk" className="rounded-xl">⚠️ At Risk</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

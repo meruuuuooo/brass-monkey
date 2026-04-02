@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import serviceRoutes from '@/routes/services';
+import { login } from '@/routes';
 
 interface Service {
     id: number;
@@ -115,7 +116,7 @@ export default function ServiceShow({ service }: Props) {
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className="text-[13px] font-bold tracking-wider text-bm-muted uppercase transition-colors hover:text-bm-gold"
+                                    className="cursor-pointer text-[13px] font-bold tracking-wider text-bm-muted uppercase transition-colors hover:text-bm-gold"
                                 >
                                     {item.name}
                                 </Link>
@@ -126,14 +127,14 @@ export default function ServiceShow({ service }: Props) {
                             {auth && auth.user ? (
                                 <Link
                                     href="/dashboard"
-                                    className="text-[13px] font-bold tracking-wider text-bm-white uppercase transition-colors hover:text-bm-gold"
+                                    className="text-[13px] font-bold tracking-wider text-bm-white uppercase transition-colors hover:text-bm-gold cursor-pointer"
                                 >
                                     Dashboard
                                 </Link>
                             ) : (
                                 <Link
                                     href={login()}
-                                    className="text-[13px] font-bold tracking-wider text-bm-white uppercase transition-colors hover:text-bm-gold"
+                                    className="text-[13px] font-bold tracking-wider text-bm-white uppercase transition-colors hover:text-bm-gold cursor-pointer"
                                 >
                                     Login
                                 </Link>
@@ -368,8 +369,8 @@ export default function ServiceShow({ service }: Props) {
                                                     <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
                                                         <p className="text-xs text-amber-200">
                                                             <Link
-                                                                href={`/login`}
-                                                                className="font-bold underline hover:text-amber-100"
+                                                                href="/login"
+                                                                className="font-bold underline hover:text-amber-100 cursor-pointer"
                                                             >
                                                                 Sign in
                                                             </Link>{' '}
@@ -384,7 +385,7 @@ export default function ServiceShow({ service }: Props) {
                                                         processing ||
                                                         !auth?.user
                                                     }
-                                                    className="h-12 w-full rounded-xl bg-bm-gold font-black text-bm-dark shadow-lg shadow-bm-gold/20 transition-all hover:-translate-y-1 hover:bg-bm-gold/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    className="h-12 w-full rounded-xl bg-bm-gold font-black text-bm-dark shadow-lg shadow-bm-gold/20 transition-all hover:-translate-y-1 hover:bg-bm-gold/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                                                 >
                                                     {processing
                                                         ? 'Booking...'
@@ -401,7 +402,7 @@ export default function ServiceShow({ service }: Props) {
                                             <div className="border-t border-bm-border/30 pt-4">
                                                 <Link
                                                     href="/#track-order"
-                                                    className="text-xs font-bold text-bm-gold transition-colors hover:text-bm-gold/80"
+                                                    className="text-xs font-bold text-bm-gold transition-colors hover:text-bm-gold/80 cursor-pointer"
                                                 >
                                                     Track an existing order
                                                 </Link>
@@ -443,7 +444,7 @@ export default function ServiceShow({ service }: Props) {
                                         new Event('submit', { bubbles: true }),
                                     );
                             }}
-                            className="h-12 rounded-full bg-bm-gold px-12 font-black text-bm-dark shadow-lg shadow-bm-gold/20 transition-all hover:-translate-y-1 hover:bg-bm-gold/90 active:scale-95"
+                            className="h-12 rounded-full bg-bm-gold px-12 font-black text-bm-dark shadow-lg shadow-bm-gold/20 transition-all hover:-translate-y-1 hover:bg-bm-gold/90 active:scale-95 cursor-pointer"
                         >
                             Book Now
                         </Button>
@@ -465,7 +466,7 @@ export default function ServiceShow({ service }: Props) {
                         </div>
                         <Link
                             href="/"
-                            className="text-sm font-bold text-bm-gold transition-colors hover:text-bm-gold/80"
+                            className="text-sm font-bold text-bm-gold transition-colors hover:text-bm-gold/80 cursor-pointer"
                         >
                             Back to Home
                         </Link>
@@ -479,11 +480,10 @@ export default function ServiceShow({ service }: Props) {
             {/* Back to Top Button */}
             <button
                 onClick={scrollToTop}
-                className={`group fixed right-8 bottom-8 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-bm-gold text-bm-dark shadow-2xl shadow-bm-gold/20 transition-all duration-500 hover:scale-110 hover:bg-bm-gold-hover active:scale-90 ${
-                    showBackToTop
-                        ? 'translate-y-0 opacity-100'
-                        : 'translate-y-20 opacity-0'
-                }`}
+                className={`group fixed right-8 bottom-8 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-bm-gold text-bm-dark shadow-2xl shadow-bm-gold/20 transition-all duration-500 hover:scale-110 hover:bg-bm-gold-hover active:scale-90 cursor-pointer ${showBackToTop
+                    ? 'translate-y-0 opacity-100'
+                    : 'translate-y-20 opacity-0'
+                    }`}
                 aria-label="Back to top"
             >
                 <ArrowUp className="h-6 w-6 transition-transform duration-300 group-hover:-translate-y-1" />

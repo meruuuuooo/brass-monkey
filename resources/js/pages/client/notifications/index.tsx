@@ -35,7 +35,7 @@ export default function NotificationsIndex({ notifications }: Props) {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="Notifications" description="Stay updated with order alerts and service news." />
                     {notifications.data.some(n => !n.pivot.is_read) && (
-                        <Button variant="outline" size="sm" onClick={markAllRead} className="rounded-xl border-border/40 hover:bg-muted/50">
+                        <Button variant="outline" size="sm" onClick={markAllRead} className="rounded-xl border-border/40 hover:bg-muted/50 cursor-pointer">
                             <Check className="size-4 mr-2" /> Mark all as read
                         </Button>
                     )}
@@ -76,7 +76,7 @@ export default function NotificationsIndex({ notifications }: Props) {
                                                 {notif.message}
                                             </p>
                                             {!notif.pivot.is_read && (
-                                                <button onClick={() => markAsRead(notif.id)} className="mt-3 text-[11px] font-black uppercase tracking-widest text-bm-gold hover:underline">
+                                                <button onClick={() => markAsRead(notif.id)} className="mt-3 text-[11px] font-black uppercase tracking-widest text-bm-gold hover:underline cursor-pointer">
                                                     Mark as read
                                                 </button>
                                             )}
