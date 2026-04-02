@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Pagination } from '@/components/ui/pagination';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 
 interface BlogCategory {
     id: number;
@@ -89,7 +90,7 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
     };
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Blog', href: '/blog' }]}>
+        <AppHeaderLayout>
             <Head title="Blog & News" />
 
             <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -258,6 +259,6 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }

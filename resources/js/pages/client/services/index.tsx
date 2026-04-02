@@ -1,9 +1,9 @@
 import { Head, useForm } from '@inertiajs/react';
-import { 
-    Wrench, 
-    Clock, 
-    ChevronRight, 
-    CheckCircle2, 
+import {
+    Wrench,
+    Clock,
+    ChevronRight,
+    CheckCircle2,
     Info,
     Sparkles,
     ShieldCheck,
@@ -13,16 +13,17 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-    Dialog, 
-    DialogContent, 
-    DialogDescription, 
-    DialogFooter, 
-    DialogHeader, 
-    DialogTitle 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import serviceRoutes from '@/routes/services';
 import type { BreadcrumbItem } from '@/types';
 
@@ -69,10 +70,10 @@ export default function ServicesIndex({ services }: Props) {
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppHeaderLayout>
             <Head title="Our Services" />
 
-            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4">
                 {/* Header Section */}
                 <div className="text-center space-y-4 max-w-2xl mx-auto pt-4">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bm-gold/10 text-bm-gold text-xs font-bold tracking-widest uppercase">
@@ -94,8 +95,8 @@ export default function ServicesIndex({ services }: Props) {
                                         {/* Service Image Placeholder / Background */}
                                         <div className="relative w-full md:w-[400px] h-[250px] md:h-auto overflow-hidden bg-muted/30">
                                             {service.image_path ? (
-                                                <img 
-                                                    src={service.image_path.startsWith('http') ? service.image_path : `/storage/${service.image_path}`} 
+                                                <img
+                                                    src={service.image_path.startsWith('http') ? service.image_path : `/storage/${service.image_path}`}
                                                     alt={service.name}
                                                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 />
@@ -121,7 +122,7 @@ export default function ServicesIndex({ services }: Props) {
                                                         </Badge>
                                                     )}
                                                 </div>
-                                                
+
                                                 <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-muted-foreground/80 uppercase tracking-widest">
                                                     <div className="flex items-center gap-2">
                                                         <Clock className="size-4 text-bm-gold" />
@@ -144,7 +145,7 @@ export default function ServicesIndex({ services }: Props) {
                                                         <ShieldCheck className="size-3.5" /> Quality Guaranteed
                                                     </div>
                                                 </div>
-                                                <Button 
+                                                <Button
                                                     onClick={() => handleBookNow(service)}
                                                     className="bg-bm-gold hover:bg-bm-gold/90 text-white font-black px-8 h-12 rounded-2xl shadow-lg shadow-bm-gold/20 group/btn transition-all hover:-translate-y-1 active:scale-95"
                                                 >
@@ -170,8 +171,8 @@ export default function ServicesIndex({ services }: Props) {
                                     We're currently updating our service offerings. Please check back later or contact us for custom requests.
                                 </p>
                             </div>
-                            <Button 
-                                variant="outline" 
+                            <Button
+                                variant="outline"
                                 className="rounded-2xl border-bm-gold/30 text-bm-gold font-bold hover:bg-bm-gold hover:text-white px-8"
                                 onClick={() => window.location.href = '/support'}
                             >
@@ -204,7 +205,7 @@ export default function ServicesIndex({ services }: Props) {
                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
                         <CalendarCheck2 className="size-48 text-bm-gold -rotate-12" />
                     </div>
-                    
+
                     <DialogHeader className="relative">
                         <DialogTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
                             Confirm Booking
@@ -217,7 +218,7 @@ export default function ServicesIndex({ services }: Props) {
                     <div className="grid gap-6 py-6 relative">
                         <div className="grid gap-2">
                             <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">Additional Notes</p>
-                            <Textarea 
+                            <Textarea
                                 value={data.notes}
                                 onChange={e => setData('notes', e.target.value)}
                                 placeholder="Any specific issues or preferences we should know about?"
@@ -241,15 +242,15 @@ export default function ServicesIndex({ services }: Props) {
                     </div>
 
                     <DialogFooter className="relative gap-3 sm:gap-0 mt-2">
-                        <Button 
-                            variant="ghost" 
-                            onClick={() => setIsBookingOpen(false)} 
+                        <Button
+                            variant="ghost"
+                            onClick={() => setIsBookingOpen(false)}
                             className="rounded-2xl font-bold hover:bg-muted"
                         >
                             Cancel
                         </Button>
-                        <Button 
-                            onClick={confirmBooking} 
+                        <Button
+                            onClick={confirmBooking}
                             disabled={processing}
                             className="rounded-2xl bg-bm-gold hover:bg-bm-gold/90 text-white font-black px-8 shadow-xl shadow-bm-gold/20"
                         >
@@ -258,7 +259,7 @@ export default function ServicesIndex({ services }: Props) {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }
 

@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pagination } from '@/components/ui/pagination';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { serviceRequestStatusConfig } from '@/lib/crm-config';
 
 interface Job {
@@ -21,9 +22,9 @@ interface Props {
 
 export default function ClientJobsIndex({ jobs }: Props) {
     return (
-        <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'My Service Jobs', href: '#' }]}>
+        <AppHeaderLayout>
             <Head title="My Service Jobs" />
-            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 ">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="My Service Jobs" description="Track the progress of your repairs and services." />
                     <Button asChild className="rounded-xl w-full sm:w-auto bg-bm-gold hover:bg-bm-gold/90 text-black font-bold cursor-pointer">
@@ -77,6 +78,6 @@ export default function ClientJobsIndex({ jobs }: Props) {
                     </div>
                 )}
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }

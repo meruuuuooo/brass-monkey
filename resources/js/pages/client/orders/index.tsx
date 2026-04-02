@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Pagination } from '@/components/ui/pagination';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 
 interface OrderItem {
     id: number; quantity: number; unit_price: number; total_price: number; product_name: string;
@@ -35,9 +36,9 @@ export default function ClientOrdersIndex({ orders }: Props) {
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Order History', href: '#' }]}>
+        <AppHeaderLayout>
             <Head title="My Orders" />
-            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
+            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4">
                 <Heading title="Order History" description="View your past purchases and download receipts." />
 
                 {orders.data.length === 0 ? (
@@ -165,6 +166,6 @@ export default function ClientOrdersIndex({ orders }: Props) {
                     )}
                 </DialogContent>
             </Dialog>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }

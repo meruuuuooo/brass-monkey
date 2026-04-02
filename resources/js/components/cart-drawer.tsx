@@ -6,8 +6,12 @@ import {
 import Swal from 'sweetalert2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+} from '@/components/ui/drawer';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
 import { type CartItem } from '@/hooks/use-cart';
 
 interface Props {
@@ -48,37 +52,37 @@ export function CartDrawer({
     };
 
     return (
-        <>
-            {/* Backdrop */}
-            {open && (
-                <div
-                    className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
-                    onClick={onClose}
-                />
-            )}
-
-            {/* Drawer */}
-            <aside
-                className={cn(
-                    'fixed top-0 right-0 h-full w-full max-w-[400px] z-50 bg-background border-l border-border/60 shadow-2xl flex flex-col',
-                    'transition-transform duration-300 ease-in-out',
-                    open ? 'translate-x-0' : 'translate-x-full'
-                )}
-            >
+        <Drawer
+            open={open}
+            onOpenChange={(nextOpen) => {
+                if (!nextOpen) {
+                    onClose();
+                }
+            }}
+            direction="right"
+        >
+            <DrawerContent className="h-full w-full p-0 sm:max-w-sm">
                 {/* Header */}
-                <div className="flex items-center justify-between p-5 border-b border-border/40">
+                <div className="flex items-center justify-between border-b border-border/40 p-5">
                     <div className="flex items-center gap-2">
                         <ShoppingCart className="size-5 text-bm-gold" />
-                        <h2 className="font-black text-lg">Order Summary</h2>
+                        <h2 className="text-lg font-black">Order Summary</h2>
                         {cartCount > 0 && (
-                            <Badge className="bg-bm-gold text-black font-black text-xs rounded-full px-2">
+                            <Badge className="rounded-full bg-bm-gold px-2 text-xs font-black text-black">
                                 {cartCount}
                             </Badge>
                         )}
                     </div>
-                    <Button variant="ghost" size="icon" className="rounded-xl hover:bg-muted/60 cursor-pointer" onClick={onClose}>
-                        <X className="size-5" />
-                    </Button>
+
+                    <DrawerClose asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="cursor-pointer rounded-xl hover:bg-muted/60"
+                        >
+                            <X className="size-5" />
+                        </Button>
+                    </DrawerClose>
                 </div>
 
                 {/* Items */}
@@ -167,8 +171,8 @@ export function CartDrawer({
                         </button>
                     </div>
                 )}
-            </aside>
-        </>
+            </DrawerContent>
+        </Drawer>
     );
 }
 
@@ -177,7 +181,7 @@ export function CartButton({ cartCount, onClick }: { cartCount: number; onClick:
     return (
         <button
             onClick={onClick}
-            className="relative flex items-center gap-2 rounded-2xl border border-border/40 bg-card px-4 py-2.5 font-bold text-sm hover:border-bm-gold/40 transition-colors cursor-pointer"
+            className="relative bg-bm-dark flex items-center gap-2 rounded-2xl border border-border/40 px-4 py-2.5 font-bold text-sm hover:border-bm-gold/40 transition-colors cursor-pointer"
         >
             <ShoppingCart className="size-4 text-bm-gold" />
             <span>Cart</span>

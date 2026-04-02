@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { cn } from '@/lib/utils';
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
@@ -78,7 +79,7 @@ export default function ClientJobShow({ job }: Props) {
     };
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'My Service Jobs', href: '/my-jobs' }, { title: job.tracking_number, href: '#' }]}>
+        <AppHeaderLayout>
             <Head title={`Job ${job.tracking_number}`} />
             <div className="flex flex-col gap-6 p-4 md:p-6 max-w-6xl mx-auto w-full">
                 {/* Header */}
@@ -220,6 +221,6 @@ export default function ClientJobShow({ job }: Props) {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }

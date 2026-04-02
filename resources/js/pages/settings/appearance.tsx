@@ -1,7 +1,9 @@
+import { usePage } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
 import { Paintbrush } from 'lucide-react';
 import AppearanceTabs from '@/components/appearance-tabs';
 import { Card, CardContent } from '@/components/ui/card';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit as editAppearance } from '@/routes/appearance';
@@ -15,8 +17,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Appearance() {
+    const { auth } = usePage().props;
+    const isClient = auth.roles?.includes('Client') ?? false;
+    const LayoutComponent = isClient ? AppHeaderLayout : AppLayout;
+
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <LayoutComponent {...(!isClient && { breadcrumbs })}>
             <Head title="Appearance settings" />
 
             <h1 className="sr-only">Appearance settings</h1>
@@ -37,6 +43,6 @@ export default function Appearance() {
                     </CardContent>
                 </Card>
             </SettingsLayout>
-        </AppLayout>
+        </LayoutComponent>
     );
 }

@@ -15,6 +15,7 @@ export interface CartItem {
 }
 
 const STORAGE_KEY = 'bm_cart';
+const CART_UPDATED_EVENT = 'bm:cart-updated';
 
 function readStorage(): CartItem[] {
     try {
@@ -34,16 +35,47 @@ function writeStorage(items: CartItem[]) {
 export function useCart() {
     const [cart, setCartState] = useState<CartItem[]>(() => readStorage());
 
-    // Keep localStorage in sync whenever cart changes
+    // Keep all useCart consumers in sync within the same tab and across tabs.
     useEffect(() => {
-        writeStorage(cart);
-    }, [cart]);
+        const onCartUpdated = (event: Event) => {
+            const customEvent = event as CustomEvent<CartItem[] | undefined>;
+
+            if (Array.isArray(customEvent.detail)) {
+                setCartState(customEvent.detail);
+                return;
+            }
+
+            setCartState(readStorage());
+        };
+
+        const onStorage = (event: StorageEvent) => {
+            if (event.key === STORAGE_KEY) {
+                setCartState(readStorage());
+            }
+        };
+
+        window.addEventListener(CART_UPDATED_EVENT, onCartUpdated as EventListener);
+        window.addEventListener('storage', onStorage);
+
+        return () => {
+            window.removeEventListener(CART_UPDATED_EVENT, onCartUpdated as EventListener);
+            window.removeEventListener('storage', onStorage);
+        };
+    }, []);
 
     const setCart = useCallback(
         (updater: CartItem[] | ((prev: CartItem[]) => CartItem[])) => {
             setCartState((prev) => {
                 const next =
                     typeof updater === 'function' ? updater(prev) : updater;
+
+                writeStorage(next);
+                window.dispatchEvent(
+                    new CustomEvent<CartItem[]>(CART_UPDATED_EVENT, {
+                        detail: next,
+                    }),
+                );
+
                 return next;
             });
         },

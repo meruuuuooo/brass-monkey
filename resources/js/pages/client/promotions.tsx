@@ -9,7 +9,8 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 
 /* ─────────────────────────────────── Types ──────────────────────────────── */
 
@@ -142,10 +143,10 @@ export default function ClientPromotions({ advertisements }: Props) {
     ];
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppHeaderLayout>
             <Head title="Promotions & Offers" />
 
-            <div className="space-y-6 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
+            <div className="space-y-6 rounded-sm p-4 md:p-6 m-4">
                 {/* Header */}
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-3">
@@ -191,6 +192,6 @@ export default function ClientPromotions({ advertisements }: Props) {
                     </>
                 )}
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }

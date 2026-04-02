@@ -4,7 +4,8 @@ import Swal from 'sweetalert2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 
 interface BlogComment {
     id: number;
@@ -61,10 +62,7 @@ export default function BlogShow({ post, related }: Props) {
     };
 
     return (
-        <AppLayout breadcrumbs={[
-            { title: 'Blog', href: '/blog' },
-            { title: post.title, href: '#' }
-        ]}>
+        <AppHeaderLayout>
             <Head title={post.meta_title || post.title} />
             {post.meta_description ? (
                 <Head>
@@ -252,6 +250,6 @@ export default function BlogShow({ post, related }: Props) {
                     </div>
                 )}
             </article>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }

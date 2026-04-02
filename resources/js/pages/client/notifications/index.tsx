@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pagination } from '@/components/ui/pagination';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { cn } from '@/lib/utils';
 
 interface Notification {
@@ -29,7 +30,7 @@ export default function NotificationsIndex({ notifications }: Props) {
     const markAllRead = () => router.post('/notifications/mark-all-read', {}, { preserveScroll: true });
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Notifications', href: '#' }]}>
+        <AppHeaderLayout>
             <Head title="Notifications" />
             <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -89,6 +90,6 @@ export default function NotificationsIndex({ notifications }: Props) {
                     </div>
                 )}
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }

@@ -4,7 +4,7 @@ import { User, Mail, Save, UserCircle, Camera } from 'lucide-react';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import DeleteUser from '@/components/delete-user';
+// import DeleteUser from '@/components/delete-user';
 import InputError from '@/components/input-error';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useInitials } from '@/hooks/use-initials';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
@@ -33,6 +34,8 @@ export default function Profile({
     status?: string;
 }) {
     const { auth } = usePage().props;
+    const isClient = auth.roles?.includes('Client') ?? false;
+    const LayoutComponent = isClient ? AppHeaderLayout : AppLayout;
     const getInitials = useInitials();
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -45,7 +48,7 @@ export default function Profile({
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <LayoutComponent {...(!isClient && { breadcrumbs })}>
             <Head title="Profile settings" />
 
             <h1 className="sr-only">Profile settings</h1>
@@ -187,6 +190,6 @@ export default function Profile({
 
                 {/* <DeleteUser /> */}
             </SettingsLayout>
-        </AppLayout>
+        </LayoutComponent>
     );
 }

@@ -1,16 +1,16 @@
 import { Head, Link } from '@inertiajs/react';
 import {
     Package, ShoppingCart, Star,
-    CheckCircle2, AlertCircle, Tag, Info, ChevronRight,
+    CheckCircle2, AlertCircle, Tag, Info,
 } from 'lucide-react';
 import { useState } from 'react';
-import { CartButton, CartDrawer } from '@/components/cart-drawer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/hooks/use-cart';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { cn } from '@/lib/utils';
 
 interface Category { id: number; name: string; }
@@ -76,10 +76,9 @@ function StockBadge({ qty, threshold }: { qty: number; threshold: number }) {
 
 export default function ProductShow({ product, related }: Props) {
     const [mainImage] = useState(product.image_path);
-    const [cartOpen, setCartOpen] = useState(false);
     const inStock = product.stock_quantity > 0;
 
-    const { cart, cartCount, subtotal, tax, total, addToCart, updateQty, removeFromCart, clearCart, inCart } = useCart();
+    const { addToCart, inCart } = useCart();
 
     const cartItem = inCart(product.id);
 
@@ -91,28 +90,10 @@ export default function ProductShow({ product, related }: Props) {
 
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppHeaderLayout>
             <Head title={product.name} />
 
-            <CartDrawer
-                open={cartOpen}
-                onClose={() => setCartOpen(false)}
-                cart={cart}
-                cartCount={cartCount}
-                subtotal={subtotal}
-                tax={tax}
-                total={total}
-                updateQty={updateQty}
-                removeFromCart={removeFromCart}
-                clearCart={clearCart}
-            />
-
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-10">
-
-                {/* Cart button — top right */}
-                <div className="flex justify-end">
-                    <CartButton cartCount={cartCount} onClick={() => setCartOpen(true)} />
-                </div>
 
                 {/* ── Image Gallery + Product Info ── */}
                 <div className="lg:grid lg:grid-cols-2 lg:gap-x-10 xl:gap-x-16">
@@ -197,7 +178,7 @@ export default function ProductShow({ product, related }: Props) {
 
                         {/* Add to Cart button */}
                         <Button
-                            onClick={() => { addToCart(product); setCartOpen(true); }}
+                            onClick={() => addToCart(product)}
                             disabled={!inStock}
                             className={cn(
                                 'w-full h-14 rounded-2xl font-black text-base uppercase tracking-widest transition-all',
@@ -211,18 +192,6 @@ export default function ProductShow({ product, related }: Props) {
                             <ShoppingCart className="size-5 mr-2" />
                             {!inStock ? 'Unavailable' : cartItem ? `In Cart (${cartItem.quantity}) — Add More` : 'Add to Cart'}
                         </Button>
-
-                        {/* View Cart shortcut — shown when item is in cart */}
-                        {cartItem && (
-                            <Button
-                                variant="outline"
-                                onClick={() => setCartOpen(true)}
-                                className="w-full h-11 rounded-2xl font-bold border-bm-gold/40 text-bm-gold hover:bg-bm-gold/10 cursor-pointer"
-                            >
-                                View Cart &amp; Checkout
-                                <ChevronRight className="size-4 ml-1" />
-                            </Button>
-                        )}
 
                         <div className="text-center text-xs text-muted-foreground/50">
                             Our team will contact you to arrange payment.
@@ -274,6 +243,6 @@ export default function ProductShow({ product, related }: Props) {
                     </div>
                 )}
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }
