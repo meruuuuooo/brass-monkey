@@ -1,6 +1,6 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import {
-    ArrowLeft, Wrench, Clock, CheckCircle2, AlertTriangle, AlertCircle,
+    ArrowLeft, Wrench,
     User, DollarSign, Calendar, MessageSquare, FileText, Activity, UserCircle2, Save,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -13,23 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-
-const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    pending: { label: 'Pending', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', icon: Clock },
-    accepted: { label: 'Accepted', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: CheckCircle2 },
-    'in-progress': { label: 'In Progress', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', icon: Wrench },
-    ready: { label: 'Ready', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    completed: { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    rejected: { label: 'Rejected', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: AlertTriangle },
-    cancelled: { label: 'Cancelled', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20', icon: AlertCircle },
-};
-
-const priorityConfig: Record<string, { label: string; color: string }> = {
-    low: { label: 'Low', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20' },
-    normal: { label: 'Normal', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-    high: { label: 'High', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20' },
-    urgent: { label: 'Urgent', color: 'bg-red-500/10 text-red-500 border-red-500/20' },
-};
+import { serviceRequestPriorityConfig, serviceRequestStatusConfig } from '@/lib/crm-config';
 
 interface Note {
     id: number; type: string; content: string; created_at: string;
@@ -51,8 +35,8 @@ interface Job {
 interface Props { job: Job; technicians: { id: number; name: string }[]; }
 
 export default function ServiceRequestShow({ job, technicians }: Props) {
-    const sCfg = statusConfig[job.status] || statusConfig.pending;
-    const pCfg = priorityConfig[job.priority] || priorityConfig.normal;
+    const sCfg = serviceRequestStatusConfig[job.status] || serviceRequestStatusConfig.pending;
+    const pCfg = serviceRequestPriorityConfig[job.priority] || serviceRequestPriorityConfig.normal;
     const StatusIcon = sCfg.icon;
 
     const mainForm = useForm({
@@ -195,7 +179,7 @@ export default function ServiceRequestShow({ job, technicians }: Props) {
                                     <Select value={mainForm.data.status} onValueChange={(v) => handleUpdate('status', v)}>
                                         <SelectTrigger className="rounded-xl font-semibold"><SelectValue /></SelectTrigger>
                                         <SelectContent className="rounded-xl">
-                                            {Object.entries(statusConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                                            {Object.entries(serviceRequestStatusConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -204,7 +188,7 @@ export default function ServiceRequestShow({ job, technicians }: Props) {
                                     <Select value={mainForm.data.priority} onValueChange={(v) => handleUpdate('priority', v)}>
                                         <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                                         <SelectContent className="rounded-xl">
-                                            {Object.entries(priorityConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                                            {Object.entries(serviceRequestPriorityConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
                                 </div>

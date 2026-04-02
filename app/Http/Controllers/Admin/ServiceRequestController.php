@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreServiceRequestNoteRequest;
+use App\Http\Requests\Admin\StoreServiceRequestRequest;
+use App\Http\Requests\Admin\UpdateServiceRequestRequest;
 use App\Models\Service;
 use App\Models\ServiceOrder;
 use App\Models\User;
@@ -60,18 +63,9 @@ class ServiceRequestController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreServiceRequestRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'service_id' => 'required|exists:services,id',
-            'customer_name' => 'required|string|max:255',
-            'user_id' => 'nullable|exists:users,id',
-            'priority' => 'required|in:low,normal,high,urgent',
-            'description' => 'nullable|string',
-            'estimated_completion' => 'nullable|date',
-            'assigned_to' => 'nullable|exists:users,id',
-            'estimated_cost' => 'nullable|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         $trackingNumber = 'JOB-'.date('Ymd').'-'.strtoupper(substr(uniqid(), -5));
 
@@ -111,15 +105,9 @@ class ServiceRequestController extends Controller
         ]);
     }
 
-    public function update(Request $request, ServiceOrder $service_request): RedirectResponse
+    public function update(UpdateServiceRequestRequest $request, ServiceOrder $service_request): RedirectResponse
     {
-        $validated = $request->validate([
-            'status' => 'nullable|string|in:pending,accepted,in-progress,completed,ready,rejected,cancelled',
-            'assigned_to' => 'nullable|exists:users,id',
-            'priority' => 'nullable|in:low,normal,high,urgent',
-            'estimated_cost' => 'nullable|numeric|min:0',
-            'actual_cost' => 'nullable|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         $oldStatus = $service_request->status;
 
@@ -151,12 +139,9 @@ class ServiceRequestController extends Controller
         return back()->with('success', 'Service job updated successfully.');
     }
 
-    public function addNote(Request $request, ServiceOrder $service_request): RedirectResponse
+    public function addNote(StoreServiceRequestNoteRequest $request, ServiceOrder $service_request): RedirectResponse
     {
-        $validated = $request->validate([
-            'type' => 'required|in:note,estimate,repair_log',
-            'content' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         $service_request->notes()->create([
             ...$validated,

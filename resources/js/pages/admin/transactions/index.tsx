@@ -41,7 +41,7 @@ const typeConfig: Record<string, { label: string; color: string; icon: React.Ele
     adjustment: { label: 'Adjustment', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: ArrowDownCircle },
 };
 
-const fmt = (n: number) => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
 export default function TransactionsIndex({ transactions, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');

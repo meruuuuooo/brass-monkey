@@ -339,7 +339,7 @@ export default function Dashboard(props: Props) {
                                         <div className="flex flex-col items-end gap-1 text-right">
                                             <Badge
                                                 variant="outline"
-                                                className={`rounded-md px-1.5 text-[10px] ${statusColors[po.status] || ''}`}
+                                                className={ `rounded-md px-1.5 text-[10px] ${statusColors[po.status] || ''}`}
                                             >
                                                 {po.status}
                                             </Badge>

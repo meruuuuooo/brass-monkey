@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreNotificationRequest;
+use App\Http\Requests\Admin\UpdateNotificationRequest;
 use App\Models\Notification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,16 +38,9 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreNotificationRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'message' => 'required|string|max:2000',
-            'type' => 'required|in:system,promotional,alert,info',
-            'target' => 'required|in:all,admins,clients',
-            'channel' => 'required|in:in_app,email,both',
-            'send_now' => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         $notification = Notification::create([
             ...$validated,
@@ -86,7 +81,7 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function update(Request $request, Notification $notification): RedirectResponse
+    public function update(UpdateNotificationRequest $request, Notification $notification): RedirectResponse
     {
         $action = $request->input('action');
 
@@ -104,13 +99,7 @@ class NotificationController extends Controller
 
         // Edit draft
         if ($notification->status === 'draft') {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'message' => 'required|string|max:2000',
-                'type' => 'required|in:system,promotional,alert,info',
-                'target' => 'required|in:all,admins,clients',
-                'channel' => 'required|in:in_app,email,both',
-            ]);
+            $validated = $request->safe()->only(['title', 'message', 'type', 'target', 'channel']);
             $notification->update($validated);
 
             return back()->with('success', 'Notification updated.');

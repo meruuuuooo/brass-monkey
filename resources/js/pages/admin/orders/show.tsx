@@ -1,13 +1,13 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
 import {
     ShoppingCart, UserCircle2, CalendarDays, CreditCard, ArrowLeft,
-    CheckCircle2, XCircle, RotateCcw, Loader2,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Swal from 'sweetalert2';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
+import { orderStatusConfig } from '@/lib/crm-config';
 
 interface OrderItem { id: number; product_name: string; quantity: number; unit_price: string; total_price: string; product: { id: number; name: string; sku: string | null } | null; }
 interface Txn { id: number; transaction_number: string; type: string; amount: string; payment_method: string | null; notes: string | null; processed_by: { id: number; name: string } | null; created_at: string; }
@@ -25,16 +25,8 @@ interface Props { order: Order; }
 
 const fmt = (n: number) => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2 });
 
-const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    pending: { label: 'Pending', color: 'bg-amber-500/10 text-amber-600 border-amber-500/20', icon: Loader2 },
-    processing: { label: 'Processing', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: Loader2 },
-    completed: { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    cancelled: { label: 'Cancelled', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20', icon: XCircle },
-    refunded: { label: 'Refunded', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: RotateCcw },
-};
-
 export default function OrderShow({ order }: Props) {
-    const cfg = statusConfig[order.status] || statusConfig.pending;
+    const cfg = orderStatusConfig[order.status] || orderStatusConfig.pending;
     const StatusIcon = cfg.icon;
 
     const handleStatusChange = (newStatus: string) => {
@@ -45,9 +37,11 @@ export default function OrderShow({ order }: Props) {
             icon: ['refunded', 'cancelled'].includes(newStatus) ? 'warning' : 'question',
             showCancelButton: true, confirmButtonText: 'Yes, proceed',
         }).then((r) => {
-            if (r.isConfirmed) router.put(`/admin/orders/${order.id}`, { status: newStatus }, {
+            if (r.isConfirmed) {
+router.put(`/admin/orders/${order.id}`, { status: newStatus }, {
                 onSuccess: () => Swal.fire('Done!', `Order ${order.order_number} updated.`, 'success'),
             });
+}
         });
     };
 

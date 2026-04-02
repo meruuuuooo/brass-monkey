@@ -23,6 +23,16 @@ class PurchaseOrderController extends Controller
         $query = PurchaseOrder::with(['supplier:id,name', 'orderedBy:id,name', 'approvedBy:id,name'])
             ->withCount('items');
 
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                    ->orWhereHas('supplier', function ($sq) use ($search) {
+                        $sq->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
@@ -42,7 +52,7 @@ class PurchaseOrderController extends Controller
             'purchaseOrders' => $purchaseOrders,
             'suppliers' => $suppliers,
             'products' => $products,
-            'filters' => $request->only(['status', 'supplier']),
+            'filters' => $request->only(['status', 'supplier', 'search']),
         ]);
     }
 

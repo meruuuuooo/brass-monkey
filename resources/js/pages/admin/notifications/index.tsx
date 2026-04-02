@@ -2,12 +2,13 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
-    Bell, Search, Filter, Plus, Send, Clock, XCircle, CheckCircle2, Info, AlertTriangle, Megaphone,
+    Search, Filter, Plus, Send,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
 import { DataTableWithPagination } from '@/components/data-table';
 import Heading from '@/components/heading';
+import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { notificationStatusConfig, notificationTypeConfig } from '@/lib/crm-config';
 
 interface Notif {
     id: number; title: string; type: string; target: string; channel: string; status: string;
@@ -40,28 +42,17 @@ interface Props {
     filters: { type?: string; status?: string; search?: string };
 }
 
-const typeConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    system: { label: 'System', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: Info },
-    promotional: { label: 'Promo', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', icon: Megaphone },
-    alert: { label: 'Alert', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: AlertTriangle },
-    info: { label: 'Info', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: Info },
-};
-
-const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    draft: { label: 'Draft', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20', icon: Clock },
-    sent: { label: 'Sent', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    cancelled: { label: 'Cancelled', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: XCircle },
-};
-
 export default function NotificationsIndex({ notifications, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [open, setOpen] = useState(false);
+    const [submitAction, setSubmitAction] = useState<'draft' | 'send' | null>(null);
 
     const form = useForm({
         title: '', message: '', type: 'info', target: 'all', channel: 'in_app', send_now: false,
     });
 
     const handleSubmit = (sendNow: boolean) => {
+        setSubmitAction(sendNow ? 'send' : 'draft');
         form.setData('send_now', sendNow);
         form.post('/admin/notifications', {
             onSuccess: () => {
@@ -69,6 +60,7 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
                 form.reset();
                 Swal.fire('Done!', sendNow ? 'Notification sent!' : 'Saved as draft.', 'success');
             },
+            onFinish: () => setSubmitAction(null),
         });
     };
 
@@ -92,7 +84,7 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
         {
             accessorKey: 'type', header: 'Type',
             cell: ({ row }) => {
-                const cfg = typeConfig[row.original.type] || typeConfig.info;
+                const cfg = notificationTypeConfig[row.original.type] || notificationTypeConfig.info;
                 const Icon = cfg.icon;
 
                 return <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold flex items-center gap-1 w-fit`}><Icon className="size-3" />{cfg.label}</Badge>;
@@ -105,7 +97,7 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
         {
             accessorKey: 'status', header: 'Status',
             cell: ({ row }) => {
-                const cfg = statusConfig[row.original.status] || statusConfig.draft;
+                const cfg = notificationStatusConfig[row.original.status] || notificationStatusConfig.draft;
                 const Icon = cfg.icon;
 
                 return <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold flex items-center gap-1 w-fit`}><Icon className="size-3" />{cfg.label}</Badge>;
@@ -122,8 +114,8 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
     ], []);
 
     const renderGridItem = (notif: Notif) => {
-        const typeCfg = typeConfig[notif.type] || typeConfig.info;
-        const statusCfg = statusConfig[notif.status] || statusConfig.draft;
+        const typeCfg = notificationTypeConfig[notif.type] || notificationTypeConfig.info;
+        const statusCfg = notificationStatusConfig[notif.status] || notificationStatusConfig.draft;
         const TypeIcon = typeCfg.icon;
 
         return (
@@ -182,12 +174,12 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
                                 <div className="grid gap-1.5">
                                     <Label className="text-xs font-bold uppercase text-muted-foreground/80">Title</Label>
                                     <Input placeholder="Notification title..." className="rounded-xl" value={form.data.title} onChange={(e) => form.setData('title', e.target.value)} />
-                                    {form.errors.title && <p className="text-xs text-red-500">{form.errors.title}</p>}
+                                    <InputError message={form.errors.title} className="text-xs" />
                                 </div>
                                 <div className="grid gap-1.5">
                                     <Label className="text-xs font-bold uppercase text-muted-foreground/80">Message</Label>
                                     <Textarea placeholder="Notification message..." className="rounded-xl min-h-[100px]" value={form.data.message} onChange={(e) => form.setData('message', e.target.value)} />
-                                    {form.errors.message && <p className="text-xs text-red-500">{form.errors.message}</p>}
+                                    <InputError message={form.errors.message} className="text-xs" />
                                 </div>
                                 <div className="grid grid-cols-3 gap-3">
                                     <div className="grid gap-1.5">
@@ -195,9 +187,10 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
                                         <Select value={form.data.type} onValueChange={(v) => form.setData('type', v)}>
                                             <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                                             <SelectContent className="rounded-2xl">
-                                                {Object.entries(typeConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                                                {Object.entries(notificationTypeConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
+                                        <InputError message={form.errors.type} className="text-xs" />
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label className="text-xs font-bold uppercase text-muted-foreground/80">Target</Label>
@@ -209,6 +202,7 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
                                                 <SelectItem value="clients" className="rounded-xl">Clients Only</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        <InputError message={form.errors.target} className="text-xs" />
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label className="text-xs font-bold uppercase text-muted-foreground/80">Channel</Label>
@@ -220,14 +214,15 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
                                                 <SelectItem value="both" className="rounded-xl">Both</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        <InputError message={form.errors.channel} className="text-xs" />
                                     </div>
                                 </div>
                                 <div className="flex gap-2 justify-end pt-2">
                                     <Button variant="outline" className="rounded-xl" onClick={() => handleSubmit(false)} disabled={form.processing}>
-                                        Save Draft
+                                        {submitAction === 'draft' && form.processing ? 'Saving...' : 'Save Draft'}
                                     </Button>
                                     <Button className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl gap-2" onClick={() => handleSubmit(true)} disabled={form.processing}>
-                                        <Send className="size-4" /> Send Now
+                                        <Send className="size-4" /> {submitAction === 'send' && form.processing ? 'Sending...' : 'Send Now'}
                                     </Button>
                                 </div>
                             </div>
@@ -244,14 +239,14 @@ export default function NotificationsIndex({ notifications, filters }: Props) {
                         <SelectTrigger className="w-[140px] rounded-xl border-border/40"><Filter className="size-4 mr-2 text-muted-foreground" /><SelectValue placeholder="All Types" /></SelectTrigger>
                         <SelectContent className="rounded-2xl">
                             <SelectItem value="all" className="rounded-xl">All Types</SelectItem>
-                            {Object.entries(typeConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                            {Object.entries(notificationTypeConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <Select value={filters.status || 'all'} onValueChange={(v) => handleFilter('status', v === 'all' ? undefined : v)}>
                         <SelectTrigger className="w-[140px] rounded-xl border-border/40"><Filter className="size-4 mr-2 text-muted-foreground" /><SelectValue placeholder="All Status" /></SelectTrigger>
                         <SelectContent className="rounded-2xl">
                             <SelectItem value="all" className="rounded-xl">All Status</SelectItem>
-                            {Object.entries(statusConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                            {Object.entries(notificationStatusConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                 </div>

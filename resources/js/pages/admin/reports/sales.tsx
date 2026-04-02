@@ -21,7 +21,7 @@ interface Props {
     paymentMethods: PaymentMethod[];
 }
 
-const fmt = (n: number) => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
 export default function SalesReport({ filters, summary, dailyRevenue, topProducts, paymentMethods }: Props) {
     const [from, setFrom] = useState(filters.from);

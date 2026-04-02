@@ -1,11 +1,12 @@
 import { Head, Link } from '@inertiajs/react';
-import { Wrench, Calendar, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { Wrench, Calendar } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Pagination } from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
+import { serviceRequestStatusConfig } from '@/lib/crm-config';
 
 interface Job {
     id: number; tracking_number: string; status: string; priority: string;
@@ -17,16 +18,6 @@ interface Job {
 interface Props {
     jobs: { data: Job[]; links: any[]; current_page: number; last_page: number };
 }
-
-const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    pending: { label: 'Pending', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', icon: Clock },
-    accepted: { label: 'Accepted', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: CheckCircle2 },
-    'in-progress': { label: 'In Progress', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', icon: Wrench },
-    ready: { label: 'Ready', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    completed: { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    rejected: { label: 'Rejected', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: AlertCircle },
-    cancelled: { label: 'Cancelled', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20', icon: AlertCircle },
-};
 
 export default function ClientJobsIndex({ jobs }: Props) {
     return (
@@ -49,7 +40,7 @@ export default function ClientJobsIndex({ jobs }: Props) {
                 ) : (
                     <div className="space-y-4">
                         {jobs.data.map(job => {
-                            const cfg = statusConfig[job.status] || statusConfig.pending;
+                            const cfg = serviceRequestStatusConfig[job.status] || serviceRequestStatusConfig.pending;
                             const StatusIcon = cfg.icon;
 
                             return (

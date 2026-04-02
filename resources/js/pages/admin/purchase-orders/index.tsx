@@ -1,7 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
-    Plus, ClipboardList, CheckCircle2, Clock, Send, Package, XCircle, Trash2, Eye, Filter, ArrowUpDown,
+    Plus, ClipboardList, CheckCircle2, Clock, Send, Package, XCircle, Trash2, Eye, Filter, ArrowUpDown, MoreVertical, Search, X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -12,6 +12,9 @@ import { Button } from '@/components/ui/button';
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import {
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
 import {
@@ -51,7 +54,7 @@ interface Props {
     purchaseOrders: PaginatedPOs;
     suppliers: Supplier[];
     products: ProductOption[];
-    filters: { status?: string; supplier?: string };
+    filters: { status?: string; supplier?: string; search?: string };
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
@@ -65,6 +68,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, products, filters }: Props) {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [items, setItems] = useState<POItem[]>([{ product_id: '', quantity: 1, unit_price: '' }]);
+    const [searchInput, setSearchInput] = useState(filters.search || '');
 
     const { data, setData, post, processing, errors, reset } = useForm({
         supplier_id: '',
@@ -131,7 +135,7 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
         {
             accessorKey: 'total_amount',
             header: 'Total',
-            cell: ({ row }) => <span className="font-mono font-semibold">₱{parseFloat(row.original.total_amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</span>,
+            cell: ({ row }) => <span className="font-mono font-semibold">${parseFloat(row.original.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>,
         },
         {
             accessorKey: 'created_at',
@@ -146,22 +150,53 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, product
                 const next = nextStatus[po.status];
 
                 return (
-                    <div className="flex justify-end gap-1">
-                        {next && (
-                            <Button variant="ghost" size="sm" className="cursor-pointer text-xs font-bold text-bm-gold" onClick={() => handleStatusChange(po, next)}>
-                                {next === 'submitted' ? 'Submit' : next === 'approved' ? 'Approve' : 'Mark Received'}
-                            </Button>
-                        )}
-                        {po.status !== 'received' && po.status !== 'cancelled' && (
-                            <Button variant="ghost" size="sm" className="cursor-pointer text-xs text-red-500" onClick={() => handleStatusChange(po, 'cancelled')}>
-                                Cancel
-                            </Button>
-                        )}
-                        {po.status === 'draft' && (
-                            <Button variant="ghost" size="icon" className="cursor-pointer size-8 text-red-500 hover:bg-red-50" onClick={() => handleDelete(po)}>
-                                <Trash2 className="size-4" />
-                            </Button>
-                        )}
+                    <div className="flex justify-end">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                    <MoreVertical className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="rounded-xl">
+                                {next && (
+                                    <>
+                                        <DropdownMenuItem onClick={() => handleStatusChange(po, next)} className="rounded-lg cursor-pointer text-bm-gold font-semibold">
+                                            {next === 'submitted' ? 'Submit' : next === 'approved' ? 'Approve' : 'Mark Received'}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                    </>
+                                )}
+                                {po.status !== 'received' && po.status !== 'cancelled' && (
+                                    <>
+                                        <DropdownMenuItem onClick={() => handleStatusChange(po, 'cancelled')} className="rounded-lg cursor-pointer text-red-500">
+                                            Cancel
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                    </>
+                                )}
+                                {po.status === 'cancelled' && (
+                                    <>
+                                        <DropdownMenuItem onClick={() => handleStatusChange(po, 'draft')} className="rounded-lg cursor-pointer text-bm-gold font-semibold">
+                                            Reopen
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                    </>
+                                )}
+                                {po.status === 'received' && (
+                                    <>
+                                        <DropdownMenuItem onClick={() => handleStatusChange(po, 'approved')} className="rounded-lg cursor-pointer text-bm-gold font-semibold">
+                                            Reopen
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                    </>
+                                )}
+                                {(po.status === 'draft' || po.status === 'cancelled' || po.status === 'received') && (
+                                    <DropdownMenuItem onClick={() => handleDelete(po)} className="rounded-lg cursor-pointer text-red-500">
+                                        <Trash2 className="size-4 mr-2" /> Delete
+                                    </DropdownMenuItem>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 );
             },
@@ -223,6 +258,11 @@ router.delete(`/admin/purchase-orders/${po.id}`, {
         router.get('/admin/purchase-orders', { ...filters, [key]: value }, { preserveState: true, preserveScroll: true });
     };
 
+    const handleSearch = (value: string) => {
+        setSearchInput(value);
+        router.get('/admin/purchase-orders', { ...filters, search: value || undefined }, { preserveState: true, preserveScroll: true });
+    };
+
     const renderGridItem = (po: PurchaseOrder) => {
         const cfg = statusConfig[po.status] || statusConfig.draft;
         const Icon = cfg.icon;
@@ -250,27 +290,56 @@ router.delete(`/admin/purchase-orders/${po.id}`, {
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Total</span>
                         <span className="font-mono font-bold text-bm-gold text-base">
-                            ₱{parseFloat(po.total_amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                            ${parseFloat(po.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </span>
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-1 pt-2 border-t border-border/40 mt-3 relative z-10">
-                    {next && (
-                        <Button variant="ghost" size="sm" className="h-7 cursor-pointer text-xs font-bold text-bm-gold inline-flex shrink-0" onClick={() => handleStatusChange(po, next)}>
-                            {next === 'submitted' ? 'Submit' : next === 'approved' ? 'Approve' : 'Mark Rcvd'}
-                        </Button>
-                    )}
-                    {po.status !== 'received' && po.status !== 'cancelled' && (
-                        <Button variant="ghost" size="sm" className="h-7 cursor-pointer text-xs text-red-500 inline-flex shrink-0" onClick={() => handleStatusChange(po, 'cancelled')}>
-                            Cancel
-                        </Button>
-                    )}
-                    {po.status === 'draft' && (
-                        <Button variant="ghost" size="icon" className="h-7 w-7 cursor-pointer text-red-500 hover:bg-red-50 shrink-0" onClick={() => handleDelete(po)}>
-                            <Trash2 className="size-3.5" />
-                        </Button>
-                    )}
+                <div className="flex items-center justify-between pt-2 border-t border-border/40 mt-3">
+                    <div />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreVertical className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-xl">
+                            {next && (
+                                <>
+                                    <DropdownMenuItem onClick={() => handleStatusChange(po, next)} className="rounded-lg cursor-pointer text-bm-gold font-semibold">
+                                        {next === 'submitted' ? 'Submit' : next === 'approved' ? 'Approve' : 'Mark Received'}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                </>
+                            )}
+                            {po.status !== 'received' && po.status !== 'cancelled' && (
+                                <DropdownMenuItem onClick={() => handleStatusChange(po, 'cancelled')} className="rounded-lg cursor-pointer text-red-500">
+                                    Cancel
+                                </DropdownMenuItem>
+                            )}
+                            {po.status === 'cancelled' && (
+                                <>
+                                    <DropdownMenuItem onClick={() => handleStatusChange(po, 'draft')} className="rounded-lg cursor-pointer text-bm-gold font-semibold">
+                                        Reopen
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                </>
+                            )}
+                            {po.status === 'received' && (
+                                <>
+                                    <DropdownMenuItem onClick={() => handleStatusChange(po, 'approved')} className="rounded-lg cursor-pointer text-bm-gold font-semibold">
+                                        Reopen
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                </>
+                            )}
+                            {(po.status === 'draft' || po.status === 'cancelled' || po.status === 'received') && (
+                                <DropdownMenuItem onClick={() => handleDelete(po)} className="rounded-lg cursor-pointer text-red-500">
+                                    <Trash2 className="size-4 mr-2" /> Delete
+                                </DropdownMenuItem>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
         );
@@ -288,6 +357,24 @@ router.delete(`/admin/purchase-orders/${po.id}`, {
                 </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div className="relative flex-1 sm:max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                        <Input
+                            type="text"
+                            placeholder="Search by PO # or supplier..."
+                            value={searchInput}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            className="pl-9 rounded-xl border-border/40"
+                        />
+                        {searchInput && (
+                            <button
+                                onClick={() => handleSearch('')}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                                <X className="size-4" />
+                            </button>
+                        )}
+                    </div>
                     <Select value={filters.status || 'all'} onValueChange={(v) => handleFilter('status', v === 'all' ? undefined : v)}>
                         <SelectTrigger className="w-[160px] rounded-xl border-border/40">
                             <Filter className="size-4 mr-2 text-muted-foreground" />
@@ -395,7 +482,7 @@ router.delete(`/admin/purchase-orders/${po.id}`, {
                                         </div>
                                     ))}
                                     <div className="text-right text-sm font-bold pt-2 border-t border-border/40">
-                                        Total: <span className="font-mono text-bm-gold">₱{totalAmount.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</span>
+                                        Total: <span className="font-mono text-bm-gold">${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                                     </div>
                                 </div>
 

@@ -1,12 +1,13 @@
 import { Head, router } from '@inertiajs/react';
 import {
-    ArrowLeft, Bell, Send, XCircle, CheckCircle2, Clock, Info, AlertTriangle, Megaphone, Users, Eye, EyeOff,
+    ArrowLeft, Bell, Send, Users, Eye, EyeOff,
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { notificationStatusConfig, notificationTypeConfig } from '@/lib/crm-config';
 
 interface Recipient { id: number; name: string; email: string; pivot: { is_read: boolean; read_at: string | null }; }
 
@@ -31,22 +32,9 @@ interface Props {
     };
 }
 
-const typeConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    system: { label: 'System', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: Info },
-    promotional: { label: 'Promo', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', icon: Megaphone },
-    alert: { label: 'Alert', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: AlertTriangle },
-    info: { label: 'Info', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: Info },
-};
-
-const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    draft: { label: 'Draft', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20', icon: Clock },
-    sent: { label: 'Sent', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    cancelled: { label: 'Cancelled', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: XCircle },
-};
-
 export default function NotificationShow({ notification, readCount, deliverySummary }: Props) {
-    const tCfg = typeConfig[notification.type] || typeConfig.info;
-    const sCfg = statusConfig[notification.status] || statusConfig.draft;
+    const tCfg = notificationTypeConfig[notification.type] || notificationTypeConfig.info;
+    const sCfg = notificationStatusConfig[notification.status] || notificationStatusConfig.draft;
     const TypeIcon = tCfg.icon;
     const StatusIcon = sCfg.icon;
 

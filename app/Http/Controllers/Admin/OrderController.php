@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreOrderRequest;
+use App\Http\Requests\Admin\UpdateOrderStatusRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -48,18 +50,9 @@ class OrderController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreOrderRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'customer_id' => 'nullable|exists:users,id',
-            'payment_method' => 'nullable|string|max:50',
-            'discount_amount' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.unit_price' => 'required|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         $order = null;
 
@@ -148,11 +141,9 @@ class OrderController extends Controller
         ]);
     }
 
-    public function update(Request $request, Order $order): RedirectResponse
+    public function update(UpdateOrderStatusRequest $request, Order $order): RedirectResponse
     {
-        $validated = $request->validate([
-            'status' => 'required|in:pending,processing,completed,cancelled,refunded',
-        ]);
+        $validated = $request->validated();
 
         $oldStatus = $order->status;
         $newStatus = $validated['status'];

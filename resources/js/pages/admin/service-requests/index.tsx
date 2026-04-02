@@ -1,11 +1,12 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Search, Filter, Plus, Wrench, Clock, CheckCircle2, User, UserCircle2, AlertTriangle, AlertCircle } from 'lucide-react';
+import { Search, Filter, Plus, User, UserCircle2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
 import { DataTableWithPagination } from '@/components/data-table';
 import Heading from '@/components/heading';
+import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -14,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { serviceRequestPriorityConfig, serviceRequestStatusConfig } from '@/lib/crm-config';
 
 interface PaginatedJobs {
     data: any[]; current_page: number; last_page: number; per_page: number; total: number;
@@ -27,23 +29,6 @@ interface Props {
     technicians: { id: number; name: string }[];
     services: { id: number; name: string }[];
 }
-
-const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    pending: { label: 'Pending', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', icon: Clock },
-    accepted: { label: 'Accepted', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: CheckCircle2 },
-    'in-progress': { label: 'In Progress', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', icon: Wrench },
-    ready: { label: 'Ready', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    completed: { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
-    rejected: { label: 'Rejected', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: AlertTriangle },
-    cancelled: { label: 'Cancelled', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20', icon: AlertCircle },
-};
-
-const priorityConfig: Record<string, { label: string; color: string }> = {
-    low: { label: 'Low', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20' },
-    normal: { label: 'Normal', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-    high: { label: 'High', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20' },
-    urgent: { label: 'Urgent', color: 'bg-red-500/10 text-red-500 border-red-500/20' },
-};
 
 export default function ServiceRequestsIndex({ requests, filters, technicians, services }: Props) {
     const [search, setSearch] = useState(filters.search || '');
@@ -94,7 +79,7 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
         {
             accessorKey: 'status', header: 'Status',
             cell: ({ row }) => {
-                const cfg = statusConfig[row.original.status] || statusConfig.pending;
+                const cfg = serviceRequestStatusConfig[row.original.status] || serviceRequestStatusConfig.pending;
                 const Icon = cfg.icon;
 
                 return <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold flex items-center gap-1 w-fit`}><Icon className="size-3" />{cfg.label}</Badge>;
@@ -103,7 +88,7 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
         {
             accessorKey: 'priority', header: 'Priority',
             cell: ({ row }) => {
-                const cfg = priorityConfig[row.original.priority] || priorityConfig.normal;
+                const cfg = serviceRequestPriorityConfig[row.original.priority] || serviceRequestPriorityConfig.normal;
 
                 return <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold w-fit`}>{cfg.label}</Badge>;
             },
@@ -121,8 +106,8 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
     ], []);
 
     const renderGridItem = (req: any) => {
-        const statusCfg = statusConfig[req.status] || statusConfig.pending;
-        const priorityCfg = priorityConfig[req.priority] || priorityConfig.normal;
+        const statusCfg = serviceRequestStatusConfig[req.status] || serviceRequestStatusConfig.pending;
+        const priorityCfg = serviceRequestPriorityConfig[req.priority] || serviceRequestPriorityConfig.normal;
         const StatusIcon = statusCfg.icon;
 
         return (
@@ -189,7 +174,7 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
                                     <div className="grid gap-1.5">
                                         <Label className="text-xs font-bold uppercase text-muted-foreground/80">Customer Name</Label>
                                         <Input placeholder="Customer name..." className="rounded-xl" value={form.data.customer_name} onChange={(e) => form.setData('customer_name', e.target.value)} required />
-                                        {form.errors.customer_name && <p className="text-xs text-red-500">{form.errors.customer_name}</p>}
+                                        <InputError message={form.errors.customer_name} className="text-xs" />
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label className="text-xs font-bold uppercase text-muted-foreground/80">Service Type</Label>
@@ -199,7 +184,7 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
                                                 {services.map(s => <SelectItem key={s.id} value={String(s.id)} className="rounded-xl">{s.name}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
-                                        {form.errors.service_id && <p className="text-xs text-red-500">{form.errors.service_id}</p>}
+                                        <InputError message={form.errors.service_id} className="text-xs" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="grid gap-1.5">
@@ -207,22 +192,25 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
                                             <Select value={form.data.priority} onValueChange={(v) => form.setData('priority', v)}>
                                                 <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                                                 <SelectContent className="rounded-2xl">
-                                                    {Object.entries(priorityConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                                                    {Object.entries(serviceRequestPriorityConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                                                 </SelectContent>
                                             </Select>
+                                            <InputError message={form.errors.priority} className="text-xs" />
                                         </div>
                                         <div className="grid gap-1.5">
                                             <Label className="text-xs font-bold uppercase text-muted-foreground/80">Est. Completion</Label>
                                             <Input type="date" className="rounded-xl" value={form.data.estimated_completion} onChange={(e) => form.setData('estimated_completion', e.target.value)} />
+                                            <InputError message={form.errors.estimated_completion} className="text-xs" />
                                         </div>
                                     </div>
                                     <div className="grid gap-1.5">
                                         <Label className="text-xs font-bold uppercase text-muted-foreground/80">Issue Description</Label>
                                         <Textarea placeholder="Describe the issue or service requested..." className="rounded-xl min-h-[100px]" value={form.data.description} onChange={(e) => form.setData('description', e.target.value)} />
+                                        <InputError message={form.errors.description} className="text-xs" />
                                     </div>
                                     <div className="flex gap-2 justify-end pt-2">
                                         <Button type="button" variant="outline" className="rounded-xl" onClick={() => setOpen(false)}>Cancel</Button>
-                                        <Button type="submit" className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl" disabled={form.processing}>Create Job</Button>
+                                        <Button type="submit" className="bg-bm-gold hover:bg-bm-gold/90 text-black font-bold rounded-xl" disabled={form.processing}>{form.processing ? 'Creating...' : 'Create Job'}</Button>
                                     </div>
                                 </div>
                             </form>
@@ -239,14 +227,14 @@ export default function ServiceRequestsIndex({ requests, filters, technicians, s
                         <SelectTrigger className="w-[140px] rounded-xl border-border/40"><Filter className="size-4 mr-2 text-muted-foreground" /><SelectValue placeholder="Status" /></SelectTrigger>
                         <SelectContent className="rounded-2xl">
                             <SelectItem value="all" className="rounded-xl">All Status</SelectItem>
-                            {Object.entries(statusConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                            {Object.entries(serviceRequestStatusConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <Select value={filters.priority || 'all'} onValueChange={(v) => handleFilter('priority', v === 'all' ? undefined : v)}>
                         <SelectTrigger className="w-[130px] rounded-xl border-border/40"><Filter className="size-4 mr-2 text-muted-foreground" /><SelectValue placeholder="Priority" /></SelectTrigger>
                         <SelectContent className="rounded-2xl">
                             <SelectItem value="all" className="rounded-xl">All Priorities</SelectItem>
-                            {Object.entries(priorityConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                            {Object.entries(serviceRequestPriorityConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <Select value={filters.assigned_to || 'all'} onValueChange={(v) => handleFilter('assigned_to', v === 'all' ? undefined : v)}>

@@ -29,7 +29,7 @@ interface Props {
     recentAdjustments: Adjustment[];
 }
 
-const fmt = (n: number) => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
 export default function InventoryReport({ products, summary, recentAdjustments }: Props) {
     const [search, setSearch] = useState('');

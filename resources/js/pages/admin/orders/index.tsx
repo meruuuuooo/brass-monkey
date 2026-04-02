@@ -1,24 +1,25 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm, Link } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
     Plus, Search, ShoppingCart, Eye, Filter, XCircle, ArrowUpDown,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import Heading from '@/components/heading';
-import { DataTableWithPagination } from '@/components/data-table';
+import { useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
+import { DataTableWithPagination } from '@/components/data-table';
+import Heading from '@/components/heading';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import AppLayout from '@/layouts/app-layout';
+import { orderStatusConfig } from '@/lib/crm-config';
 
 interface Customer { id: number; name: string; email: string; }
 interface ProductOption { id: number; name: string; sku: string | null; price: string; stock_quantity: number; }
@@ -45,15 +46,7 @@ interface Props {
     filters: { status?: string; search?: string };
 }
 
-const statusConfig: Record<string, { label: string; color: string }> = {
-    pending: { label: 'Pending', color: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
-    processing: { label: 'Processing', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-    completed: { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
-    cancelled: { label: 'Cancelled', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20' },
-    refunded: { label: 'Refunded', color: 'bg-red-500/10 text-red-500 border-red-500/20' },
-};
-
-const fmt = (n: number) => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
 export default function OrdersIndex({ orders, customers, products, filters }: Props) {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -92,7 +85,8 @@ export default function OrdersIndex({ orders, customers, products, filters }: Pr
         {
             accessorKey: 'status', header: 'Status',
             cell: ({ row }) => {
-                const cfg = statusConfig[row.original.status] || statusConfig.pending;
+                const cfg = orderStatusConfig[row.original.status] || orderStatusConfig.pending;
+
                 return <Badge variant="outline" className={`${cfg.color} rounded-lg text-xs font-bold`}>{cfg.label}</Badge>;
             },
         },
@@ -149,7 +143,8 @@ export default function OrdersIndex({ orders, customers, products, filters }: Pr
     };
 
     const renderGridItem = (order: Order) => {
-        const cfg = statusConfig[order.status] || statusConfig.pending;
+        const cfg = orderStatusConfig[order.status] || orderStatusConfig.pending;
+
         return (
             <div className="group relative bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col p-5">
                 <div className="flex items-start justify-between mb-4">
@@ -205,7 +200,7 @@ export default function OrdersIndex({ orders, customers, products, filters }: Pr
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl">
                             <SelectItem value="all" className="rounded-xl">All Status</SelectItem>
-                            {Object.entries(statusConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
+                            {Object.entries(orderStatusConfig).map(([k, v]) => <SelectItem key={k} value={k} className="rounded-xl">{v.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                 </div>
