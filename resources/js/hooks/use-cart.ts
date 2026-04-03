@@ -20,6 +20,7 @@ const CART_UPDATED_EVENT = 'bm:cart-updated';
 function readStorage(): CartItem[] {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
+
         return raw ? JSON.parse(raw) : [];
     } catch {
         return [];
@@ -42,6 +43,7 @@ export function useCart() {
 
             if (Array.isArray(customEvent.detail)) {
                 setCartState(customEvent.detail);
+
                 return;
             }
 
@@ -86,6 +88,7 @@ export function useCart() {
         (product: CartProduct) => {
             setCart((prev) => {
                 const existing = prev.find((i) => i.product.id === product.id);
+
                 if (existing) {
                     return prev.map((i) =>
                         i.product.id === product.id
@@ -99,6 +102,7 @@ export function useCart() {
                             : i,
                     );
                 }
+
                 return [...prev, { product, quantity: 1 }];
             });
         },

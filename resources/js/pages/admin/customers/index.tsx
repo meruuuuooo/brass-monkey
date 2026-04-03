@@ -92,8 +92,13 @@ export default function CustomersIndex({ customers, segments, filters }: Props) 
             header: 'Health',
             cell: ({ row }) => {
                 const s = row.original.health_status;
-                if (!s) return null;
+
+                if (!s) {
+return null;
+}
+
                 const cfg = healthConfig[s];
+
                 return (
                     <span className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold ${cfg.color} ${cfg.bg} ${cfg.border}`}>
                         <ShieldCheck className="size-3" />{cfg.label}
@@ -167,6 +172,7 @@ export default function CustomersIndex({ customers, segments, filters }: Props) 
                     </div>
                     {customer.health_status && (() => {
                         const cfg = healthConfig[customer.health_status!];
+
                         return (
                             <span className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold shrink-0 ${cfg.color} ${cfg.bg} ${cfg.border}`}>
                                 <ShieldCheck className="size-3" />{cfg.label}

@@ -1,4 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import Autoplay from 'embla-carousel-autoplay';
 import {
     Package, ShoppingCart, Star, CheckCircle2,
     AlertCircle, Tag, Info, ArrowRight, ChevronRight,
@@ -8,7 +9,6 @@ import { useState, useRef } from 'react';
 import Swal from 'sweetalert2';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
 import { login, dashboard } from '@/routes';
 
 interface Category { id: number; name: string; }
@@ -62,7 +62,9 @@ export default function PublicProductShow({ product, related, auth }: Props) {
             confirmButtonText: 'Go to Login',
             cancelButtonText: 'Maybe Later',
         }).then(result => {
-            if (result.isConfirmed) window.location.href = '/login';
+            if (result.isConfirmed) {
+window.location.href = '/login';
+}
         });
     };
 

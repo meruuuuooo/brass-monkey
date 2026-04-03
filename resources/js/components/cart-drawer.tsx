@@ -12,7 +12,7 @@ import {
     DrawerContent,
 } from '@/components/ui/drawer';
 import { Separator } from '@/components/ui/separator';
-import { type CartItem } from '@/hooks/use-cart';
+import type {CartItem} from '@/hooks/use-cart';
 
 interface Props {
     open: boolean;
@@ -32,7 +32,10 @@ export function CartDrawer({
     updateQty, removeFromCart, clearCart,
 }: Props) {
     const handleCheckout = () => {
-        if (cart.length === 0) return;
+        if (cart.length === 0) {
+return;
+}
+
         Swal.fire({
             title: 'Place Order?',
             html: `<strong>${cartCount} item${cartCount > 1 ? 's' : ''}</strong> &mdash; Total: <strong>$${total.toFixed(2)}</strong><br/><small class="text-gray-400">Our team will contact you for payment.</small>`,
@@ -42,11 +45,16 @@ export function CartDrawer({
             cancelButtonColor: '#64748b',
             confirmButtonText: 'Place Order',
         }).then(result => {
-            if (!result.isConfirmed) return;
+            if (!result.isConfirmed) {
+return;
+}
+
             router.post('/products/cart/checkout', {
                 items: cart.map(i => ({ product_id: i.product.id, quantity: i.quantity })),
             }, {
-                onSuccess: () => { clearCart(); onClose(); },
+                onSuccess: () => {
+ clearCart(); onClose(); 
+},
             });
         });
     };

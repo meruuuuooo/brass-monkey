@@ -23,7 +23,9 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 export function ClientPendingActions({ actions }: Props) {
-    if (actions.length === 0) return null;
+    if (actions.length === 0) {
+return null;
+}
 
     return (
         <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-2">

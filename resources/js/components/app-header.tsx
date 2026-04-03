@@ -395,7 +395,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                             item.href,
                                                             activeItemStyles,
                                                         ),
-                                                        'cursor-pointer px-3 bg-bm-dark hover:text-bm-gold hover:bg-bm-dark  rounded-md',
+                                                        'cursor-pointer text-bm-white focus:bg-bm-dark dark:bg-bm-dark px-3 bg-bm-dark hover:text-bm-gold hover:bg-bm-dark rounded-md',
                                                     )}
                                                 >
                                                     {item.icon && (
@@ -404,7 +404,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                     {item.title}
                                                 </Link>
                                                 {isCurrentUrl(item.href) && (
-                                                    <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-bm-gold dark:bg-white"></div>
+                                                    <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-bm-gold dark:bg-bm-gold"></div>
                                                 )}
                                             </NavigationMenuItem>
                                         ),

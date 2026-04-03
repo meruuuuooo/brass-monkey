@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import {
     Megaphone,
     ExternalLink,
@@ -9,8 +9,9 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-// import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/app-layout';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
+import appLayout from '@/layouts/app-layout';
 
 /* ─────────────────────────────────── Types ──────────────────────────────── */
 
@@ -141,9 +142,12 @@ export default function ClientPromotions({ advertisements }: Props) {
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Promotions', href: '#' },
     ];
+    const { auth } = usePage().props;
+    const isClient = auth.roles?.includes('Client') ?? false;
+    const LayoutComponent = isClient ? AppHeaderLayout : appLayout;
 
     return (
-        <AppHeaderLayout>
+        <LayoutComponent breadcrumbs={breadcrumbs}>
             <Head title="Promotions & Offers" />
 
             <div className="space-y-6 rounded-sm p-4 md:p-6 m-4">
@@ -192,6 +196,6 @@ export default function ClientPromotions({ advertisements }: Props) {
                     </>
                 )}
             </div>
-        </AppHeaderLayout>
+        </LayoutComponent>
     );
 }

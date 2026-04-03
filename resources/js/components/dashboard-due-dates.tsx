@@ -28,22 +28,22 @@ export function DashboardDueDates({
 }: DashboardDueDatesProps) {
     const filteredItems = selectedDate
         ? serviceOrders.filter((order) => {
-              const displayDate =
-                  order.estimated_completion || order.created_at;
-              const orderDate = new Date(displayDate);
+            const displayDate =
+                order.estimated_completion || order.created_at;
+            const orderDate = new Date(displayDate);
 
-              return (
-                  orderDate.getDate() === selectedDate.getDate() &&
-                  orderDate.getMonth() === selectedDate.getMonth() &&
-                  orderDate.getFullYear() === selectedDate.getFullYear()
-              );
-          })
+            return (
+                orderDate.getDate() === selectedDate.getDate() &&
+                orderDate.getMonth() === selectedDate.getMonth() &&
+                orderDate.getFullYear() === selectedDate.getFullYear()
+            );
+        })
         : serviceOrders.sort((a, b) => {
-              const dateA = new Date(a.estimated_completion || a.created_at);
-              const dateB = new Date(b.estimated_completion || b.created_at);
+            const dateA = new Date(a.estimated_completion || a.created_at);
+            const dateB = new Date(b.estimated_completion || b.created_at);
 
-              return dateA.getTime() - dateB.getTime();
-          }); // Show all, sorted by date
+            return dateA.getTime() - dateB.getTime();
+        }); // Show all, sorted by date
 
     const formatDateShort = (iso: string) => {
         return new Date(iso).toLocaleDateString('en-US', {
@@ -91,7 +91,7 @@ export function DashboardDueDates({
                 )}
             </div>
 
-            <div className="scrollbar-hide flex-1 space-y-4 overflow-y-auto pr-2">
+            <div className="scrollbar-hide flex-1 space-y-4 overflow-y-auto pr-2 max-h-[400px] xl:max-h-[650px]">
                 {filteredItems.length > 0 ? (
                     filteredItems.map((order) => {
                         const displayDate =
@@ -110,8 +110,8 @@ export function DashboardDueDates({
                                             statusColor === 'urgent'
                                                 ? 'bg-red-500/10 text-red-500'
                                                 : statusColor === 'completed'
-                                                  ? 'bg-emerald-500/10 text-emerald-500'
-                                                  : 'bg-bm-gold/10 text-bm-gold',
+                                                    ? 'bg-emerald-500/10 text-emerald-500'
+                                                    : 'bg-bm-gold/10 text-bm-gold',
                                         )}
                                     >
                                         <Clock className="h-5 w-5" />
@@ -143,8 +143,8 @@ export function DashboardDueDates({
                                                     ? 'bg-red-500/10 text-red-500'
                                                     : statusColor ===
                                                         'completed'
-                                                      ? 'bg-emerald-500/10 text-emerald-500'
-                                                      : 'bg-bm-gold/10 text-bm-gold',
+                                                        ? 'bg-emerald-500/10 text-emerald-500'
+                                                        : 'bg-bm-gold/10 text-bm-gold',
                                             )}
                                         >
                                             {order.status}

@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Search, Calendar, User, Eye, Tag, FileText } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Heading from '@/components/heading';
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Pagination } from '@/components/ui/pagination';
 // import AppLayout from '@/layouts/app-layout';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
+import appLayout from '@/layouts/app-layout';
 
 interface BlogCategory {
     id: number;
@@ -89,8 +90,17 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
         router.get('/blog');
     };
 
+    const { auth } = usePage().props;
+    const isClient = auth.roles?.includes('Client') ?? false;
+    const LayoutComponent = isClient ? AppHeaderLayout : appLayout;
+
+    const breadcrumbs = [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Blog', href: '#' },
+    ];
+
     return (
-        <AppHeaderLayout>
+        <LayoutComponent breadcrumbs={breadcrumbs}>
             <Head title="Blog & News" />
 
             <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -259,6 +269,6 @@ export default function BlogIndex({ posts, categories, tags, filters }: Props) {
                     </div>
                 </div>
             </div>
-        </AppHeaderLayout>
+        </LayoutComponent>
     );
 }

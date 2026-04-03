@@ -22,7 +22,9 @@ const priorityStyle = {
 };
 
 export function ClientRecommendedServices({ services }: Props) {
-    if (services.length === 0) return null;
+    if (services.length === 0) {
+return null;
+}
 
     return (
         <div className="space-y-3">
@@ -33,6 +35,7 @@ export function ClientRecommendedServices({ services }: Props) {
             <div className="grid gap-3 sm:grid-cols-3">
                 {services.map((svc) => {
                     const style = priorityStyle[svc.priority];
+
                     return (
                         <div
                             key={svc.service_id}

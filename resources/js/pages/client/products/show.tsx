@@ -60,6 +60,7 @@ function StockBadge({ qty, threshold }: { qty: number; threshold: number }) {
             </span>
         );
     }
+
     if (qty <= threshold) {
         return (
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-sm font-bold text-amber-500">
@@ -67,6 +68,7 @@ function StockBadge({ qty, threshold }: { qty: number; threshold: number }) {
             </span>
         );
     }
+
     return (
         <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-sm font-bold text-emerald-500">
             <CheckCircle2 className="size-4" /> In Stock

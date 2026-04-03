@@ -1,9 +1,12 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ChevronRight, ExternalLink, Package, Search, Sparkles, Truck } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { ClientPendingActions, type PendingAction } from '@/components/client-pending-actions';
-import { ClientRecommendedProducts, type RecommendedProduct } from '@/components/client-recommended-products';
-import { ClientRecommendedServices, type RecommendedService } from '@/components/client-recommended-services';
+import { ClientPendingActions  } from '@/components/client-pending-actions';
+import type {PendingAction} from '@/components/client-pending-actions';
+import { ClientRecommendedProducts  } from '@/components/client-recommended-products';
+import type {RecommendedProduct} from '@/components/client-recommended-products';
+import { ClientRecommendedServices  } from '@/components/client-recommended-services';
+import type {RecommendedService} from '@/components/client-recommended-services';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -57,9 +60,11 @@ export default function ClientDashboard({
         if (advertisements.length <= 1) {
             return;
         }
+
         const timer = setInterval(() => {
             setCurrentAdIndex((prev: number) => (prev + 1) % advertisements.length);
         }, 8000);
+
         return () => clearInterval(timer);
     }, [advertisements.length]);
 
@@ -159,40 +164,40 @@ export default function ClientDashboard({
                                         </div>
                                     </div>
                                 ))}
+                                {advertisements.length > 1 && (
+                                    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-30 bg-black/30 backdrop-blur-xl px-3 py-2 rounded-full border border-white/10">
+                                        {advertisements.map((_, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => setCurrentAdIndex(i)}
+                                                className={cn(
+                                                    "h-1.5 transition-all duration-500 rounded-full cursor-pointer ring-1 ring-transparent hover:ring-bm-gold/50",
+                                                    i === currentAdIndex ? "w-8 bg-bm-gold shadow-[0_0_12px_rgba(235,188,72,0.6)]" : "w-2 bg-white/25 hover:bg-white/50"
+                                                )}
+                                                aria-label={`Go to slide ${i + 1}`}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                             {advertisements.length > 1 && (
-                                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-30 bg-black/30 backdrop-blur-xl px-3 py-2 rounded-full border border-white/10">
-                                    {advertisements.map((_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => setCurrentAdIndex(i)}
-                                            className={cn(
-                                                "h-1.5 transition-all duration-500 rounded-full cursor-pointer ring-1 ring-transparent hover:ring-bm-gold/50",
-                                                i === currentAdIndex ? "w-8 bg-bm-gold shadow-[0_0_12px_rgba(235,188,72,0.6)]" : "w-2 bg-white/25 hover:bg-white/50"
-                                            )}
-                                            aria-label={`Go to slide ${i + 1}`}
-                                        />
-                                    ))}
-                                </div>
+                                <>
+                                    <button
+                                        onClick={prevAd}
+                                        aria-label="Previous promotion"
+                                        className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 size-11 md:size-12 rounded-xl bg-black/30 backdrop-blur-md border border-white/15 hover:border-bm-gold/50 flex items-center justify-center text-white hover:text-bm-gold opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 hover:bg-bm-gold/20 z-40 hover:-translate-x-1"
+                                    >
+                                        <ChevronRight className="size-6 rotate-180" />
+                                    </button>
+                                    <button
+                                        onClick={nextAd}
+                                        aria-label="Next promotion"
+                                        className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 size-11 md:size-12 rounded-xl bg-black/30 backdrop-blur-md border border-white/15 hover:border-bm-gold/50 flex items-center justify-center text-white hover:text-bm-gold opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 hover:bg-bm-gold/20 z-40 hover:translate-x-1"
+                                    >
+                                        <ChevronRight className="size-6" />
+                                    </button>
+                                </>
                             )}
-                        </div>
-                        {advertisements.length > 1 && (
-                            <>
-                                <button
-                                    onClick={prevAd}
-                                    aria-label="Previous promotion"
-                                    className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 size-11 md:size-12 rounded-xl bg-black/30 backdrop-blur-md border border-white/15 hover:border-bm-gold/50 flex items-center justify-center text-white hover:text-bm-gold opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 hover:bg-bm-gold/20 z-40 hover:-translate-x-1"
-                                >
-                                    <ChevronRight className="size-6 rotate-180" />
-                                </button>
-                                <button
-                                    onClick={nextAd}
-                                    aria-label="Next promotion"
-                                    className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 size-11 md:size-12 rounded-xl bg-black/30 backdrop-blur-md border border-white/15 hover:border-bm-gold/50 flex items-center justify-center text-white hover:text-bm-gold opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 hover:bg-bm-gold/20 z-40 hover:translate-x-1"
-                                >
-                                    <ChevronRight className="size-6" />
-                                </button>
-                            </>
-                        )}
                         </div>
                     ) : (
                         <div className="relative overflow-hidden rounded-[2.5rem] bg-linear-to-br from-bm-gold/8 via-background/50 to-background/30 backdrop-blur-2xl border border-bm-gold/20 p-8 md:p-12 lg:p-16 flex flex-col items-center justify-center min-h-70 shadow-lg shadow-bm-gold/5">

@@ -16,7 +16,9 @@ interface Props {
 }
 
 export function ClientRecommendedProducts({ products }: Props) {
-    if (products.length === 0) return null;
+    if (products.length === 0) {
+return null;
+}
 
     return (
         <div className="rounded-2xl border border-border/40 bg-background/50 shadow-sm backdrop-blur-sm p-5 space-y-4">

@@ -15,7 +15,9 @@ interface Props {
 }
 
 export default function LandingProductGrid({ products }: Props) {
-    if (!products || products.length === 0) return null;
+    if (!products || products.length === 0) {
+return null;
+}
 
     return (
         <section id="product" className="relative bg-bm-dark py-32 overflow-hidden">

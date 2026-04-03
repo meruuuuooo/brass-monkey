@@ -12,7 +12,8 @@ import {
     Users,
 } from 'lucide-react';
 import { useState } from 'react';
-import { CrmNextBestActions, type NextBestAction } from '@/components/crm-next-best-actions';
+import { CrmNextBestActions  } from '@/components/crm-next-best-actions';
+import type {NextBestAction} from '@/components/crm-next-best-actions';
 import { DashboardCalendar } from '@/components/dashboard-calendar';
 import { DashboardDueDates } from '@/components/dashboard-due-dates';
 import { Badge } from '@/components/ui/badge';

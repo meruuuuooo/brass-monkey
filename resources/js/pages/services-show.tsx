@@ -15,8 +15,8 @@ import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import serviceRoutes from '@/routes/services';
 import { login } from '@/routes';
+import serviceRoutes from '@/routes/services';
 
 interface Service {
     id: number;
