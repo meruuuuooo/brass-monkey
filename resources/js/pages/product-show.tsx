@@ -9,6 +9,7 @@ import { useState, useRef } from 'react';
 import Swal from 'sweetalert2';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
+import { AppFooter } from '@/components/app-footer';
 import { login, dashboard } from '@/routes';
 
 interface Category { id: number; name: string; }
@@ -63,8 +64,8 @@ export default function PublicProductShow({ product, related, auth }: Props) {
             cancelButtonText: 'Maybe Later',
         }).then(result => {
             if (result.isConfirmed) {
-window.location.href = '/login';
-}
+                window.location.href = '/login';
+            }
         });
     };
 
@@ -337,21 +338,7 @@ window.location.href = '/login';
                 )}
             </main>
 
-            {/* ── Footer ───────────────────────────────────────── */}
-            <footer className="border-t border-bm-gold/10 bg-[#120E0A] py-10">
-                <div className="mx-auto max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 lg:px-8">
-                    <Link href="/" className="group flex cursor-pointer items-center gap-3">
-                        <AppLogoIcon className="h-8 w-auto text-bm-gold" />
-                        <span className="font-serif text-lg font-bold text-bm-white">Brass Monkey</span>
-                    </Link>
-                    <p className="text-xs font-medium text-bm-muted/40">© {new Date().getFullYear()} Brass Monkey. All rights reserved.</p>
-                    <div className="flex items-center gap-6 text-xs font-bold uppercase tracking-widest text-bm-muted/50">
-                        <Link href="/#services" className="cursor-pointer hover:text-bm-gold transition-colors">Services</Link>
-                        <Link href="/#product" className="cursor-pointer hover:text-bm-gold transition-colors">Shop</Link>
-                        <Link href={login()} className="cursor-pointer hover:text-bm-gold transition-colors">Login</Link>
-                    </div>
-                </div>
-            </footer>
+            <AppFooter />
         </div>
     );
 }

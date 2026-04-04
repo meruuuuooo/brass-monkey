@@ -15,6 +15,7 @@ import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { AppFooter } from '@/components/app-footer';
 import { login } from '@/routes';
 import serviceRoutes from '@/routes/services';
 
@@ -35,25 +36,10 @@ interface Props {
 export default function ServiceShow({ service }: Props) {
     const { auth } = usePage().props as { auth: { user: any } };
     const [isBookingOpen, setIsBookingOpen] = useState(false);
-    const [showBackToTop, setShowBackToTop] = useState(false);
-
     const { data, setData, post, processing, reset } = useForm({
         service_id: service.id.toString(),
         notes: '',
     });
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setShowBackToTop(window.scrollY > 500);
-        };
-        window.addEventListener('scroll', handleScroll);
-
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
 
     const handleBooking = (e: React.FormEvent) => {
         e.preventDefault();
@@ -452,43 +438,7 @@ export default function ServiceShow({ service }: Props) {
                 </section>
             </main>
 
-            {/* Footer */}
-            <footer className="border-t border-bm-gold/5 bg-[#120E0A] py-16">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="flex flex-col items-center justify-between gap-6 border-b border-bm-white/5 pb-8 md:flex-row">
-                        <div>
-                            <h3 className="font-serif text-lg font-bold tracking-tight text-bm-white">
-                                Brass Monkey
-                            </h3>
-                            <p className="mt-1 text-sm text-bm-white/50">
-                                Precision Mechanical Excellence
-                            </p>
-                        </div>
-                        <Link
-                            href="/"
-                            className="text-sm font-bold text-bm-gold transition-colors hover:text-bm-gold/80 cursor-pointer"
-                        >
-                            Back to Home
-                        </Link>
-                    </div>
-                    <p className="pt-8 text-center text-xs text-bm-white/30">
-                        © 2026 Brass Monkey. All rights reserved.
-                    </p>
-                </div>
-            </footer>
-
-            {/* Back to Top Button */}
-            <button
-                onClick={scrollToTop}
-                className={`group fixed right-8 bottom-8 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-bm-gold text-bm-dark shadow-2xl shadow-bm-gold/20 transition-all duration-500 hover:scale-110 hover:bg-bm-gold-hover active:scale-90 cursor-pointer ${showBackToTop
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-20 opacity-0'
-                    }`}
-                aria-label="Back to top"
-            >
-                <ArrowUp className="h-6 w-6 transition-transform duration-300 group-hover:-translate-y-1" />
-                <div className="absolute inset-0 animate-ping rounded-full border-4 border-bm-gold/20" />
-            </button>
+            <AppFooter />
         </div>
     );
 }

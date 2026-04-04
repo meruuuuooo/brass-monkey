@@ -20,6 +20,7 @@ import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import WorkOrderModal from '@/components/work-order-modal';
+import { AppFooter } from '@/components/app-footer';
 import { home, login, dashboard } from '@/routes';
 
 interface ServiceOrder {
@@ -390,9 +391,7 @@ export default function TrackOrder({ order, query }: Props) {
                 )}
             </main>
 
-            <footer className="relative z-10 border-t border-bm-white/5 py-10 text-center text-[11px] font-bold uppercase tracking-[0.3em] text-bm-muted/40">
-                © {new Date().getFullYear()} Brassmonkey Mechanical Mastery
-            </footer>
+            <AppFooter />
 
             {/* Work Order Detail Modal */}
             <WorkOrderModal
