@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Bell, BellOff, Calendar, CheckCircle2, Info, Megaphone, AlertTriangle, Check } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,7 @@ import { Pagination } from '@/components/ui/pagination';
 // import AppLayout from '@/layouts/app-layout';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { cn } from '@/lib/utils';
+import appLayout from '@/layouts/app-layout';
 
 interface Notification {
     id: number; title: string; message: string; type: string; created_at: string;
@@ -29,10 +30,20 @@ export default function NotificationsIndex({ notifications }: Props) {
     const markAsRead = (id: number) => router.post(`/notifications/${id}/read`, {}, { preserveScroll: true });
     const markAllRead = () => router.post('/notifications/mark-all-read', {}, { preserveScroll: true });
 
+    const { auth } = usePage().props;
+        const isClient = auth.roles?.includes('Client') ?? false;
+        const LayoutComponent = isClient ? AppHeaderLayout : appLayout;
+    
+        const breadcrumbs = [
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Blog', href: '#' },
+        ];
+
+
     return (
-        <AppHeaderLayout>
+        <LayoutComponent breadcrumbs={breadcrumbs}>
             <Head title="Notifications" />
-            <div className="space-y-6 mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
+            <div className="mt-0 rounded-sm p-4 md:p-6 m-4 border border-sidebar-border/50 shadow-sm">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="Notifications" description="Stay updated with order alerts and service news." />
                     {notifications.data.some(n => !n.pivot.is_read) && (
@@ -90,6 +101,6 @@ export default function NotificationsIndex({ notifications }: Props) {
                     </div>
                 )}
             </div>
-        </AppHeaderLayout>
+        </LayoutComponent>
     );
 }

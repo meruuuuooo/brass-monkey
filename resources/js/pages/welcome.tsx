@@ -210,7 +210,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                             <span className="text-xs font-bold uppercase tracking-[0.2em] text-bm-gold">Premium Service Excellence</span>
                         </div>
 
-                        <h1 className="animate-spin font-serif text-5xl font-bold leading-[1.1] tracking-tight sm:text-7xl lg:text-8xl">
+                        <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight sm:text-7xl lg:text-8xl">
                             Precision. <br />
                             <span className="text-bm-gold underline decoration-bm-gold/20 underline-offset-8">Craftsmanship.</span>
                         </h1>
@@ -220,7 +220,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                         </p>
 
                         <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
-                            <Button size="lg" className="animate-spin bg-bm-gold px-12 h-16 text-bm-dark text-lg font-bold hover:bg-bm-gold-hover transition-all hover:scale-105 active:scale-95 shadow-xl shadow-bm-gold/20 rounded-lg group cursor-pointer">
+                            <Button size="lg" className="bg-bm-gold px-12 h-16 text-bm-dark text-lg font-bold hover:bg-bm-gold-hover transition-all hover:scale-105 active:scale-95 shadow-xl shadow-bm-gold/20 rounded-lg group cursor-pointer">
                                 Book a Service <ArrowRight className="ml-2 h-6 w-6 transition-transform group-hover:translate-x-1" />
                             </Button>
                             <button
@@ -228,7 +228,7 @@ export default function Welcome({ canRegister = true, auth, order, query, posts,
                                     e.preventDefault();
                                     handleScrollToSection(e as any, '#services');
                                 }}
-                                className="animate-spin inline-flex items-center gap-2 px-12 h-16 border border-bm-white/30 bg-transparent text-bm-white text-lg font-bold hover:bg-bm-white/10 transition-all rounded-lg backdrop-blur-sm hover:scale-105 active:scale-95 cursor-pointer"
+                                className="inline-flex items-center gap-2 px-12 h-16 border border-bm-white/30 bg-transparent text-bm-white text-lg font-bold hover:bg-bm-white/10 transition-all rounded-lg backdrop-blur-sm hover:scale-105 active:scale-95 cursor-pointer"
                             >
                                 Explore Services <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
                             </button>

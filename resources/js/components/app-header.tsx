@@ -116,6 +116,7 @@ const mainNavItems: NavItem[] = [
         href: '/blog',
         icon: BookText,
     },
+    
 ];
 
 const rightNavItems: NavItem[] = [];
@@ -293,8 +294,8 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
 
     return (
         <>
-            <div className="fixed top-0 right-0 left-0 z-50 backdrop-blur-md">
-                <div className="text-bm-white flex h-16 items-center bg-bm-dark px-4">
+            <div className="fixed top-0 right-0 left-0 z-50 border-b border-bm-border/10 bg-bm-dark/80 backdrop-blur-md">
+                <div className="text-bm-white flex h-20 items-center bg-bm-dark px-6">
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
                         <Sheet>
@@ -377,7 +378,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="ml-6 hidden h-full items-center space-x-6 lg:flex">
+                    <div className="ml-auto hidden h-full items-center lg:flex pr-8">
                         <NavigationMenu className="flex h-full items-stretch">
                             <NavigationMenuList className="flex h-full items-stretch space-x-2">
                                 {mainNavItems.map(
@@ -398,9 +399,9 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                         'cursor-pointer text-bm-white focus:bg-bm-dark dark:bg-bm-dark px-3 bg-bm-dark hover:text-bm-gold hover:bg-bm-dark rounded-md',
                                                     )}
                                                 >
-                                                    {item.icon && (
+                                                    {/* {item.icon && (
                                                         <item.icon className="mr-2 h-4 w-4" />
-                                                    )}
+                                                    )} */}
                                                     {item.title}
                                                 </Link>
                                                 {isCurrentUrl(item.href) && (
@@ -413,8 +414,8 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         </NavigationMenu>
                     </div>
 
-                    <div className="ml-auto flex items-center space-x-2">
-                        <div className="relative flex items-center space-x-1">
+                    <div className="flex items-center">
+                        <div className="relative flex items-center space-x-3">
                             {/* Add to Cart Button */}
                             <CartButton
                                 cartCount={cartCount}
@@ -816,15 +817,15 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
-                                    variant="ghost"
-                                    className="hidden size-9 cursor-pointer items-center justify-center rounded-md border border-border/40 bg-muted/30 text-muted-foreground transition-all duration-300 hover:bg-muted/60 hover:text-foreground hover:shadow-md active:scale-90 md:flex"
+                                    // variant="ghost"
+                                    className="hidden size-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground bg-bm-dark active:scale-90 md:flex"
                                 >
-                                    <Avatar className="size-8 overflow-hidden rounded-full">
+                                    <Avatar className="size-8 overflow-hidden rounded-md hover:bg-bm-gold/60 hover:text-bm-dark">
                                         <AvatarImage
                                             src={auth.user.avatar}
                                             alt={auth.user.name}
                                         />
-                                        <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                        <AvatarFallback className="rounded-md bg-bm-gold text-black dark:bg-bm-dark dark:text-white">
                                             {getInitials(auth.user.name)}
                                         </AvatarFallback>
                                     </Avatar>
