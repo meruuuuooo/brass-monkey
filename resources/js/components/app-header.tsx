@@ -15,9 +15,10 @@ import {
     Palette,
     RotateCcw,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
+import AppLogoBrassMonkey from '@/components/app-logo-brassmonkey';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { CartButton, CartDrawer } from '@/components/cart-drawer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -116,7 +117,7 @@ const mainNavItems: NavItem[] = [
         href: '/blog',
         icon: BookText,
     },
-    
+
 ];
 
 const rightNavItems: NavItem[] = [];
@@ -277,6 +278,14 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
         useAdvancedThemeCustomization();
     const { cart, cartCount, subtotal, tax, total, updateQty, removeFromCart, clearCart } = useCart();
     const [cartOpen, setCartOpen] = useState(false);
+    const [showBrassMonkey, setShowBrassMonkey] = useState(true);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setShowBrassMonkey((prev) => !prev);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, []);
 
     const isDarkMode = resolvedAppearance === 'dark';
 
@@ -372,9 +381,24 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     <Link
                         href={dashboard()}
                         prefetch
-                        className="flex items-center space-x-2 text-bm-white"
+                        className="grid items-center text-bm-white"
                     >
-                        <AppLogo />
+                        <div
+                            className={cn(
+                                "col-start-1 row-start-1 flex items-center space-x-2 transition-all duration-1000",
+                                showBrassMonkey ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
+                            )}
+                        >
+                            <AppLogoBrassMonkey />
+                        </div>
+                        <div
+                            className={cn(
+                                "col-start-1 row-start-1 flex items-center space-x-2 transition-all duration-1000",
+                                !showBrassMonkey ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+                            )}
+                        >
+                            <AppLogo />
+                        </div>
                     </Link>
 
                     {/* Desktop Navigation */}
